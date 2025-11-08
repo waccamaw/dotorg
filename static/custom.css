@@ -11,7 +11,7 @@
   --color-earth-light: #d4b896;     /* Light earth tan */
   
   /* Accent Colors */
-  --color-turquoise: #3ba99c;       /* Turquoise - sacred color */
+  --color-turquoise: #3ba99c;       /* Turquoise accent */
   --color-turquoise-dark: #2d8577;  /* Darker turquoise */
   --color-terracotta: #c67b5c;      /* Terracotta red */
   --color-sage: #9caf88;            /* Sage green */
@@ -144,6 +144,11 @@ header .site-title {
   margin: 0;
   color: var(--color-white);
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+header .site-title a {
+  color: inherit;
+  border: none;
 }
 
 header .site-description {
