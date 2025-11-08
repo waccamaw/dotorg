@@ -11,8 +11,14 @@
         <nav role="navigation" aria-label="Main navigation">
             <ul>
                 <li><a href="{{ .Site.BaseURL }}">Home</a></li>
+                {{ if .Site.Menus.main }}
+                    {{ range .Site.Menus.main }}
+                    <li><a href="{{ .URL }}">{{ .Name }}</a></li>
+                    {{ end }}
+                {{ else }}
                 <li><a href="{{ .Site.BaseURL }}archive/">Archive</a></li>
                 <li><a href="{{ .Site.BaseURL }}about/">About</a></li>
+                {{ end }}
             </ul>
         </nav>
     </div>
