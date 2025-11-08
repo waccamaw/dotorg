@@ -1,42 +1,42 @@
 /* 
- * Waccamaw Indian People - Modern Native American Tribal Theme
- * A sophisticated, modern design inspired by Native American heritage
+ * Waccamaw Indian People - Modern Flat Theme
+ * A clean, modern flat design with navy blue color scheme
  */
 
 /* CSS Variables for Color Palette */
 :root {
-  /* Earth Tones - Primary Colors */
-  --color-earth-dark: #4a3528;      /* Deep earth brown */
-  --color-earth-medium: #8b6f47;    /* Medium earth brown */
-  --color-earth-light: #d4b896;     /* Light earth tan */
+  /* Navy Blue - Primary Colors */
+  --color-navy-dark: #1a2332;       /* Deep navy blue */
+  --color-navy-medium: #2c3e50;     /* Medium navy blue */
+  --color-navy-light: #34495e;      /* Light navy blue */
   
   /* Accent Colors */
-  --color-turquoise: #3ba99c;       /* Turquoise accent */
-  --color-turquoise-dark: #2d8577;  /* Darker turquoise */
-  --color-terracotta: #c67b5c;      /* Terracotta red */
-  --color-sage: #9caf88;            /* Sage green */
+  --color-accent-blue: #3498db;     /* Bright blue accent */
+  --color-accent-light: #5dade2;    /* Light blue accent */
+  --color-silver: #95a5a6;          /* Silver gray */
+  --color-teal: #16a085;            /* Teal accent */
   
   /* Neutrals */
-  --color-cream: #f5f1e8;           /* Warm cream background */
-  --color-sand: #e8dcc8;            /* Sand */
   --color-white: #ffffff;
-  --color-text: #2d2520;            /* Almost black, warm tone */
-  --color-text-light: #5a4a3f;      /* Lighter text for secondary content */
+  --color-light-gray: #f8f9fa;      /* Very light gray background */
+  --color-gray: #ecf0f1;            /* Light gray */
+  --color-text: #2c3e50;            /* Dark blue-gray for text */
+  --color-text-light: #7f8c8d;      /* Lighter text for secondary content */
   
   /* Spacing */
   --spacing-xs: 0.5rem;
   --spacing-sm: 1rem;
   --spacing-md: 1.5rem;
-  --spacing-lg: 2.5rem;
-  --spacing-xl: 4rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 3rem;
   
   /* Typography */
   --font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-headings: Georgia, "Times New Roman", serif;
+  --font-headings: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   
   /* Borders */
-  --border-radius: 4px;
-  --border-width: 2px;
+  --border-radius: 2px;
+  --border-width: 1px;
 }
 
 /* Global Styles */
@@ -54,11 +54,7 @@ html {
 body {
   font-family: var(--font-primary);
   color: var(--color-text);
-  background-color: var(--color-cream);
-  background-image: 
-    linear-gradient(90deg, var(--color-sand) 1px, transparent 1px),
-    linear-gradient(var(--color-sand) 1px, transparent 1px);
-  background-size: 50px 50px;
+  background-color: var(--color-light-gray);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -67,27 +63,27 @@ body {
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-headings);
-  color: var(--color-earth-dark);
+  color: var(--color-navy-dark);
   margin-bottom: var(--spacing-sm);
-  line-height: 1.3;
+  line-height: 1.4;
   font-weight: 600;
 }
 
 h1 {
-  font-size: 2.5rem;
-  margin-bottom: var(--spacing-md);
-  border-bottom: 3px solid var(--color-turquoise);
-  padding-bottom: var(--spacing-sm);
+  font-size: 2rem;
+  margin-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-accent-blue);
+  padding-bottom: var(--spacing-xs);
   display: inline-block;
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: 1.75rem;
   margin-top: var(--spacing-lg);
 }
 
 h3 {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   margin-top: var(--spacing-md);
 }
 
@@ -100,49 +96,30 @@ p {
 }
 
 a {
-  color: var(--color-turquoise-dark);
+  color: var(--color-accent-blue);
   text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 a:hover {
-  color: var(--color-turquoise);
-  border-bottom-color: var(--color-turquoise);
+  color: var(--color-accent-light);
 }
 
 /* Header Styles */
 header {
-  background: linear-gradient(135deg, var(--color-earth-dark) 0%, var(--color-earth-medium) 100%);
+  background: var(--color-navy-dark);
   color: var(--color-white);
-  padding: var(--spacing-lg) var(--spacing-md);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  position: relative;
-}
-
-header::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, 
-    var(--color-turquoise) 0%, 
-    var(--color-terracotta) 25%, 
-    var(--color-sage) 50%, 
-    var(--color-terracotta) 75%, 
-    var(--color-turquoise) 100%
-  );
+  padding: var(--spacing-md) var(--spacing-md);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-bottom: 3px solid var(--color-accent-blue);
 }
 
 header .site-title {
   font-family: var(--font-headings);
-  font-size: 2.5rem;
-  font-weight: 700;
+  font-size: 1.75rem;
+  font-weight: 600;
   margin: 0;
   color: var(--color-white);
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 header .site-title a {
@@ -151,20 +128,20 @@ header .site-title a {
 }
 
 header .site-description {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   margin-top: var(--spacing-xs);
-  color: var(--color-earth-light);
-  font-style: italic;
+  color: var(--color-gray);
+  opacity: 0.9;
 }
 
 header nav {
-  margin-top: var(--spacing-md);
+  margin-top: var(--spacing-sm);
 }
 
 header nav ul {
   list-style: none;
   display: flex;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
   flex-wrap: wrap;
 }
 
@@ -172,14 +149,12 @@ header nav a {
   color: var(--color-white);
   padding: var(--spacing-xs) var(--spacing-sm);
   border-bottom: 2px solid transparent;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   font-weight: 500;
 }
 
 header nav a:hover {
-  border-bottom-color: var(--color-turquoise);
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: var(--border-radius);
+  border-bottom-color: var(--color-accent-blue);
 }
 
 /* Main Content Area */
@@ -187,7 +162,7 @@ main {
   flex: 1;
   max-width: 1200px;
   width: 100%;
-  margin: var(--spacing-xl) auto;
+  margin: var(--spacing-lg) auto;
   padding: 0 var(--spacing-md);
 }
 
@@ -195,25 +170,10 @@ main {
 article, .post, .page-content {
   background: var(--color-white);
   padding: var(--spacing-lg);
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
   border-radius: var(--border-radius);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-left: 4px solid var(--color-turquoise);
-  position: relative;
-}
-
-article::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 60px;
-  height: 60px;
-  background: 
-    linear-gradient(45deg, transparent 30%, var(--color-sand) 30%, var(--color-sand) 70%, transparent 70%),
-    linear-gradient(-45deg, transparent 30%, var(--color-sand) 30%, var(--color-sand) 70%, transparent 70%);
-  background-size: 10px 10px;
-  opacity: 0.3;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-left: 3px solid var(--color-accent-blue);
 }
 
 article h2 {
@@ -224,7 +184,6 @@ article .post-meta {
   color: var(--color-text-light);
   font-size: 0.9rem;
   margin-bottom: var(--spacing-sm);
-  font-style: italic;
 }
 
 /* Lists */
@@ -239,12 +198,11 @@ li {
 
 /* Blockquotes */
 blockquote {
-  border-left: 4px solid var(--color-terracotta);
+  border-left: 3px solid var(--color-accent-blue);
   margin: var(--spacing-md) 0;
   padding: var(--spacing-sm) var(--spacing-md);
-  background-color: var(--color-sand);
-  font-style: italic;
-  color: var(--color-text-light);
+  background-color: var(--color-gray);
+  color: var(--color-text);
 }
 
 blockquote p:last-child {
@@ -253,17 +211,17 @@ blockquote p:last-child {
 
 /* Code Blocks */
 code {
-  background-color: var(--color-sand);
+  background-color: var(--color-gray);
   padding: 2px 6px;
   border-radius: 3px;
   font-family: 'Courier New', Consolas, Monaco, 'Lucida Console', monospace;
   font-size: 0.9em;
-  color: var(--color-earth-dark);
+  color: var(--color-navy-dark);
 }
 
 pre {
-  background-color: var(--color-earth-dark);
-  color: var(--color-cream);
+  background-color: var(--color-navy-dark);
+  color: var(--color-white);
   padding: var(--spacing-md);
   border-radius: var(--border-radius);
   overflow-x: auto;
@@ -281,16 +239,15 @@ img {
   max-width: 100%;
   height: auto;
   border-radius: var(--border-radius);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Footer */
 footer {
-  background: var(--color-earth-dark);
-  color: var(--color-earth-light);
-  padding: var(--spacing-lg) var(--spacing-md);
+  background: var(--color-navy-dark);
+  color: var(--color-gray);
+  padding: var(--spacing-md) var(--spacing-md);
   margin-top: var(--spacing-xl);
-  border-top: 4px solid var(--color-turquoise);
+  border-top: 3px solid var(--color-accent-blue);
 }
 
 footer .footer-content {
@@ -300,33 +257,28 @@ footer .footer-content {
 }
 
 footer a {
-  color: var(--color-turquoise);
-  border-bottom-color: transparent;
+  color: var(--color-accent-blue);
 }
 
 footer a:hover {
-  color: var(--color-earth-light);
-  border-bottom-color: var(--color-earth-light);
+  color: var(--color-accent-light);
 }
 
 footer p {
   margin-bottom: var(--spacing-xs);
+  font-size: 0.9rem;
 }
 
 /* Decorative Elements */
 .decorative-border {
-  height: 3px;
-  background: linear-gradient(90deg, 
-    var(--color-turquoise) 0%, 
-    var(--color-terracotta) 50%, 
-    var(--color-turquoise) 100%
-  );
+  height: 2px;
+  background: var(--color-accent-blue);
   margin: var(--spacing-md) 0;
 }
 
 /* Buttons */
 button, .button, input[type="submit"] {
-  background-color: var(--color-turquoise);
+  background-color: var(--color-accent-blue);
   color: var(--color-white);
   padding: var(--spacing-xs) var(--spacing-md);
   border: none;
@@ -339,9 +291,7 @@ button, .button, input[type="submit"] {
 }
 
 button:hover, .button:hover, input[type="submit"]:hover {
-  background-color: var(--color-turquoise-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: var(--color-accent-light);
 }
 
 /* Forms */
@@ -352,19 +302,19 @@ textarea,
 select {
   width: 100%;
   padding: var(--spacing-xs) var(--spacing-sm);
-  border: 2px solid var(--color-sand);
+  border: 1px solid var(--color-gray);
   border-radius: var(--border-radius);
   font-family: var(--font-primary);
   font-size: 1rem;
   margin-bottom: var(--spacing-sm);
-  transition: border-color 0.3s ease;
+  transition: border-color 0.2s ease;
 }
 
 input:focus, 
 textarea:focus, 
 select:focus {
   outline: none;
-  border-color: var(--color-turquoise);
+  border-color: var(--color-accent-blue);
 }
 
 /* Pagination */
@@ -378,45 +328,44 @@ select:focus {
 
 .pagination a, .pagination span {
   padding: var(--spacing-xs) var(--spacing-sm);
-  border: 2px solid var(--color-turquoise);
+  border: 1px solid var(--color-accent-blue);
   border-radius: var(--border-radius);
-  color: var(--color-turquoise-dark);
-  transition: all 0.3s ease;
+  color: var(--color-accent-blue);
+  transition: all 0.2s ease;
 }
 
 .pagination a:hover {
-  background-color: var(--color-turquoise);
+  background-color: var(--color-accent-blue);
   color: var(--color-white);
-  border-bottom-color: var(--color-turquoise);
 }
 
 .pagination .current {
-  background-color: var(--color-turquoise);
+  background-color: var(--color-accent-blue);
   color: var(--color-white);
-  border-color: var(--color-turquoise);
+  border-color: var(--color-accent-blue);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
   :root {
-    --spacing-lg: 2rem;
-    --spacing-xl: 2.5rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
   }
   
   header .site-title {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
   
   h1 {
-    font-size: 2rem;
-  }
-  
-  h2 {
     font-size: 1.75rem;
   }
   
+  h2 {
+    font-size: 1.5rem;
+  }
+  
   h3 {
-    font-size: 1.35rem;
+    font-size: 1.25rem;
   }
   
   header nav ul {
@@ -435,11 +384,11 @@ select:focus {
 
 @media (max-width: 480px) {
   header .site-title {
-    font-size: 1.75rem;
+    font-size: 1.35rem;
   }
   
   h1 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
   
   article, .post, .page-content {
@@ -465,7 +414,7 @@ a:focus,
 button:focus, 
 input:focus, 
 textarea:focus {
-  outline: 3px solid var(--color-turquoise);
+  outline: 2px solid var(--color-accent-blue);
   outline-offset: 2px;
 }
 
@@ -473,28 +422,26 @@ textarea:focus {
 .read-more {
   display: inline-block;
   margin-top: var(--spacing-sm);
-  color: var(--color-turquoise-dark);
+  color: var(--color-accent-blue);
   font-weight: 500;
-  border-bottom: 2px solid var(--color-turquoise);
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .read-more:hover {
-  color: var(--color-turquoise);
-  transform: translateX(5px);
+  color: var(--color-accent-light);
 }
 
 /* Welcome Section */
 .welcome {
-  background: linear-gradient(135deg, var(--color-white) 0%, var(--color-sand) 100%);
-  border-left-color: var(--color-terracotta);
+  background: var(--color-white);
+  border-left-color: var(--color-accent-blue);
 }
 
 /* Page Header */
 .page-header {
   margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-md);
-  border-bottom: 3px solid var(--color-turquoise);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-accent-blue);
 }
 
 .page-header h1 {
@@ -509,16 +456,16 @@ textarea:focus {
 }
 
 .posts-list .post {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
 }
 
 .recent-posts {
-  margin-top: var(--spacing-xl);
+  margin-top: var(--spacing-lg);
 }
 
 .recent-posts h2 {
-  color: var(--color-earth-dark);
-  border-bottom: 2px solid var(--color-turquoise);
+  color: var(--color-navy-dark);
+  border-bottom: 2px solid var(--color-accent-blue);
   padding-bottom: var(--spacing-xs);
   margin-bottom: var(--spacing-md);
 }
