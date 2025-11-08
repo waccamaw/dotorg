@@ -1,6 +1,6 @@
-# Waccamaw Siouan Tribe - Micro.blog Theme
+# Waccamaw Indian People - Micro.blog Theme
 
-A modern and sophisticated Native American tribal-inspired theme for micro.blog, designed specifically for the Waccamaw Siouan Tribe.
+A modern and sophisticated Native American tribal-inspired theme for micro.blog, designed specifically for the Waccamaw Indian People of Aynor, SC.
 
 ## Features
 
@@ -68,4 +68,4 @@ See LICENSE file for details.
 
 ## Credits
 
-Designed for the Waccamaw Siouan Tribe.
+Designed for the Waccamaw Indian People of Aynor, South Carolina.
