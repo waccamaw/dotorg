@@ -1,0 +1,55 @@
+{{ define "main" }}
+<main role="main">
+    <div class="home-content">
+        {{ with .Site.Params.about_me }}
+        <section class="welcome page-content">
+            <h2>Welcome</h2>
+            {{ . | safeHTML }}
+        </section>
+        {{ end }}
+        
+        <section class="recent-posts">
+            <h2>Recent Posts</h2>
+            {{ $pages := where .Site.RegularPages "Type" "!=" "redirect" }}
+            {{ range first 10 $pages }}
+            <article class="post">
+                <header>
+                    <h3>
+                        <a href="{{ .Permalink }}">{{ if .Title }}{{ .Title }}{{ else }}{{ .Date.Format "January 2, 2006 at 3:04 PM" }}{{ end }}</a>
+                    </h3>
+                    {{ if .Date }}
+                    <p class="post-meta">
+                        <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+                            {{ .Date.Format "January 2, 2006" }}
+                        </time>
+                        {{ with .Params.categories }}
+                        <span> • </span>
+                        {{ range . }}
+                        <a href="{{ "/categories/" | relLangURL }}{{ . | urlize }}">{{ . }}</a>
+                        {{ end }}
+                        {{ end }}
+                    </p>
+                    {{ end }}
+                </header>
+                <div class="post-content">
+                    {{ if .Description }}
+                        {{ .Description }}
+                    {{ else if .Summary }}
+                        {{ .Summary }}
+                    {{ else }}
+                        {{ .Content }}
+                    {{ end }}
+                </div>
+                {{ if .Truncated }}
+                <a href="{{ .Permalink }}" class="read-more">Read more →</a>
+                {{ end }}
+            </article>
+            {{ end }}
+        </section>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{{ .Site.BaseURL }}archive/" class="button">View All Posts</a>
+        </div>
+    </div>
+</main>
+{{ end }}

@@ -1,0 +1,25 @@
+{{ define "main" }}
+<main role="main">
+    <article>
+        <header>
+            <h1>{{ .Title }}</h1>
+            {{ if .Date }}
+            <p class="post-meta">
+                <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">
+                    {{ .Date.Format "January 2, 2006" }}
+                </time>
+                {{ with .Params.categories }}
+                <span> • </span>
+                {{ range . }}
+                <a href="{{ "/categories/" | relLangURL }}{{ . | urlize }}">{{ . }}</a>
+                {{ end }}
+                {{ end }}
+            </p>
+            {{ end }}
+        </header>
+        <div class="post-content">
+            {{ .Content }}
+        </div>
+    </article>
+</main>
+{{ end }}

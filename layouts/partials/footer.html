@@ -1,0 +1,17 @@
+<footer role="contentinfo">
+    <div class="footer-content">
+        <div class="decorative-border"></div>
+        <p>&copy; {{ now.Year }} {{ .Site.Title }}. All rights reserved.</p>
+        {{ with .Site.Params.about_me }}
+        <p>{{ . | safeHTML }}</p>
+        {{ end }}
+        <p>
+            <a href="{{ .Site.BaseURL }}feed.xml">RSS Feed</a> | 
+            <a href="{{ .Site.BaseURL }}feed.json">JSON Feed</a>
+            {{ if .Site.Params.has_podcasts }}
+            | <a href="{{ .Site.BaseURL }}podcast.xml">Podcast</a>
+            {{ end }}
+        </p>
+        {{ partial "microblog_syndication.html" . }}
+    </div>
+</footer>

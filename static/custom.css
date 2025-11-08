@@ -1,0 +1,548 @@
+/* 
+ * Waccamaw Siouan Tribe - Modern Native American Tribal Theme
+ * A sophisticated, modern design inspired by Native American heritage
+ */
+
+/* CSS Variables for Color Palette */
+:root {
+  /* Earth Tones - Primary Colors */
+  --color-earth-dark: #4a3528;      /* Deep earth brown */
+  --color-earth-medium: #8b6f47;    /* Medium earth brown */
+  --color-earth-light: #d4b896;     /* Light earth tan */
+  
+  /* Accent Colors */
+  --color-turquoise: #3ba99c;       /* Turquoise - sacred color */
+  --color-turquoise-dark: #2d8577;  /* Darker turquoise */
+  --color-terracotta: #c67b5c;      /* Terracotta red */
+  --color-sage: #9caf88;            /* Sage green */
+  
+  /* Neutrals */
+  --color-cream: #f5f1e8;           /* Warm cream background */
+  --color-sand: #e8dcc8;            /* Sand */
+  --color-white: #ffffff;
+  --color-text: #2d2520;            /* Almost black, warm tone */
+  --color-text-light: #5a4a3f;      /* Lighter text for secondary content */
+  
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 1.5rem;
+  --spacing-lg: 2.5rem;
+  --spacing-xl: 4rem;
+  
+  /* Typography */
+  --font-primary: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-headings: Georgia, "Times New Roman", serif;
+  
+  /* Borders */
+  --border-radius: 4px;
+  --border-width: 2px;
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+body {
+  font-family: var(--font-primary);
+  color: var(--color-text);
+  background-color: var(--color-cream);
+  background-image: 
+    linear-gradient(90deg, var(--color-sand) 1px, transparent 1px),
+    linear-gradient(var(--color-sand) 1px, transparent 1px);
+  background-size: 50px 50px;
+  background-attachment: fixed;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headings);
+  color: var(--color-earth-dark);
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 2.5rem;
+  margin-bottom: var(--spacing-md);
+  border-bottom: 3px solid var(--color-turquoise);
+  padding-bottom: var(--spacing-sm);
+  display: inline-block;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-top: var(--spacing-lg);
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-top: var(--spacing-md);
+}
+
+h4 {
+  font-size: 1.25rem;
+}
+
+p {
+  margin-bottom: var(--spacing-sm);
+}
+
+a {
+  color: var(--color-turquoise-dark);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--color-turquoise);
+  border-bottom-color: var(--color-turquoise);
+}
+
+/* Header Styles */
+header {
+  background: linear-gradient(135deg, var(--color-earth-dark) 0%, var(--color-earth-medium) 100%);
+  color: var(--color-white);
+  padding: var(--spacing-lg) var(--spacing-md);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    var(--color-turquoise) 0%, 
+    var(--color-terracotta) 25%, 
+    var(--color-sage) 50%, 
+    var(--color-terracotta) 75%, 
+    var(--color-turquoise) 100%
+  );
+}
+
+header .site-title {
+  font-family: var(--font-headings);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+  color: var(--color-white);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+header .site-description {
+  font-size: 1.1rem;
+  margin-top: var(--spacing-xs);
+  color: var(--color-earth-light);
+  font-style: italic;
+}
+
+header nav {
+  margin-top: var(--spacing-md);
+}
+
+header nav ul {
+  list-style: none;
+  display: flex;
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
+}
+
+header nav a {
+  color: var(--color-white);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+header nav a:hover {
+  border-bottom-color: var(--color-turquoise);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+}
+
+/* Main Content Area */
+main {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: var(--spacing-xl) auto;
+  padding: 0 var(--spacing-md);
+}
+
+/* Content Cards */
+article, .post, .page-content {
+  background: var(--color-white);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid var(--color-turquoise);
+  position: relative;
+}
+
+article::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  background: 
+    linear-gradient(45deg, transparent 30%, var(--color-sand) 30%, var(--color-sand) 70%, transparent 70%),
+    linear-gradient(-45deg, transparent 30%, var(--color-sand) 30%, var(--color-sand) 70%, transparent 70%);
+  background-size: 10px 10px;
+  opacity: 0.3;
+}
+
+article h2 {
+  margin-top: 0;
+}
+
+article .post-meta {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  margin-bottom: var(--spacing-sm);
+  font-style: italic;
+}
+
+/* Lists */
+ul, ol {
+  margin-left: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+}
+
+li {
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--color-terracotta);
+  margin: var(--spacing-md) 0;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--color-sand);
+  font-style: italic;
+  color: var(--color-text-light);
+}
+
+blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Code Blocks */
+code {
+  background-color: var(--color-sand);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: "Courier New", monospace;
+  font-size: 0.9em;
+  color: var(--color-earth-dark);
+}
+
+pre {
+  background-color: var(--color-earth-dark);
+  color: var(--color-cream);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  overflow-x: auto;
+  margin-bottom: var(--spacing-sm);
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  color: inherit;
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer */
+footer {
+  background: var(--color-earth-dark);
+  color: var(--color-earth-light);
+  padding: var(--spacing-lg) var(--spacing-md);
+  margin-top: var(--spacing-xl);
+  border-top: 4px solid var(--color-turquoise);
+}
+
+footer .footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+footer a {
+  color: var(--color-turquoise);
+  border-bottom-color: transparent;
+}
+
+footer a:hover {
+  color: var(--color-earth-light);
+  border-bottom-color: var(--color-earth-light);
+}
+
+footer p {
+  margin-bottom: var(--spacing-xs);
+}
+
+/* Decorative Elements */
+.decorative-border {
+  height: 3px;
+  background: linear-gradient(90deg, 
+    var(--color-turquoise) 0%, 
+    var(--color-terracotta) 50%, 
+    var(--color-turquoise) 100%
+  );
+  margin: var(--spacing-md) 0;
+}
+
+/* Buttons */
+button, .button, input[type="submit"] {
+  background-color: var(--color-turquoise);
+  color: var(--color-white);
+  padding: var(--spacing-xs) var(--spacing-md);
+  border: none;
+  border-radius: var(--border-radius);
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+button:hover, .button:hover, input[type="submit"]:hover {
+  background-color: var(--color-turquoise-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Forms */
+input[type="text"], 
+input[type="email"], 
+input[type="url"], 
+textarea, 
+select {
+  width: 100%;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 2px solid var(--color-sand);
+  border-radius: var(--border-radius);
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  margin-bottom: var(--spacing-sm);
+  transition: border-color 0.3s ease;
+}
+
+input:focus, 
+textarea:focus, 
+select:focus {
+  outline: none;
+  border-color: var(--color-turquoise);
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.pagination a, .pagination span {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 2px solid var(--color-turquoise);
+  border-radius: var(--border-radius);
+  color: var(--color-turquoise-dark);
+  transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+  background-color: var(--color-turquoise);
+  color: var(--color-white);
+  border-bottom-color: var(--color-turquoise);
+}
+
+.pagination .current {
+  background-color: var(--color-turquoise);
+  color: var(--color-white);
+  border-color: var(--color-turquoise);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  :root {
+    --spacing-lg: 2rem;
+    --spacing-xl: 2.5rem;
+  }
+  
+  header .site-title {
+    font-size: 2rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.75rem;
+  }
+  
+  h3 {
+    font-size: 1.35rem;
+  }
+  
+  header nav ul {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+  
+  main {
+    margin: var(--spacing-md) auto;
+  }
+  
+  article, .post, .page-content {
+    padding: var(--spacing-md);
+  }
+}
+
+@media (max-width: 480px) {
+  header .site-title {
+    font-size: 1.75rem;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  article, .post, .page-content {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* Accessibility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Focus states for accessibility */
+a:focus, 
+button:focus, 
+input:focus, 
+textarea:focus {
+  outline: 3px solid var(--color-turquoise);
+  outline-offset: 2px;
+}
+
+/* Read More Links */
+.read-more {
+  display: inline-block;
+  margin-top: var(--spacing-sm);
+  color: var(--color-turquoise-dark);
+  font-weight: 500;
+  border-bottom: 2px solid var(--color-turquoise);
+  transition: all 0.3s ease;
+}
+
+.read-more:hover {
+  color: var(--color-turquoise);
+  transform: translateX(5px);
+}
+
+/* Welcome Section */
+.welcome {
+  background: linear-gradient(135deg, var(--color-white) 0%, var(--color-sand) 100%);
+  border-left-color: var(--color-terracotta);
+}
+
+/* Page Header */
+.page-header {
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
+  border-bottom: 3px solid var(--color-turquoise);
+}
+
+.page-header h1 {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Posts List */
+.posts-list {
+  margin-top: var(--spacing-lg);
+}
+
+.posts-list .post {
+  margin-bottom: var(--spacing-lg);
+}
+
+.recent-posts {
+  margin-top: var(--spacing-xl);
+}
+
+.recent-posts h2 {
+  color: var(--color-earth-dark);
+  border-bottom: 2px solid var(--color-turquoise);
+  padding-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Post Summary */
+.post-summary {
+  margin-top: var(--spacing-sm);
+  color: var(--color-text);
+}
+
+/* Home Content */
+.home-content section {
+  margin-bottom: var(--spacing-xl);
+}
+
+/* Print Styles */
+@media print {
+  body {
+    background: white;
+    background-image: none;
+  }
+  
+  header, footer {
+    background: white;
+    color: black;
+  }
+  
+  a {
+    text-decoration: underline;
+  }
+}

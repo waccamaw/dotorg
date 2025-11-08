@@ -1,0 +1,19 @@
+<header role="banner">
+    <div class="header-content">
+        <h1 class="site-title">
+            <a href="{{ .Site.BaseURL }}" style="color: inherit; border: none;">
+                {{ .Site.Title }}
+            </a>
+        </h1>
+        {{ with .Site.Params.description }}
+        <p class="site-description">{{ . | safeHTML }}</p>
+        {{ end }}
+        <nav role="navigation" aria-label="Main navigation">
+            <ul>
+                <li><a href="{{ .Site.BaseURL }}">Home</a></li>
+                <li><a href="{{ .Site.BaseURL }}archive/">Archive</a></li>
+                <li><a href="{{ .Site.BaseURL }}about/">About</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
