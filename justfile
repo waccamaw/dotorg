@@ -5,20 +5,42 @@
 default:
     @just --list
 
+# Helper to get Hugo command
+_hugo:
+    #!/usr/bin/env bash
+    if command -v hugo &> /dev/null; then
+        echo "hugo"
+    elif [ -f ~/bin/hugo ]; then
+        echo "~/bin/hugo"
+    else
+        echo "hugo"
+    fi
+
 # Install all dependencies
 install:
     @echo "Installing dependencies..."
     npm install
     npx playwright install --with-deps chromium
     @echo "Installing Hugo..."
-    @if ! command -v hugo &> /dev/null; then \
+    @if ! command -v hugo &> /dev/null && ! [ -f ~/bin/hugo ]; then \
         echo "Hugo not found, installing..."; \
         wget -q https://github.com/gohugoio/hugo/releases/download/v0.121.0/hugo_0.121.0_Linux-64bit.tar.gz; \
         tar -xzf hugo_0.121.0_Linux-64bit.tar.gz; \
-        sudo mv hugo /usr/local/bin/ || mv hugo ~/bin/; \
+        mkdir -p ~/bin; \
+        mv hugo ~/bin/hugo; \
+        chmod +x ~/bin/hugo; \
         rm hugo_0.121.0_Linux-64bit.tar.gz; \
+        echo "Hugo installed to ~/bin/hugo"; \
     fi
-    hugo version
+    @echo "Verifying Hugo installation..."
+    @if command -v hugo &> /dev/null; then \
+        hugo version; \
+    elif [ -f ~/bin/hugo ]; then \
+        ~/bin/hugo version; \
+    else \
+        echo "ERROR: Hugo not found after installation!"; \
+        exit 1; \
+    fi
 
 # Create sample content for testing
 create-content:
@@ -98,16 +120,20 @@ restore-config:
 
 # Build Hugo site
 build: create-content create-test-config
-    @echo "Building Hugo site..."
-    hugo --buildDrafts
-    @just restore-config
+    #!/usr/bin/env bash
+    echo "Building Hugo site..."
+    HUGO_CMD=$(if command -v hugo &> /dev/null; then echo "hugo"; elif [ -f ~/bin/hugo ]; then echo "~/bin/hugo"; else echo "hugo"; fi)
+    $HUGO_CMD --buildDrafts
+    just restore-config
 
 # Start Hugo server in background
 serve: create-content create-test-config
-    @echo "Starting Hugo server..."
-    hugo server --bind 0.0.0.0 --port 1313 --buildDrafts &
-    @sleep 5
-    @echo "Hugo server running at http://localhost:1313"
+    #!/usr/bin/env bash
+    echo "Starting Hugo server..."
+    HUGO_CMD=$(if command -v hugo &> /dev/null; then echo "hugo"; elif [ -f ~/bin/hugo ]; then echo "~/bin/hugo"; else echo "hugo"; fi)
+    $HUGO_CMD server --bind 0.0.0.0 --port 1313 --buildDrafts &
+    sleep 5
+    echo "Hugo server running at http://localhost:1313"
 
 # Stop Hugo server
 stop-serve:

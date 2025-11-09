@@ -34,7 +34,10 @@ jobs:
         run: just --version
       
       - name: Install dependencies
-        run: just install
+        run: |
+          just install
+          # Ensure Hugo is in PATH for subsequent steps
+          echo "$HOME/bin" >> $GITHUB_PATH
       
       - name: Generate screenshots
         run: just test-all
