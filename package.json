@@ -1,0 +1,20 @@
+{
+  "name": "waccamaw-dotorg",
+  "version": "1.0.0",
+  "description": "Waccamaw Indian People official website",
+  "scripts": {
+    "test": "playwright test --config=.github/playwright.config.js",
+    "screenshots": "just screenshots",
+    "build": "just build",
+    "serve": "just serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/waccamaw/dotorg.git"
+  },
+  "author": "Waccamaw Indian People",
+  "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "@playwright/test": "^1.40.0"
+  }
+}

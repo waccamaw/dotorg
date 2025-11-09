@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# Pre-commit hook for Waccamaw Indian People website
+# Ensures screenshots are generated before committing
+
+echo "Running pre-commit hook..."
+echo "Generating screenshots for all pages..."
+
+# Check if just is installed
+if ! command -v just &> /dev/null; then
+    echo "Error: 'just' is not installed. Please install it first:"
+    echo "  curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/bin"
+    exit 1
+fi
+
+# Run the screenshot generation
+if just test-all; then
+    echo "✓ Screenshots generated successfully!"
+    echo ""
+    echo "Screenshots are in the screenshots/ directory."
+    echo "Review them and add to your commit if needed:"
+    echo "  git add screenshots/"
+    exit 0
+else
+    echo "✗ Screenshot generation failed!"
+    echo "Please fix the errors before committing."
+    exit 1
+fi

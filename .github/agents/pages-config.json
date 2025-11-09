@@ -1,0 +1,51 @@
+{
+  "pages": [
+    {
+      "name": "home",
+      "path": "/",
+      "description": "Homepage with welcome message and recent posts",
+      "waitForSelector": "main"
+    },
+    {
+      "name": "about",
+      "path": "/about/",
+      "description": "About page with tribal information",
+      "waitForSelector": "article"
+    },
+    {
+      "name": "archive",
+      "path": "/archive/",
+      "description": "Archive page with all posts",
+      "waitForSelector": "main"
+    },
+    {
+      "name": "post",
+      "path": "/posts/",
+      "description": "Sample post page (if exists)",
+      "waitForSelector": "article",
+      "optional": true
+    }
+  ],
+  "instructions": {
+    "title": "Pages Configuration for Playwright Screenshots",
+    "description": "This file defines all major pages that should have screenshots generated.",
+    "how_to_add_new_page": [
+      "1. Add a new object to the 'pages' array above",
+      "2. Required fields: 'name', 'path', 'description'",
+      "3. Optional fields: 'waitForSelector' (recommended), 'optional' (for pages that might not exist)",
+      "4. Example:",
+      "{",
+      "  \"name\": \"contact\",",
+      "  \"path\": \"/contact/\",",
+      "  \"description\": \"Contact page\",",
+      "  \"waitForSelector\": \"form\"",
+      "}"
+    ],
+    "naming_conventions": [
+      "- Use lowercase for page names",
+      "- Use hyphens for multi-word names (e.g., 'tribal-council')",
+      "- Path should always end with '/' for Hugo pages",
+      "- waitForSelector should be a CSS selector that uniquely identifies the page content"
+    ]
+  }
+}
