@@ -1,12 +1,13 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
+const path = require('path');
 
 /**
  * Playwright configuration for generating screenshots of all major pages
  * @see https://playwright.dev/docs/test-configuration
  */
 module.exports = defineConfig({
-  testDir: '.github/tests',
+  testDir: path.join(__dirname, 'tests'),
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

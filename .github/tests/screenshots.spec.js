@@ -3,8 +3,8 @@ const { test, expect } = require('@playwright/test');
 const fs = require('fs');
 const path = require('path');
 
-// Load page configuration
-const pagesConfig = require('../agents/pages-config.json');
+// Load page configuration using absolute path
+const pagesConfig = require(path.join(__dirname, '..', 'agents', 'pages-config.json'));
 
 // Ensure screenshots directory exists
 const screenshotsDir = path.join(process.cwd(), 'screenshots');
