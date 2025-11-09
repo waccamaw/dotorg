@@ -25,136 +25,19 @@ jobs:
         with:
           node-version: '20'
       
-      - name: Install Hugo
+      - name: Install Just
         run: |
-          HUGO_VERSION=0.121.0
-          wget -q https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_Linux-64bit.tar.gz
-          tar -xzf hugo_${HUGO_VERSION}_Linux-64bit.tar.gz
-          sudo mv hugo /usr/local/bin/
-          hugo version
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/bin
+          echo "$HOME/bin" >> $GITHUB_PATH
       
-      - name: Install Playwright
-        run: |
-          npm init -y
-          npm install -D @playwright/test
-          npx playwright install --with-deps chromium
+      - name: Verify Just installation
+        run: just --version
       
-      - name: Build Hugo site
-        run: |
-          # Create temporary config for build
-          cat > config_temp.json << 'EOF'
-          {
-            "title": "Waccamaw Indian People",
-            "author": {
-              "name": "Waccamaw Indian People",
-              "avatar": "https://micro.blog/waccamaw/avatar.jpg",
-              "username": "waccamaw",
-              "activitypub": {
-                "username": "waccamaw",
-                "url": "https://micro.blog/waccamaw"
-              }
-            },
-            "baseURL": "http://localhost:1313/",
-            "mediaTypes": {
-              "application/json": {
-                "suffixes": [ "json" ]
-              }
-            },
-            "outputFormats": {
-              "RSS": {
-                "baseName": "feed"
-              },
-              "JSON": {
-                "baseName": "feed"
-              }
-            },
-            "outputs": {
-              "home": [ "HTML", "RSS", "JSON" ],
-              "page": [ "HTML" ],
-              "section": [ "HTML" ],
-              "taxonomy": [ "HTML", "RSS", "JSON" ],
-              "term": [ "HTML", "RSS", "JSON" ]
-            },
-            "taxonomies": {
-              "category": "categories"
-            },
-            "rssLimit": 25,
-            "uglyURLs": false,
-            "enableRobotsTXT": true,
-            "languageCode": "en",
-            "defaultContentLanguage": "en",
-            "paginate": 25,
-            "pluralizeListTitles": false,
-            "params": {
-              "description": "Official website of the Waccamaw Indian People of Aynor, SC",
-              "about_me": "The Waccamaw Indian People are a state-recognized Native American tribe."
-            }
-          }
-          EOF
-          
-          # Create sample content
-          mkdir -p content/posts
-          
-          cat > content/_index.md << 'EOF'
-          ---
-          title: "Welcome to the Waccamaw Indian People"
-          ---
-          
-          The Waccamaw Indian People are a state-recognized Native American tribe based in Aynor, South Carolina.
-          EOF
-          
-          cat > content/about.md << 'EOF'
-          ---
-          title: "About the Waccamaw Indian People"
-          ---
-          
-          ## Who We Are
-          
-          The Waccamaw Indian People are a state-recognized Native American tribe based in Aynor, South Carolina.
-          EOF
-          
-          cat > content/posts/post1.md << 'EOF'
-          ---
-          title: "Sample Post"
-          date: 2025-11-01
-          categories: ["News"]
-          ---
-          
-          This is a sample post for screenshot testing.
-          EOF
-          
-          # Build site
-          mv config.json config.json.bak
-          mv config_temp.json config.json
-          hugo --buildDrafts
-          mv config.json.bak config.json
-      
-      - name: Start Hugo server
-        run: |
-          mv config.json config.json.bak
-          cat > config.json << 'EOF'
-          {
-            "title": "Waccamaw Indian People",
-            "author": {
-              "name": "Waccamaw Indian People",
-              "avatar": "https://micro.blog/waccamaw/avatar.jpg",
-              "username": "waccamaw"
-            },
-            "baseURL": "http://localhost:1313/",
-            "languageCode": "en",
-            "defaultContentLanguage": "en",
-            "params": {
-              "description": "Official website of the Waccamaw Indian People of Aynor, SC",
-              "about_me": "The Waccamaw Indian People are a state-recognized Native American tribe."
-            }
-          }
-          EOF
-          hugo server --bind 0.0.0.0 --port 1313 --buildDrafts &
-          sleep 5
-          mv config.json.bak config.json
+      - name: Install dependencies
+        run: just install
       
       - name: Generate screenshots
-        run: npx playwright test --config=.github/playwright.config.js
+        run: just test-all
       
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
@@ -173,37 +56,78 @@ jobs:
             const path = require('path');
             
             const screenshotsDir = 'screenshots';
-            const files = fs.readdirSync(screenshotsDir);
             
-            let comment = '## 📸 Playwright Screenshots\n\n';
-            comment += 'Screenshots generated for all major pages:\n\n';
-            
-            const pages = [...new Set(files.map(f => f.split('-')[0]))];
-            
-            for (const page of pages) {
-              comment += `### ${page.charAt(0).toUpperCase() + page.slice(1)}\n\n`;
-              
-              const pageFiles = files.filter(f => f.startsWith(page));
-              const devices = {
-                'desktop': pageFiles.filter(f => f.includes('desktop')),
-                'tablet': pageFiles.filter(f => f.includes('tablet')),
-                'mobile': pageFiles.filter(f => f.includes('mobile'))
-              };
-              
-              for (const [device, deviceFiles] of Object.entries(devices)) {
-                if (deviceFiles.length > 0) {
-                  comment += `**${device.charAt(0).toUpperCase() + device.slice(1)}**\n\n`;
-                  comment += `![${page}-${device}](screenshots/${deviceFiles[0]})\n\n`;
-                }
-              }
+            if (!fs.existsSync(screenshotsDir)) {
+              console.log('No screenshots directory found');
+              return;
             }
             
-            comment += '\n---\n';
-            comment += `Download all screenshots: [playwright-screenshots-${context.sha}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n`;
+            const files = fs.readdirSync(screenshotsDir);
             
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
+            if (files.length === 0) {
+              console.log('No screenshot files found');
+              return;
+            }
+            
+            let comment = '## 📸 Playwright Screenshots\n\n';
+            comment += `Generated ${files.length} screenshots for all major pages:\n\n`;
+            
+            // Group by page name
+            const pages = [...new Set(files.map(f => f.split('-')[0]))];
+            
+            for (const pageName of pages) {
+              const pageFiles = files.filter(f => f.startsWith(pageName + '-'));
+              
+              if (pageFiles.length === 0) continue;
+              
+              comment += `### ${pageName.charAt(0).toUpperCase() + pageName.slice(1)}\n\n`;
+              comment += '| Desktop | Tablet | Mobile |\n';
+              comment += '|---------|--------|--------|\n';
+              comment += '| ';
+              
+              const desktop = pageFiles.find(f => f.includes('desktop'));
+              const tablet = pageFiles.find(f => f.includes('tablet'));
+              const mobile = pageFiles.find(f => f.includes('mobile'));
+              
+              comment += desktop ? `📱 ${desktop}` : '-';
+              comment += ' | ';
+              comment += tablet ? `📱 ${tablet}` : '-';
+              comment += ' | ';
+              comment += mobile ? `📱 ${mobile}` : '-';
+              comment += ' |\n\n';
+            }
+            
+            comment += '\n---\n\n';
+            comment += `📦 Download all screenshots: [playwright-screenshots-${context.sha}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId})\n\n`;
+            comment += `Generated with \`just test-all\` on commit ${context.sha.substring(0, 7)}\n`;
+            
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: comment
+              issue_number: context.issue.number,
             });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('📸 Playwright Screenshots')
+            );
+            
+            if (botComment) {
+              // Update existing comment
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              // Create new comment
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            }
+

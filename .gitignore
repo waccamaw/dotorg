@@ -6,6 +6,6 @@ resources/
 node_modules/
 screenshots/
 package-lock.json
-package.json
 playwright-report/
 test-results/
+config.json.bak
