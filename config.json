@@ -1,14 +1,5 @@
 {
-    "title": "Waccamaw Indian People",
-    "author": {
-        "name": "Chief Harold D. Hatcher",
-        "avatar": "[AVATAR_URL]",
-        "username": "waccamaw",
-        "activitypub": {
-                "username": "[ACTIVITYPUB_USERNAME]",
-                "url": "[ACTIVITYPUB_ACTOR]"
-        }
-    },
+    "title": "Waccamaw.org",
     "baseURL": "https://waccamaw.org/",
         "mediaTypes": {
                 "application/json": {
@@ -85,25 +76,16 @@
         "params": {
                 "description": "The Waccamaw Indian People - First state-recognized tribe in South Carolina. Preserving our heritage and culture in Dog Bluff community near Aynor, SC.",
                 "about_me": "The Waccamaw Indian People are a state-recognized tribe in South Carolina, making history as the first tribe to gain official recognition in 2005.",
-                "itunes_description": "[ITUNES_DESCRIPTION]",
-                "itunes_category": "[ITUNES_CATEGORY]",
-                "itunes_subcategory": "[ITUNES_SUBCATEGORY]",
-                "itunes_author": "[ITUNES_AUTHOR]",
                 "itunes_email": "WaccamawChief@gmail.com",
-                "itunes_cover": "[ITUNES_COVER]",
                 "twitter_username": "Waccamaw_SC",
-                "github_username": "[GITHUB_USERNAME]",
+                "github_username": "superterran",
                 "instagram_username": "waccamaw_sc",
-                "site_id": "[SITE_ID]",
                 "paginate_home": false,
                 "paginate_categories": false,
                 "paginate_replies": false,
                 "theme_seconds": "0",
                 "plugins_css": [],
                 "plugins_js": [],
-                "plugins_html": [],
-                "feeds": {
-                        "bookmarks_json": "[FEEDS_BOOKMARKS_JSON]"
-                }
+                "plugins_html": []
         }
 }
