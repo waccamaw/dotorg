@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ .Site.Title }} - Coming Soon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -29,14 +30,14 @@
         }
         
         .logo {
-            max-width: 280px;
+            max-width: 220px;
             height: auto;
-            margin: 0 auto 3rem;
+            margin: 0 auto 2rem;
             display: block;
         }
         
         h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             margin-bottom: 0.5rem;
             color: #2A2A2A;
             font-weight: 300;
@@ -44,42 +45,39 @@
         }
         
         .tagline {
-            font-size: 1.125rem;
+            font-size: 1rem;
             color: #6B6B6B;
-            margin-bottom: 4rem;
+            margin-bottom: 2.5rem;
             font-weight: 300;
             letter-spacing: 0.3px;
         }
         
         .contact {
             background: #0033cc;
-            padding: 3rem 2.5rem;
+            padding: 2.5rem 2rem;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0, 51, 204, 0.15);
-            margin-bottom: 2rem;
-        }
-        
-        .contact h2 {
-            font-size: 1.25rem;
-            margin-bottom: 2rem;
-            color: white;
-            font-weight: 400;
-            letter-spacing: 0.5px;
         }
         
         .contact-info {
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
         }
         
         .contact-item {
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
             color: rgba(255, 255, 255, 0.95);
-            font-size: 1rem;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
         }
         
-        .contact-item:last-of-type {
-            margin-bottom: 0;
+        .contact-item i {
+            font-size: 1.25rem;
+            opacity: 0.9;
         }
         
         .contact-item a {
@@ -93,30 +91,39 @@
             opacity: 0.8;
         }
         
-        .address-line {
-            display: block;
+        .address-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.5;
         }
         
         .social {
-            margin-top: 2.5rem;
-            padding-top: 2.5rem;
+            padding-top: 2rem;
             border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            align-items: center;
         }
         
         .social a {
-            display: inline-block;
-            margin: 0 1rem;
             color: white;
-            font-size: 0.95rem;
+            font-size: 1.5rem;
             text-decoration: none;
             transition: all 0.2s;
-            font-weight: 400;
-            letter-spacing: 0.3px;
+            opacity: 0.9;
         }
         
         .social a:hover {
             transform: translateY(-2px);
-            opacity: 0.8;
+            opacity: 1;
+        }
+        
+        .social-divider {
+            width: 1px;
+            height: 1.5rem;
+            background: rgba(255, 255, 255, 0.3);
         }
         
         @media (max-width: 600px) {
@@ -125,27 +132,38 @@
             }
             
             .logo {
-                max-width: 220px;
-                margin-bottom: 2rem;
+                max-width: 180px;
+                margin-bottom: 1.5rem;
             }
             
             h1 {
-                font-size: 2.25rem;
+                font-size: 2rem;
             }
             
             .tagline {
-                font-size: 1rem;
-                margin-bottom: 3rem;
+                font-size: 0.95rem;
+                margin-bottom: 2rem;
             }
             
             .contact {
-                padding: 2.5rem 1.5rem;
+                padding: 2rem 1.5rem;
                 border-radius: 16px;
             }
             
-            .social a {
-                margin: 0 0.75rem;
+            .contact-info {
+                gap: 1.5rem;
+            }
+            
+            .contact-item {
                 font-size: 0.9rem;
+            }
+            
+            .social {
+                gap: 1.5rem;
+            }
+            
+            .social a {
+                font-size: 1.35rem;
             }
         }
     </style>
@@ -158,21 +176,37 @@
         <p class="tagline">We're building something special. Stay tuned.</p>
         
         <div class="contact">
-            <h2>Get in Touch</h2>
             <div class="contact-info">
                 <div class="contact-item">
+                    <i class="fas fa-phone"></i>
                     <a href="tel:+18433586877">(843) 358-6877</a>
                 </div>
                 <div class="contact-item">
-                    <span class="address-line">591 Bluewater Road</span>
-                    <span class="address-line">Aynor, SC 29511</span>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="address-text">
+                        <span>591 Bluewater Road</span>
+                        <span>Aynor, SC 29511</span>
+                    </div>
                 </div>
             </div>
             
             <div class="social">
-                <a href="https://www.facebook.com/WaccamawIndianPeople/" target="_blank" rel="noopener">Facebook</a>
-                <a href="https://twitter.com/Waccamaw_SC" target="_blank" rel="noopener">Twitter</a>
-                <a href="https://www.instagram.com/waccamaw_sc/" target="_blank" rel="noopener">Instagram</a>
+                <a href="https://www.waccamaw.org/" target="_blank" rel="noopener" aria-label="Official Website">
+                    <i class="fas fa-globe"></i>
+                </a>
+                <a href="mailto:WaccamawChief@gmail.com" aria-label="Email">
+                    <i class="fas fa-at"></i>
+                </a>
+                <div class="social-divider"></div>
+                <a href="https://www.facebook.com/WaccamawIndianPeople/" target="_blank" rel="noopener" aria-label="Facebook">
+                    <i class="fab fa-facebook"></i>
+                </a>
+                <a href="https://twitter.com/Waccamaw_SC" target="_blank" rel="noopener" aria-label="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="https://www.instagram.com/waccamaw_sc/" target="_blank" rel="noopener" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
             </div>
         </div>
     </div>
