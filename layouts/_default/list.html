@@ -1,0 +1,143 @@
+{{ define "main" }}
+
+<div class="h-feed archive-page">
+	<header class="archive-header">
+		<h1 class="archive-title">{{ .Title }}</h1>
+		{{ with .Content }}
+			<div class="archive-description">
+				{{ . }}
+			</div>
+		{{ end }}
+		
+		{{ if eq .Kind "section" }}
+			<p class="archive-count">{{ len .Pages }} {{ if eq (len .Pages) 1 }}post{{ else }}posts{{ end }}</p>
+		{{ end }}
+	</header>
+
+	{{ if eq .Type "content" }}
+		{{ if .Sections }}
+			<div class="year-list">
+				<h2>Browse by Year</h2>
+				<ul>
+					{{ range .Sections.Reverse }}
+						<li>
+							<a href="{{ .Permalink }}">{{ .Title }}</a>
+							<span class="count">({{ len (where .Site.RegularPages "Section" .Section) }} posts)</span>
+						</li>
+					{{ end }}
+				</ul>
+			</div>
+		{{ end }}
+	{{ end }}
+
+	{{ $paginator := .Paginate .Pages 20 }}
+	
+	{{ if $paginator.Pages }}
+		{{ if eq .Type "content" }}
+			{{ $currentYear := "" }}
+			{{ $currentMonth := "" }}
+			
+			{{ range $paginator.Pages }}
+				{{ $year := .Date.Format "2006" }}
+				{{ $month := .Date.Format "January" }}
+				
+				{{ if ne $year $currentYear }}
+					{{ if ne $currentYear "" }}
+						</div></div>
+					{{ end }}
+					<div class="year-group">
+						<h2 class="year-heading">{{ $year }}</h2>
+						<div class="year-posts">
+					{{ $currentYear = $year }}
+					{{ $currentMonth = "" }}
+				{{ end }}
+				
+				{{ if ne $month $currentMonth }}
+					{{ if ne $currentMonth "" }}
+						</div>
+					{{ end }}
+					<h3 class="month-heading">{{ $month }}</h3>
+					<div class="month-posts">
+					{{ $currentMonth = $month }}
+				{{ end }}
+				
+				<article class="h-entry post-item">
+					<div class="post-date">
+						<time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
+							{{ .Date.Format "Jan 2" }}
+						</time>
+					</div>
+					<div class="post-info">
+						{{ if .Title }}
+							<h4 class="p-name">
+								<a href="{{ .Permalink }}">{{ .Title }}</a>
+							</h4>
+						{{ else }}
+							<div class="p-summary">
+								<a href="{{ .Permalink }}">{{ .Summary | truncate 100 }}</a>
+							</div>
+						{{ end }}
+						{{ with .Params.author }}
+							{{ if .full_name }}
+								<span class="post-author">by {{ .full_name }}</span>
+							{{ end }}
+						{{ end }}
+					</div>
+				</article>
+			{{ end }}
+			
+			{{ if ne $currentMonth "" }}
+				</div>
+			{{ end }}
+			{{ if ne $currentYear "" }}
+				</div></div>
+			{{ end }}
+		{{ else }}
+			<div class="post-list">
+				{{ range $paginator.Pages }}
+					<article class="h-entry post-item">
+						<div class="post-date">
+							<time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
+								{{ .Date.Format "January 2, 2006" }}
+							</time>
+						</div>
+						<div class="post-info">
+							{{ if .Title }}
+								<h3 class="p-name">
+									<a href="{{ .Permalink }}">{{ .Title }}</a>
+								</h3>
+							{{ else }}
+								<div class="p-summary">
+									<a href="{{ .Permalink }}">{{ .Content | plainify | truncate 150 }}</a>
+								</div>
+							{{ end }}
+							{{ with .Params.author }}
+								{{ if .full_name }}
+									<span class="post-author">by {{ .full_name }}</span>
+								{{ end }}
+							{{ end }}
+						</div>
+					</article>
+				{{ end }}
+			</div>
+		{{ end }}
+	{{ end }}
+
+	{{ if or $paginator.HasPrev $paginator.HasNext }}
+		<nav class="pagination">
+			{{ if $paginator.HasPrev }}
+				<a href="{{ $paginator.Prev.URL }}" class="pagination-prev">← Newer</a>
+			{{ end }}
+			
+			<span class="pagination-info">
+				Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}
+			</span>
+			
+			{{ if $paginator.HasNext }}
+				<a href="{{ $paginator.Next.URL }}" class="pagination-next">Older →</a>
+			{{ end }}
+		</nav>
+	{{ end }}
+</div>
+
+{{ end }}

@@ -1,0 +1,43 @@
+<footer class="site-footer">
+	<div class="footer-container">
+		<div class="footer-section contact-info">
+			<h3>Contact</h3>
+			<p>
+				<strong>Phone:</strong> <a href="tel:+18433586877">(843) 358-6877</a><br>
+				<strong>Email:</strong> <a href="mailto:WaccamawChief@gmail.com">WaccamawChief@gmail.com</a>
+			</p>
+			<p>
+				<strong>Address:</strong><br>
+				591 Bluewater Road<br>
+				Aynor, SC 29511
+			</p>
+		</div>
+
+		<div class="footer-section social-links">
+			<h3>Connect</h3>
+			<ul class="social-menu">
+				<li><a href="https://www.waccamaw.org/" target="_blank" rel="noopener">Official Website</a></li>
+				<li><a href="https://www.facebook.com/WaccamawIndianPeople/" target="_blank" rel="noopener">Facebook</a></li>
+				<li><a href="https://twitter.com/Waccamaw_SC" target="_blank" rel="noopener">Twitter</a></li>
+				<li><a href="https://www.instagram.com/waccamaw_sc/" target="_blank" rel="noopener">Instagram</a></li>
+			</ul>
+		</div>
+
+		<div class="footer-section subscribe">
+			<h3>Subscribe</h3>
+			<p>
+				<a href="/feed.xml">RSS Feed</a> · 
+				<a href="/feed.json">JSON Feed</a>
+			</p>
+			{{ if .Site.Params.microblog_user }}
+				<p>
+					<a href="https://micro.blog/{{ .Site.Params.microblog_user }}">Follow on Micro.blog</a>
+				</p>
+			{{ end }}
+		</div>
+	</div>
+
+	<div class="footer-bottom">
+		<p>&copy; {{ now.Year }} {{ .Site.Title }}. All rights reserved.</p>
+	</div>
+</footer>

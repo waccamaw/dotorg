@@ -1,215 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ .Site.Title }} - Coming Soon</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #FAF8F3 0%, #FFF5EB 50%, #F5EBE0 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #333;
-        }
-        
-        .container {
-            text-align: center;
-            padding: 2rem;
-            max-width: 600px;
-            width: 100%;
-        }
-        
-        .logo {
-            max-width: 220px;
-            height: auto;
-            margin: 0 auto 2rem;
-            display: block;
-        }
-        
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            color: #2A2A2A;
-            font-weight: 300;
-            letter-spacing: -0.5px;
-        }
-        
-        .tagline {
-            font-size: 1rem;
-            color: #6B6B6B;
-            margin-bottom: 2.5rem;
-            font-weight: 300;
-            letter-spacing: 0.3px;
-        }
-        
-        .contact {
-            background: #0033cc;
-            padding: 2.5rem 2rem;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 51, 204, 0.15);
-        }
-        
-        .contact-info {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            flex-wrap: wrap;
-            margin-bottom: 2rem;
-        }
-        
-        .contact-item {
-            color: rgba(255, 255, 255, 0.95);
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .contact-item i {
-            font-size: 1.25rem;
-            opacity: 0.9;
-        }
-        
-        .contact-item a {
-            color: white;
-            text-decoration: none;
-            transition: opacity 0.2s;
-            font-weight: 400;
-        }
-        
-        .contact-item a:hover {
-            opacity: 0.8;
-        }
-        
-        .address-text {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            line-height: 1.5;
-        }
-        
-        .social {
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            align-items: center;
-        }
-        
-        .social a {
-            color: white;
-            font-size: 1.5rem;
-            text-decoration: none;
-            transition: all 0.2s;
-            opacity: 0.9;
-        }
-        
-        .social a:hover {
-            transform: translateY(-2px);
-            opacity: 1;
-        }
-        
-        .social-divider {
-            width: 1px;
-            height: 1.5rem;
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        @media (max-width: 600px) {
-            .container {
-                padding: 1.5rem;
-            }
-            
-            .logo {
-                max-width: 180px;
-                margin-bottom: 1.5rem;
-            }
-            
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .tagline {
-                font-size: 0.95rem;
-                margin-bottom: 2rem;
-            }
-            
-            .contact {
-                padding: 2rem 1.5rem;
-                border-radius: 16px;
-            }
-            
-            .contact-info {
-                gap: 1.5rem;
-            }
-            
-            .contact-item {
-                font-size: 0.9rem;
-            }
-            
-            .social {
-                gap: 1.5rem;
-            }
-            
-            .social a {
-                font-size: 1.35rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <img src="/logos/classic/logo.png" alt="{{ .Site.Title }}" class="logo">
-        
-        <h1>Coming Soon</h1>
-        <p class="tagline">We're building something special. Stay tuned.</p>
-        
-        <div class="contact">
-            <div class="contact-info">
-                <div class="contact-item">
-                    <i class="fas fa-phone"></i>
-                    <a href="tel:+18433586877">(843) 358-6877</a>
-                </div>
-                <div class="contact-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <div class="address-text">
-                        <span>591 Bluewater Road</span>
-                        <span>Aynor, SC 29511</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="social">
-                <a href="https://www.waccamaw.org/" target="_blank" rel="noopener" aria-label="Official Website">
-                    <i class="fas fa-globe"></i>
-                </a>
-                <a href="mailto:WaccamawChief@gmail.com" aria-label="Email">
-                    <i class="fas fa-at"></i>
-                </a>
-                <div class="social-divider"></div>
-                <a href="https://www.facebook.com/WaccamawIndianPeople/" target="_blank" rel="noopener" aria-label="Facebook">
-                    <i class="fab fa-facebook"></i>
-                </a>
-                <a href="https://twitter.com/Waccamaw_SC" target="_blank" rel="noopener" aria-label="Twitter">
-                    <i class="fab fa-twitter"></i>
-                </a>
-                <a href="https://www.instagram.com/waccamaw_sc/" target="_blank" rel="noopener" aria-label="Instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+{{ define "main" }}
+
+<div class="h-feed home-feed">
+	{{ $paginator := .Paginate (where .Site.RegularPages "Type" "post") 15 }}
+	
+	{{ range $paginator.Pages }}
+		<article class="h-entry post-preview">
+			<header class="post-header">
+				{{ if .Title }}
+					<h2 class="p-name post-title">
+						<a href="{{ .Permalink }}">{{ .Title }}</a>
+					</h2>
+				{{ end }}
+				
+				<div class="post-meta">
+					<time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
+						{{ .Date.Format "January 2, 2006" }}
+					</time>
+					{{ with .Params.author }}
+						{{ if .full_name }}
+							by <span class="p-author h-card">{{ .full_name }}</span>
+						{{ end }}
+					{{ end }}
+				</div>
+			</header>
+
+			<div class="p-summary post-summary">
+				{{ if .Title }}
+					{{ .Summary }}
+				{{ else }}
+					{{ .Content }}
+				{{ end }}
+			</div>
+
+			{{ if .Params.photos }}
+				<div class="post-photos-preview">
+					{{ range first 3 .Params.photos }}
+						<img src="{{ . }}" alt="" loading="lazy">
+					{{ end }}
+					{{ if gt (len .Params.photos) 3 }}
+						<span class="more-photos">+{{ sub (len .Params.photos) 3 }} more</span>
+					{{ end }}
+				</div>
+			{{ end }}
+
+			<div class="post-footer">
+				<a href="{{ .Permalink }}" class="u-url read-more">Read more →</a>
+			</div>
+		</article>
+	{{ end }}
+
+	{{ if or $paginator.HasPrev $paginator.HasNext }}
+		<nav class="pagination">
+			{{ if $paginator.HasPrev }}
+				<a href="{{ $paginator.Prev.URL }}" class="pagination-prev">← Newer posts</a>
+			{{ end }}
+			
+			<span class="pagination-info">
+				Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}
+			</span>
+			
+			{{ if $paginator.HasNext }}
+				<a href="{{ $paginator.Next.URL }}" class="pagination-next">Older posts →</a>
+			{{ end }}
+		</nav>
+	{{ end }}
+</div>
+
+{{ end }}
