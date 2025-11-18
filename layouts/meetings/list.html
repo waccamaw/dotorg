@@ -12,10 +12,15 @@
 	{{- $meetings := slice -}}
 	{{- range $allPages -}}
 		{{- $titleLower := lower .Title -}}
-		{{- if or (in $titleLower "meeting") (in $titleLower "executive") -}}
+		{{- $urlPath := .RelPermalink -}}
+		{{- $fileName := path.Base .File.Path -}}
+		{{- if and (or (in $titleLower "meeting") (in $titleLower "executive") (in $fileName "meeting")) (ne $urlPath "/meetings/") (gt .Date.Year 2000) -}}
 			{{- $meetings = $meetings | append . -}}
 		{{- end -}}
 	{{- end -}}
+	{{- $meetings = sort $meetings ".Date" "desc" -}}
+	
+	<!-- DEBUG: Total pages: {{ len .Site.RegularPages }}, Filtered meetings: {{ len $meetings }} -->
 	
 	<div class="meetings-stats">
 		<div class="stat-card">

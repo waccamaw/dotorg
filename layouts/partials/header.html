@@ -6,14 +6,29 @@
 			</a>
 		</div>
 
-		<nav class="site-nav" aria-label="Main navigation">
-			<ul class="nav-menu">
-				<li><a href="/">Home</a></li>
-				<li><a href="/meetings/">Meetings</a></li>
-				<li><a href="/archive/">Archive</a></li>
-				<li><a href="/photos/">Photos</a></li>
-				<li><a href="/about/">About</a></li>
-			</ul>
-		</nav>
+		<div class="header-right">
+			<nav class="site-nav" aria-label="Main navigation">
+				<ul class="nav-menu">
+					<li><a href="/">Home</a></li>
+					<li><a href="/meetings/">Meetings</a></li>
+					<li><a href="/archive/">Archive</a></li>
+					<li><a href="/photos/">Photos</a></li>
+					<li><a href="/about/">About</a></li>
+				</ul>
+			</nav>
+
+			<div class="site-search">
+				<form action="https://www.google.com/search" method="get" target="_blank" role="search">
+					<input type="hidden" name="sitesearch" value="waccamaw.org">
+					<input type="search" name="q" placeholder="Search..." aria-label="Search" class="search-input">
+					<button type="submit" class="search-icon" aria-label="Submit search" title="Search">
+						<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="11" cy="11" r="8"></circle>
+							<path d="m21 21-4.35-4.35"></path>
+						</svg>
+					</button>
+				</form>
+			</div>
+		</div>
 	</div>
 </header>
