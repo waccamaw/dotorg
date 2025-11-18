@@ -1,0 +1,20 @@
+{{ define "main" }}
+
+<div class="style-guide">
+	<div style="text-align: center; margin-bottom: 3rem;">
+		<img src="/logos/classic/logo.png" alt="Waccamaw Indian People Classic Logo" style="width: 300px;" title="Classic Logo - See proposed replacement designs below">
+		<div style="margin-top: 1rem; color: var(--text-light); font-size: 0.95rem; font-style: italic;">
+			Classic Logo — <a href="#logo" style="color: var(--primary-color);">See proposed replacement designs below ↓</a>
+		</div>
+	</div>
+
+	<header class="page-header">
+		<h1 class="page-title">Waccamaw.org Style Guide</h1>
+		<p class="page-description">This page documents the visual design system, colors, typography, and branding elements used throughout the Waccamaw Indian People website.</p>
+	</header>
+
+	<!-- Color Band and rest of content from style-guide.html -->
+	{{ partial "style-guide-content.html" . }}
+</div>
+
+{{ end }}
