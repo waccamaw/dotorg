@@ -1,0 +1,78 @@
+{{ define "main" }}
+
+<div class="meetings-page">
+	<header class="page-header">
+		<h1 class="page-title">Tribal Meetings</h1>
+		<p class="page-description">
+			Browse summaries and minutes from tribal open meetings, executive sessions, and community gatherings from 2008 to present.
+		</p>
+	</header>
+
+	{{- $allPages := .Site.RegularPages -}}
+	{{- $meetings := slice -}}
+	{{- range $allPages -}}
+		{{- $titleLower := lower .Title -}}
+		{{- if or (in $titleLower "meeting") (in $titleLower "executive") -}}
+			{{- $meetings = $meetings | append . -}}
+		{{- end -}}
+	{{- end -}}
+	
+	<div class="meetings-stats">
+		<div class="stat-card">
+			<span class="stat-number">{{ len $meetings }}</span>
+			<span class="stat-label">Total Meetings</span>
+		</div>
+		<div class="stat-card">
+			<span class="stat-number">{{ len (where $meetings ".Date.Year" "eq" 2025) }}</span>
+			<span class="stat-label">2025 Meetings</span>
+		</div>
+		<div class="stat-card">
+			<span class="stat-number">{{ len (where $meetings ".Date.Year" "eq" 2024) }}</span>
+			<span class="stat-label">2024 Meetings</span>
+		</div>
+	</div>
+
+	<div class="meetings-list">
+		{{ $currentYear := "" }}
+		{{ range $meetings }}
+			{{ $year := .Date.Format "2006" }}
+			
+			{{ if ne $year $currentYear }}
+				{{ if ne $currentYear "" }}
+					</div></div>
+				{{ end }}
+				<div class="meetings-year">
+					<h2 class="year-heading">{{ $year }} Meetings</h2>
+					<div class="year-meetings">
+				{{ $currentYear = $year }}
+			{{ end }}
+			
+			<article class="meeting-item">
+				<div class="meeting-date">
+					<time datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
+						{{ .Date.Format "Jan 2" }}
+					</time>
+				</div>
+				<div class="meeting-info">
+					<h3 class="meeting-title">
+						<a href="{{ .Permalink }}">{{ .Title }}</a>
+					</h3>
+					{{ with .Params.author }}
+						{{ if .full_name }}
+							<span class="meeting-author">Posted by {{ .full_name }}</span>
+						{{ end }}
+					{{ end }}
+					{{ if .Summary }}
+						<p class="meeting-summary">{{ .Summary | truncate 150 }}</p>
+					{{ end }}
+				</div>
+			</article>
+		{{ end }}
+		
+		{{ if ne $currentYear "" }}
+			</div></div>
+		{{ end }}
+	</div>
+</div>
+
+{{ end }}

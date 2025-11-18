@@ -566,4 +566,152 @@ main {
 	.footer-container {
 		grid-template-columns: 1fr;
 	}
+	
+	.meetings-stats {
+		grid-template-columns: 1fr !important;
+	}
+	
+	.meeting-item {
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+	
+	.meeting-date {
+		width: auto !important;
+	}
+}
+
+/* Meetings Page */
+.meetings-page {
+	max-width: 900px;
+	margin: 0 auto;
+}
+
+.page-header {
+	margin-bottom: 3rem;
+	text-align: center;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	margin-bottom: 1rem;
+	color: var(--text-color);
+}
+
+.page-description {
+	font-size: 1.1rem;
+	color: var(--text-light);
+	max-width: 700px;
+	margin: 0 auto;
+	line-height: 1.6;
+}
+
+.meetings-stats {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 1.5rem;
+	margin-bottom: 3rem;
+}
+
+.stat-card {
+	background: white;
+	padding: 2rem;
+	border-radius: 8px;
+	text-align: center;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+	border: 1px solid var(--border-color);
+}
+
+.stat-number {
+	display: block;
+	font-size: 2.5rem;
+	font-weight: 700;
+	color: var(--primary-color);
+	margin-bottom: 0.5rem;
+}
+
+.stat-label {
+	display: block;
+	font-size: 0.9rem;
+	color: var(--text-light);
+	font-weight: 500;
+}
+
+.meetings-year {
+	margin-bottom: 3rem;
+}
+
+.meetings-year .year-heading {
+	font-size: 2rem;
+	margin-bottom: 1.5rem;
+	color: var(--primary-color);
+	border-bottom: 3px solid var(--primary-color);
+	padding-bottom: 0.5rem;
+}
+
+.year-meetings {
+	display: grid;
+	gap: 1rem;
+}
+
+.meeting-item {
+	display: flex;
+	gap: 1.5rem;
+	padding: 1.5rem;
+	background: white;
+	border-radius: 8px;
+	border: 1px solid var(--border-color);
+	transition: all 0.2s;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.meeting-item:hover {
+	border-color: var(--primary-color);
+	background: var(--bg-secondary);
+	box-shadow: 0 4px 8px rgba(0, 51, 204, 0.1);
+}
+
+.meeting-date {
+	flex-shrink: 0;
+	width: 80px;
+	text-align: center;
+}
+
+.meeting-date time {
+	display: block;
+	color: var(--primary-color);
+	font-size: 1.1rem;
+	font-weight: 600;
+}
+
+.meeting-info {
+	flex: 1;
+}
+
+.meeting-title {
+	font-size: 1.3rem;
+	margin-bottom: 0.5rem;
+	line-height: 1.3;
+}
+
+.meeting-title a {
+	color: var(--text-color);
+	text-decoration: none;
+}
+
+.meeting-title a:hover {
+	color: var(--primary-color);
+}
+
+.meeting-author {
+	display: block;
+	color: var(--text-light);
+	font-size: 0.85rem;
+	margin-bottom: 0.75rem;
+}
+
+.meeting-summary {
+	color: var(--text-color);
+	line-height: 1.6;
+	margin: 0;
 }
