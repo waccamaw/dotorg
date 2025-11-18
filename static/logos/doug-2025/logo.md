@@ -4,37 +4,43 @@
 
 ## Colors
 
-- **Primary**: `#0b05a8` (traditional blue)
-- **Background**: White
+- **Primary**: `#004384` (dark blue - rgb(0, 67, 132))
+- **Secondary**: `#002D5A` (darker blue accent - rgb(0, 45, 90))
+- **Background**: `#F4F4F4` (light gray - rgb(244, 244, 244))
 
 ## Design Concept
-A circular seal in **vintage stamp/engraving style** featuring:
-- **Eagle**: Central symbol of strength, freedom, and spiritual connection with detailed feather work
-- **Medicine Wheel**: Cross/plus design representing the four sacred directions
-- **Seal Format**: Traditional circular design with double-ring border
-- **Text**: Curved upper and lower text bands
+A detailed, modern iconographic logo featuring:
+- **Red Hawk Portrait**: Highly detailed side profile with dimensional features showing the hawk looking slightly forward into the foreground
+- **Complex Feathering**: Intricate wing and body feather details with natural texture and flow
+- **Three-Dimensional Face**: Hawk head rendered with depth, showing subtle perspective and facial contours
+- **Circular Band Frame**: Thick solid ring representing unity, continuity, and the sacred circle
+- **No Text**: Pure iconographic design for versatility and modern web/print applications
+- **Dual-Tone Palette**: Primary and secondary blues create depth and visual interest
 
-## Art Style: Vintage Seal/Engraving
-The logo emulates a classic **woodcut/block print aesthetic**:
-- **High contrast**: Strict two-tone (blue and white only), no gradients
-- **Hand-drawn quality**: Organic, slightly irregular edges
-- **Detailed texturing**: Individual feather barbs and natural line work
-- **Negative space**: White shapes define blue areas for visual interest
-- **Traditional engraving**: Similar to official seals, stamps, and vintage emblems
+## Art Style: Detailed Illustrative
+The logo uses a sophisticated, naturalistic design:
+- **High detail**: Complex path work capturing realistic feather patterns and facial features
+- **Dimensional rendering**: Three-dimensional perspective showing depth and form
+- **Dual-tone shading**: Primary and secondary blues create natural shadows and highlights
+- **Downward gaze**: Hawk looking slightly down and forward, creating engagement with viewer
+- **Organic forms**: Natural curves and flowing lines reflecting the hawk's anatomy
+- **Professional quality**: Suitable for both digital and high-resolution print applications
 
 ## SVG Structure
-The logo is built with scalability and maintainability in mind:
-- Organized in logical groups (seal border, medicine wheel, eagle, text)
-- Clean, semantic markup
-- CSS classes for easy color theming
-- ViewBox set for proper scaling at any size
+The logo is built with detail and scalability in mind:
+- Complex path-based illustration with multiple feather and facial detail layers
+- Organized with logical grouping (background, circular band, hawk body, wing details)
+- Dual-tone color palette (primary dark blue, secondary darker blue for depth)
+- ViewBox set to 2048x2048 for high-resolution rendering
+- Generated with AI assistance for natural, organic forms
 
 ## Usage
 The SVG can be used at any size without quality loss, suitable for:
-- Website headers and logos
+- Website favicons and icons
+- Social media profile images (works well at small sizes)
+- App icons and branding
 - Print materials (letterhead, business cards)
-- Social media profiles
-- Official documents and seals
+- Embroidery and physical products
 
 ---
 
@@ -45,33 +51,35 @@ See: `/static/logos/doug-2025/logo.svg`
 ## Customization Notes
 
 ### Adjusting Colors
-The logo uses CSS classes for easy theming:
-- `.primary` - Main color (default: `#0b05a8`)
-- `.primary-stroke` - Stroke color for outlines
-- `.background` - Background color (default: white)
+The logo uses inline fill colors throughout:
+- `rgb(0, 67, 132)` - Primary dark blue for main hawk body, circular band, and eye details
+- `rgb(0, 45, 90)` - Secondary darker blue for shadowing and depth on wing feathers
+- `rgb(244, 244, 244)` - Light background and highlight areas on feathers
 
-To create an inverted version (white on blue/black), simply swap the colors in the CSS.
+To change colors, replace the RGB values in the SVG path fill attributes. The dual-tone approach creates natural depth.
 
 ### Scaling
 - The `viewBox="0 0 400 400"` ensures the logo scales proportionally
 - Change `width` and `height` attributes as needed
 - Use in HTML: `<img src="logo.svg" width="100%">` for responsive scaling
-
-### Adding Text
-- The text band uses a curved path for professional appearance
-- Modify the `<textPath>` content to change the organization name
-- Adjust `font-size`, `font-family`, and `startOffset` as needed
+- Works perfectly as a favicon at 16x16 or 32x32 pixels
 
 ### Symbol Modifications
-- Eagle: Grouped in `<g id="eagle">` with detailed feather work
-- Medicine Wheel: Cross design in `<g id="medicine-wheel">`
-- Seal border: Double-ring design in `<g id="seal-outer">`
-- Text: Curved paths for "THE PEOPLE OF THE" and "WACCAMAW"
+- **Red Hawk Portrait**: Complex multi-path illustration with detailed feathering, facial features, and dimensional perspective
+- **Circular Band**: Single thick ring framing the hawk, representing unity and the sacred circle
+- **Feather Details**: Individual wing feathers rendered with natural flow and organic curves
+- **Three-Dimensional Face**: Hawk head showing subtle perspective with eye, beak, and facial contours
+- **Downward Gaze**: Head tilted to look down and slightly forward into the foreground
+
+Note: This is a complex illustration generated with AI assistance. Major modifications may require regeneration.
 
 ## Design Philosophy
-This logo maintains the **authentic vintage seal aesthetic** with:
-- Hand-drawn character for warmth and tradition
-- High-contrast two-tone design for maximum clarity and reproduction
-- Detailed eagle rendering showing individual feathers
-- Professional circular seal format suitable for official use
-- Scalable vector format that works at any size
+This logo embraces **detailed illustrative realism**:
+- High-detail iconographic design honoring the red hawk as a powerful symbol
+- Red hawk (not eagle) representing vision, awareness, and connection to the natural world
+- Three-dimensional rendering creates depth and engagement with viewers
+- Complex feather work and natural forms reflect authentic representation
+- Circular band represents unity, continuity, and the sacred circle
+- Dual-tone color palette creates natural depth without gradients
+- No text allows for universal recognition and flexible pairing with wordmarks
+- Vector format scales from small icons to large prints while maintaining detail
