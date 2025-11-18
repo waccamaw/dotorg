@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <!-- CSS for color theming -->
+    <style>
+      .primary { fill: #0b05a8; }
+      .primary-stroke { stroke: #0b05a8; fill: none; }
+      .background { fill: white; }
+    </style>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="200" cy="200" r="200" class="background"/>
+  
+  <!-- Outer seal circle -->
+  <g id="seal-outer">
+    <circle cx="200" cy="200" r="192" fill="none" class="primary-stroke" stroke-width="5"/>
+    <circle cx="200" cy="200" r="120" fill="none" class="primary-stroke" stroke-width="2.5"/>
+  </g>
+  
+  <!-- Medicine Wheel Cross -->
+  <g id="medicine-wheel">
+    <!-- Horizontal bar with organic edges -->
+    <path d="M 25,195 L 105,195 L 105,205 L 25,205 Z M 295,195 L 375,195 L 375,205 L 295,205 Z" class="primary"/>
+    <!-- Vertical bar with organic edges -->
+    <path d="M 195,25 L 205,25 L 205,105 L 195,105 Z M 195,295 L 205,295 L 205,375 L 195,375 Z" class="primary"/>
+    
+    <!-- Center circle -->
+    <circle cx="200" cy="200" r="15" class="primary"/>
+  </g>
+  
+  <!-- Text band -->
+  <g id="text-band">
+    <!-- Upper arc text path -->
+    <path id="upperArc" d="M 40,200 A 160,160 0 0,1 360,200" fill="none"/>
+    <text font-family="Arial, sans-serif" font-size="22" font-weight="bold" letter-spacing="2" class="primary">
+      <textPath href="#upperArc" startOffset="50%" text-anchor="middle">
+        THE PEOPLE OF THE
+      </textPath>
+    </text>
+    
+    <!-- Lower arc text path -->
+    <path id="lowerArc" d="M 40,200 A 160,160 0 0,0 360,200" fill="none"/>
+    <text font-family="Arial, sans-serif" font-size="28" font-weight="bold" letter-spacing="3" class="primary">
+      <textPath href="#lowerArc" startOffset="50%" text-anchor="middle">
+        WACCAMAW
+      </textPath>
+    </text>
+  </g>
+</svg>
