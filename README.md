@@ -2,7 +2,7 @@
 
 Official website of the Waccamaw Indian People - South Carolina's first state-recognized tribe.
 
-![Waccamaw Indian People](./static/logos/doug-2025/logo.svg)
+![Waccamaw Indian People](./static/logos/classic/logo.png)
 
 ## Overview
 
