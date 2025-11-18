@@ -1,0 +1,79 @@
+{{ define "main" }}
+
+<div class="meetings-page">
+	<header class="page-header">
+		<h1 class="page-title">{{ .Title }}</h1>
+		{{ if .Content }}
+		<div class="page-description">
+			{{ .Content }}
+		</div>
+		{{ end }}
+	</header>
+
+	{{- $allPages := .Site.RegularPages -}}
+	{{- $meetings := slice -}}
+	{{- range $allPages -}}
+		{{- $titleLower := lower .Title -}}
+		{{- $urlPath := .RelPermalink -}}
+		{{- $fileName := path.Base .File.Path -}}
+		{{- if and (or (in $titleLower "meeting") (in $titleLower "executive") (in $fileName "meeting")) (ne $urlPath "/meetings/") (gt .Date.Year 2000) -}}
+			{{- $meetings = $meetings | append . -}}
+		{{- end -}}
+	{{- end -}}
+	{{- $meetings = sort $meetings ".Date" "desc" -}}
+	
+	<div class="meetings-stats">
+		<div class="stat-card">
+			<span class="stat-number">{{ len $meetings }}</span>
+			<span class="stat-label">Total Meetings</span>
+		</div>
+		<div class="stat-card">
+			<span class="stat-number">{{ len (where $meetings ".Date.Year" "eq" 2025) }}</span>
+			<span class="stat-label">2025 Meetings</span>
+		</div>
+		<div class="stat-card">
+			<span class="stat-number">{{ len (where $meetings ".Date.Year" "eq" 2024) }}</span>
+			<span class="stat-label">2024 Meetings</span>
+		</div>
+	</div>
+
+	<div class="meetings-list">
+		{{ $currentYear := "" }}
+		{{ range $meetings }}
+			{{ $year := .Date.Format "2006" }}
+			
+			{{ if ne $year $currentYear }}
+				{{ if ne $currentYear "" }}
+					</div></div>
+				{{ end }}
+				<div class="meetings-year">
+					<h2 class="year-heading">{{ $year }} Meetings</h2>
+					<div class="year-meetings">
+			{{ end }}
+			
+			<article class="meeting-item h-entry">
+				<div class="meeting-header">
+					<h3 class="meeting-title p-name">
+						<a href="{{ .RelPermalink }}" class="u-url">{{ .Title }}</a>
+					</h3>
+					<time class="meeting-date dt-published" datetime="{{ .Date.Format "2006-01-02" }}">
+						{{ .Date.Format "January 2, 2006" }}
+					</time>
+				</div>
+				{{ if .Summary }}
+				<div class="meeting-summary p-summary">
+					{{ .Summary }}
+				</div>
+				{{ end }}
+			</article>
+			
+			{{ $currentYear = $year }}
+		{{ end }}
+		
+		{{ if ne $currentYear "" }}
+			</div></div>
+		{{ end }}
+	</div>
+</div>
+
+{{ end }}
