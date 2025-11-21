@@ -148,7 +148,7 @@ body {
 	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-lg);
 	padding: var(--spacing-xl);
-	max-width: 550px;
+	max-width: 600px;
 	width: 100%;
 }
 

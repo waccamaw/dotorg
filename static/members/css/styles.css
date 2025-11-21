@@ -140,8 +140,9 @@ body {
 	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-lg);
 	padding: var(--spacing-xl);
-	max-width: 500px;
+	max-width: 700px;
 	width: 100%;
+	width: 550px;
 }
 
 .auth-header {
