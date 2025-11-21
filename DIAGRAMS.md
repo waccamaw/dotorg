@@ -25,11 +25,18 @@ This file contains ASCII diagrams and visual explanations of the system architec
     ┌───▼────┐       ┌─────▼─────┐      ┌────▼──────┐
     │  /home/ │       │ /updates/ │      │ /members/ │
     │         │       │           │      │           │
-    │ Framer  │       │Micro.blog │      │  Future   │
-    │         │       │   (Hugo)  │      │  Service  │
-    └─────────┘       └───────────┘      └───────────┘
-     External          This Repo         Not Yet Built
-     Platform          GitHub Sync
+    │ Framer  │       │Micro.blog │      │ Frontend  │
+    │         │       │   (Hugo)  │      │ + Backend │
+    └─────────┘       └───────────┘      └─────┬─────┘
+     External          This Repo           This Repo
+     Platform          GitHub Sync         + API Service
+                                                │
+                                         ┌──────▼──────┐
+                                         │ Backend API │
+                                         │ (member-    │
+                                         │  services)  │
+                                         └─────────────┘
+```
 ```
 
 ## Request Flow - User Visits waccamaw.org/updates/
@@ -499,9 +506,252 @@ Test Sizes:
 • 1920x1080 (Desktop)
 ```
 
+## Member Portal Architecture
+
+### Frontend + Backend Separation
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     Member Portal (/members/)                    │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+        ┌────────────────┴────────────────┐
+        │                                 │
+        ▼                                 ▼
+┌────────────────┐              ┌──────────────────┐
+│    Frontend    │              │     Backend      │
+│   (This Repo)  │◄────────────►│ (member-services)│
+│                │   REST API    │                  │
+│  Static Files  │   JWT Auth    │  Node.js/Express │
+│  HTML/CSS/JS   │               │  + Database      │
+└────────────────┘              └──────────────────┘
+       │                                 │
+       │ Deploy to:                      │ Deploy to:
+       ▼                                 ▼
+┌────────────────┐              ┌──────────────────┐
+│ Cloudflare     │              │  Railway/Fly.io  │
+│ Pages          │              │  Render/Heroku   │
+│ (CDN)          │              │                  │
+└────────────────┘              └──────────────────┘
+
+User → Cloudflare Workers → Frontend (CDN)
+                          ↓
+                     API Requests → Backend → Database
+```
+
+### Member Portal Request Flow
+
+```
+┌─────────┐
+│ User    │
+│ Browser │
+└────┬────┘
+     │ 1. Visit waccamaw.org/members/
+     │
+┌────▼──────────────────┐
+│ Cloudflare Worker     │
+│ Routes /members/* to  │
+│ Static Frontend       │
+└────┬──────────────────┘
+     │ 2. Serve index.html + assets
+     │
+┌────▼──────────────────┐
+│  Frontend App Loads   │
+│  - config.js          │
+│  - api.js             │
+│  - auth.js            │
+│  - app.js             │
+└────┬──────────────────┘
+     │ 3. User logs in
+     │
+┌────▼──────────────────┐
+│  POST /api/auth/login │
+│  email + password     │
+└────┬──────────────────┘
+     │ 4. API Request
+     │
+┌────▼──────────────────────┐
+│  Backend API              │
+│  member-services          │
+│                           │
+│  1. Validate credentials  │
+│  2. Generate JWT token    │
+│  3. Return user + token   │
+└────┬──────────────────────┘
+     │ 5. Response
+     │
+┌────▼──────────────────┐
+│  Frontend saves:      │
+│  - Token → localStorage│
+│  - User data          │
+│  - Show dashboard     │
+└────┬──────────────────┘
+     │ 6. Load dashboard data
+     │
+┌────▼──────────────────────┐
+│  Parallel API Requests    │
+│  (with Bearer token)      │
+│                           │
+│  GET /api/documents       │
+│  GET /api/events          │
+│  GET /api/announcements   │
+└────┬──────────────────────┘
+     │ 7. Responses
+     │
+┌────▼──────────────────┐
+│  Render Dashboard     │
+│  - Stats              │
+│  - Document list      │
+│  - Event list         │
+│  - Announcements      │
+└───────────────────────┘
+```
+
+### Member Portal File Structure
+
+```
+members/
+├── index.html                 Main HTML page
+│   ├── Login Screen          #loginScreen
+│   ├── Register Screen       #registerScreen
+│   └── Dashboard             #memberDashboard
+│
+├── assets/
+│   ├── css/
+│   │   └── styles.css        All styles, mobile-first
+│   │       ├── Variables     :root colors/spacing
+│   │       ├── Base styles   Typography, layout
+│   │       ├── Components    Cards, forms, buttons
+│   │       ├── Auth screens  Login/register
+│   │       ├── Dashboard     Stats, lists, actions
+│   │       └── Responsive    Media queries
+│   │
+│   └── js/
+│       ├── config.js         ⚙️  Configuration
+│       │   ├── API_BASE_URL
+│       │   ├── Endpoints
+│       │   └── Settings
+│       │
+│       ├── api.js            🔌 API Client
+│       │   ├── request()     HTTP wrapper
+│       │   ├── get/post/put/delete
+│       │   ├── login()
+│       │   ├── register()
+│       │   ├── getDocuments()
+│       │   └── getEvents()
+│       │
+│       ├── auth.js           🔐 Auth Manager
+│       │   ├── init()        Check token
+│       │   ├── login()       Handle login
+│       │   ├── logout()      Clear session
+│       │   └── getCurrentUser()
+│       │
+│       └── app.js            🎯 Main App
+│           ├── init()
+│           ├── setupEventListeners()
+│           ├── handleLogin()
+│           ├── handleRegister()
+│           ├── showDashboard()
+│           └── loadDashboardData()
+│
+├── .env.example              Environment template
+├── .gitignore               Git ignore rules
+├── QUICKSTART.md            Quick start guide
+└── README.md                Full documentation
+```
+
+### Authentication Flow Details
+
+```
+┌──────────────┐
+│ User enters  │
+│ credentials  │
+└──────┬───────┘
+       │
+       ▼
+┌──────────────────────┐
+│ app.handleLogin()    │
+│ - Get form values    │
+│ - Show loading       │
+└──────┬───────────────┘
+       │
+       ▼
+┌──────────────────────┐
+│ auth.login()         │
+│ - Call API           │
+└──────┬───────────────┘
+       │
+       ▼
+┌──────────────────────┐
+│ api.login()          │
+│ - POST /auth/login   │
+│ - Save token         │
+└──────┬───────────────┘
+       │
+       ▼
+┌──────────────────────┐
+│ Backend validates    │
+│ - Check email/pass   │
+│ - Generate JWT       │
+│ - Return user+token  │
+└──────┬───────────────┘
+       │
+       ▼
+┌──────────────────────┐
+│ Token stored in      │
+│ localStorage:        │
+│                      │
+│ waccamaw_auth_token  │
+│ waccamaw_user_data   │
+└──────┬───────────────┘
+       │
+       ▼
+┌──────────────────────┐
+│ All API requests     │
+│ include header:      │
+│                      │
+│ Authorization:       │
+│ Bearer <token>       │
+└──────────────────────┘
+```
+
+### Data Flow Pattern
+
+```
+User Action → Frontend Handler → API Client → Backend API
+                                                    ↓
+                                               Database
+                                                    ↓
+                                             Response
+                                                    ↓
+Backend API → API Client → Frontend Handler → Update UI
+```
+
+**Example: Loading Documents**
+
+```javascript
+// User lands on dashboard
+app.showDashboard()
+    ↓
+app.loadDashboardData()
+    ↓
+api.getDocuments()
+    ↓
+GET /api/documents
+Authorization: Bearer eyJhbG...
+    ↓
+Backend queries database
+    ↓
+Returns JSON: { data: [...], total: 5 }
+    ↓
+app.renderDocuments(data)
+    ↓
+UI updates with document list
+```
+
 ---
 
-**Last Updated**: November 18, 2025
+**Last Updated**: November 20, 2025
 
 **Purpose**: Visual reference for understanding system architecture
 

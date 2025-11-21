@@ -64,7 +64,7 @@ The Waccamaw.org website uses a **segmented multi-platform architecture** where 
 | `/` | Redirect | Root redirects to `/home/` | N/A | ✅ Active |
 | `/home/` | Framer | Marketing, tribal info, about pages | External | ✅ Active |
 | `/updates/` | Micro.blog | Blog posts, news, meeting notes, photos | **This repo** | ✅ Active |
-| `/members/` | TBD | Member portal, private content | Future | 🔜 Planned |
+| `/members/` | Static Site + API | Member portal, private content | **This repo** + member-services | ✅ Active |
 
 ## DNS Configuration
 
@@ -257,47 +257,67 @@ dotorg/
 └── static/              # CSS, images, logos
 ```
 
-### 3. Member Portal (`/members/`) - **Future**
+### 3. Member Portal (`/members/`) - **This Repository**
 
 **Purpose**: Private member-only portal for internal tribal communications and resources.
 
-**Planned Technology**:
-- Container-based microservice
-- Framework: TBD (Django, Rails, or Node.js)
-- Database: PostgreSQL or MongoDB
-- Hosting: Free tier for non-profits
-  - Options: Heroku, Railway, Fly.io, Render
-  - Requirements: SSL, database, user auth
+**Technology**:
+- Frontend: Vanilla JavaScript (ES6+), HTML5, CSS3
+- Backend: Separate microservice (member-services repository)
+- Authentication: JWT-based token authentication
+- API: RESTful JSON API
+- Hosting: Static site hosting (Cloudflare Pages, Netlify, or similar)
 
-**Planned Features**:
-- Member authentication
-- Private documents and resources
-- Tribal council communications
-- Member directory
-- Event registration
-- Voting/polling
-- Discussion forums
+**Features**:
+- ✅ Member authentication (login/registration)
+- ✅ Member dashboard with personalized overview
+- ✅ Documents list display
+- ✅ Events calendar display
+- ✅ Announcements feed
+- 🔜 Document upload functionality
+- 🔜 Event registration
+- 🔜 Member directory
+- 🔜 Profile editing
+- 🔜 Discussion forums
 
-**Architecture Requirements**:
-- **Authentication**: OAuth2 or JWT-based
-- **Database**: Member data, documents, permissions
-- **Storage**: Document/file uploads (S3-compatible)
-- **Email**: Notifications and communications
-- **Security**: HTTPS, RBAC, audit logging
+**Architecture**:
+- **Frontend**: Static files in `members/` directory
+  - Single-page application (SPA)
+  - Mobile-first responsive design
+  - Matches Waccamaw brand styling
+  
+- **Backend**: Separate member-services API
+  - RESTful endpoints for auth, documents, events, etc.
+  - JWT token-based authentication
+  - Database for member data
+  
+- **Authentication**: JWT-based
+  - Token stored in localStorage
+  - Automatic token refresh
+  - Secure session management
 
-**Deployment Strategy** (when implemented):
-1. Docker container deployment
-2. Environment-based configuration
-3. Database migrations managed
-4. SSL via Cloudflare
-5. Proxied to `/members/` path
+**Repository Structure**:
+```
+members/
+├── index.html           # Main HTML page
+├── assets/
+│   ├── css/
+│   │   └── styles.css  # Member portal styles
+│   └── js/
+│       ├── config.js   # API configuration
+│       ├── api.js      # API client
+│       ├── auth.js     # Authentication manager
+│       └── app.js      # Main application logic
+├── .env.example        # Environment config template
+├── QUICKSTART.md       # Quick start guide
+└── README.md           # Full documentation
+```
 
-**Non-Profit Hosting Options**:
-- **Heroku**: Free tier for non-profits (via GitHub Student/Non-profit program)
-- **Railway**: $5/month credits for non-profits
-- **Fly.io**: Free tier, scales affordably
-- **Render**: Free tier for static + paid for dynamic
-- **Cloudflare Workers** (advanced): Could host serverless API
+**Deployment**:
+- Frontend: Static hosting (Cloudflare Pages, Netlify, GitHub Pages)
+- Backend: Separate deployment (see member-services repository)
+- Routing: Cloudflare Workers proxy `/members/` to frontend
+- API calls: Frontend → Backend API via configured endpoint
 
 ## Data Flow
 
@@ -486,23 +506,29 @@ waccamaw.org/updates/*
 - [x] Basic Cloudflare routing
 - [x] Framer marketing site (`/home/`)
 - [x] GitHub Copilot workflow
+- [x] Member portal (`/members/`) - Initial implementation
+- [x] Member authentication system (JWT)
+- [x] Basic dashboard with documents, events, announcements
 
 ### Phase 2: Near Term (Next 3-6 months)
-- [ ] Member portal (`/members/`) - Initial implementation
-- [ ] Enhanced Cloudflare Workers routing
-- [ ] Member authentication system
-- [ ] Private document storage
+- [ ] Enhanced Cloudflare Workers routing for member portal
+- [ ] Document upload functionality
+- [ ] Event registration system
+- [ ] Member directory with search
+- [ ] Profile editing
+- [ ] Email notifications
 
 ### Phase 3: Medium Term (6-12 months)
 - [ ] Tribal calendar integration
-- [ ] Event registration system
-- [ ] Member directory
-- [ ] Email notifications
+- [ ] Real-time notifications
+- [ ] Discussion forums
+- [ ] Voting/polling system
+- [ ] Advanced document management
 
 ### Phase 4: Long Term (12+ months)
+- [ ] Progressive Web App (PWA)
 - [ ] Mobile app consideration
 - [ ] Video/podcast hosting
-- [ ] Advanced member features (voting, surveys)
 - [ ] Integration with tribal management systems
 
 ## Architecture Decision Records
@@ -554,6 +580,69 @@ waccamaw.org/updates/*
 - Ghost (more expensive, less flexible)
 - Medium (no ownership, ads, limited control)
 - Self-hosted Hugo (requires server management, backups)
+
+### ADR-004: Why Vanilla JavaScript for Member Portal?
+
+**Decision**: Use vanilla JavaScript (ES6+) instead of frameworks like React, Vue, or Angular.
+
+**Rationale**:
+- **Simplicity**: No build process, no dependencies, easy to understand
+- **Performance**: Minimal bundle size, fast load times
+- **Maintainability**: Any JavaScript developer can contribute
+- **Future-proof**: No framework version upgrades or deprecations
+- **Learning curve**: Tribal members can learn and contribute more easily
+- **Cost**: Zero npm dependencies, no build infrastructure needed
+
+**Alternatives Considered**:
+- **React**: Too complex for simple use case, requires build tooling
+- **Vue**: Better than React but still requires build process
+- **Alpine.js**: Considered, but vanilla JS is even simpler
+- **Svelte**: Requires compilation, adds complexity
+
+**Trade-offs Accepted**:
+- More manual DOM manipulation
+- No component reactivity out of the box
+- Slightly more verbose code
+
+**When to Reconsider**:
+- If portal becomes very complex (100+ components)
+- If real-time features require sophisticated state management
+- If team grows and wants modern tooling
+
+### ADR-005: Why Separate Frontend and Backend?
+
+**Decision**: Separate the member portal into static frontend (this repo) and API backend (member-services repo).
+
+**Rationale**:
+- **Deployment flexibility**: Frontend on CDN, backend on appropriate platform
+- **Scalability**: Frontend scales via CDN, backend scales independently
+- **Security**: API can be locked down, frontend is public static files
+- **Development**: Teams can work on frontend/backend independently
+- **Cost**: Free CDN for frontend, minimal cost for backend
+- **Testing**: Easier to test API separately from UI
+
+**Architecture**:
+```
+Frontend (members/)       Backend (member-services)
+    ↓                           ↓
+Static Hosting            API Server + Database
+(Cloudflare Pages)        (Railway, Fly.io, etc.)
+    ↓                           ↓
+    └─── HTTP Requests ────────┘
+         (JWT Auth)
+```
+
+**Alternatives Considered**:
+- **Server-side rendering**: More complex, requires server
+- **Monolithic full-stack**: Harder to deploy, less flexible
+- **Serverless functions**: Considered for future, adds complexity
+
+**Benefits**:
+1. Frontend deploys instantly via CDN
+2. Backend can use any language/framework
+3. Easy to replace either component
+4. Better separation of concerns
+5. API can serve multiple clients (web, mobile, etc.)
 
 ## Troubleshooting
 
