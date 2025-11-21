@@ -66,6 +66,8 @@ class MemberPortalApp {
         const errorElement = document.getElementById('requestError');
         const successElement = document.getElementById('requestSuccess');
 
+        console.log('[Member Portal] Form submitted with email:', email);
+
         // Hide previous messages
         errorElement.style.display = 'none';
         successElement.style.display = 'none';
@@ -74,15 +76,21 @@ class MemberPortalApp {
         this.showLoading(true);
 
         try {
+            console.log('[Member Portal] Calling API endpoint:', CONFIG.API_BASE_URL + CONFIG.ENDPOINTS.REQUEST_UPDATE);
             const response = await api.requestUpdate(email);
+            console.log('[Member Portal] API response:', response);
             
             // Store email for display
             localStorage.setItem(CONFIG.STORAGE_KEYS.MEMBER_EMAIL, email);
             
             // Show success screen
+            console.log('[Member Portal] Showing verification sent screen');
             this.showVerificationSent(email);
             
         } catch (error) {
+            console.log('[Member Portal] API call failed:', error);
+            console.log('[Member Portal] Showing verification screen anyway (development mode)');
+            
             // Even if API fails (e.g., no backend), still show verification screen
             // Store email for display
             localStorage.setItem(CONFIG.STORAGE_KEYS.MEMBER_EMAIL, email);

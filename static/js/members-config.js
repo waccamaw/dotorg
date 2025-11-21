@@ -1,7 +1,7 @@
 // Configuration for Member Portal
 const CONFIG = {
     // API Base URL - Update this to point to your member-services endpoint
-    API_BASE_URL: 'http://localhost:8787',
+    API_BASE_URL: 'https://members.waccamaw.org',
     
     // Environment
     ENV: 'development',
