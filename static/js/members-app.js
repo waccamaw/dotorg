@@ -263,8 +263,6 @@ class MemberPortalApp {
         document.getElementById('city').value = memberData.city || '';
         document.getElementById('state').value = memberData.state || 'SC';
         document.getElementById('zip').value = memberData.zip || '';
-        document.getElementById('emergencyContact').value = memberData.emergencyContact || '';
-        document.getElementById('emergencyPhone').value = memberData.emergencyPhone || '';
     }
 
     /**
@@ -290,8 +288,6 @@ class MemberPortalApp {
             city: document.getElementById('city').value,
             state: document.getElementById('state').value,
             zip: document.getElementById('zip').value,
-            emergencyContact: document.getElementById('emergencyContact').value,
-            emergencyPhone: document.getElementById('emergencyPhone').value,
         };
 
         console.log('[Member Portal] Updating member info:', formData);
