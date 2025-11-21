@@ -1,5 +1,13 @@
 # GitHub Copilot Agent Instructions
 
+## CRITICAL RULES - READ FIRST
+
+1. **Hugo server is ALREADY RUNNING on port 1313** - NEVER start additional servers
+2. **Members portal is at `/members/` directory** - served by Hugo at http://localhost:1313/members/
+3. **Stay focused** - Answer the user's actual question without overcomplicating
+4. **Don't test unless asked** - Make the change, trust the code
+5. **Members portal uses vanilla JS** - Not part of Hugo build, just static HTML/CSS/JS files
+
 ## Project Overview
 
 This repository powers the **Waccamaw Indian People's official website** at waccamaw.org/updates/. The Waccamaw are South Carolina's first state-recognized tribe (recognized in 2005), based in the Dog Bluff community near Aynor, SC.
@@ -201,17 +209,24 @@ See `ARCHITECTURE.md` for complete technical details on DNS, Cloudflare Workers,
 
 ### Manual Testing
 
+**CRITICAL**: Hugo is already running on port 1313. **NEVER** start additional web servers.
+
 Before pushing to `main`:
 
 ```bash
-# Start local Hugo server
-just serve
+# Hugo is already running - just access it at:
+# http://localhost:1313/
 
-# Or manually:
-hugo server --watch --bind="0.0.0.0" --port="1313"
-
-# Access at http://localhost:1313/
+# DO NOT run: just serve
+# DO NOT run: hugo server
+# DO NOT run: python -m http.server
+# DO NOT start any other web servers
 ```
+
+To view changes:
+- Members portal: http://localhost:1313/members/
+- Updates/blog: http://localhost:1313/
+- Any page: http://localhost:1313/path/to/page/
 
 ### Deployment Checklist
 

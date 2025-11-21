@@ -1,10 +1,10 @@
 // Configuration for Member Portal
 const CONFIG = {
     // API Base URL - Update this to point to your member-services endpoint
-    API_BASE_URL: process.env.API_BASE_URL || 'http://localhost:8787',
+    API_BASE_URL: 'http://localhost:8787',
     
     // Environment
-    ENV: process.env.NODE_ENV || 'development',
+    ENV: 'development',
     
     // Local Storage Keys
     STORAGE_KEYS: {
@@ -28,8 +28,3 @@ const CONFIG = {
         ALLOWED_FILE_TYPES: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif']
     }
 };
-
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = CONFIG;
-}
