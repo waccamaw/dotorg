@@ -115,6 +115,15 @@ class APIClient {
     }
 
     /**
+     * Update member information (alias for compatibility)
+     * @param {Object} updateData - Fields to update
+     * @returns {Promise<Object>} Success response
+     */
+    async updateMemberInfo(updateData) {
+        return this.updateMember(updateData);
+    }
+
+    /**
      * Get member data from local storage
      */
     getMemberData() {

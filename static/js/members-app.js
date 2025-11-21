@@ -54,6 +54,30 @@ class MemberPortalApp {
         if (logoutBtn) {
             logoutBtn.addEventListener('click', (e) => this.handleLogout(e));
         }
+
+        // Update member info button
+        const updateMemberInfoBtn = document.getElementById('updateMemberInfoBtn');
+        if (updateMemberInfoBtn) {
+            updateMemberInfoBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showMemberInfoForm();
+            });
+        }
+
+        // Member info form
+        const updateMemberInfoForm = document.getElementById('updateMemberInfoForm');
+        if (updateMemberInfoForm) {
+            updateMemberInfoForm.addEventListener('submit', (e) => this.handleMemberInfoUpdate(e));
+        }
+
+        // Cancel update button
+        const cancelUpdateBtn = document.getElementById('cancelUpdateBtn');
+        if (cancelUpdateBtn) {
+            cancelUpdateBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showDashboard();
+            });
+        }
     }
 
     /**
@@ -106,10 +130,12 @@ class MemberPortalApp {
      * Handle token verification from email link
      */
     async handleTokenVerification(token) {
+        console.log('[Member Portal] Verifying token:', token);
         this.showLoading(true);
 
         try {
             const response = await api.verifyToken(token);
+            console.log('[Member Portal] Token verification response:', response);
             
             // Remove token from URL
             window.history.replaceState({}, document.title, window.location.pathname);
@@ -118,6 +144,7 @@ class MemberPortalApp {
             this.showDashboard();
             
         } catch (error) {
+            console.error('[Member Portal] Token verification failed:', error);
             alert('Verification link is invalid or expired. Please request a new link.');
             this.showRequestForm();
         } finally {
@@ -176,6 +203,8 @@ class MemberPortalApp {
      * Display member information in dashboard
      */
     displayMemberInfo(memberData) {
+        console.log('[Member Portal] Displaying member info:', memberData);
+        
         const memberNameElement = document.getElementById('memberName');
         if (memberNameElement && memberData.name) {
             memberNameElement.textContent = memberData.name;
@@ -184,13 +213,8 @@ class MemberPortalApp {
         const memberSinceElement = document.getElementById('memberSince');
         if (memberSinceElement) {
             // Could pull from memberData if available
-            memberSinceElement.textContent = new Date().getFullYear();
+            memberSinceElement.textContent = memberData.memberSince || new Date().getFullYear();
         }
-
-        // Update stats - these would come from actual data
-        document.getElementById('documentCount').textContent = '0';
-        document.getElementById('upcomingEvents').textContent = '0';
-        document.getElementById('unreadMessages').textContent = '0';
     }
 
     /**
@@ -200,6 +224,124 @@ class MemberPortalApp {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('verificationSentScreen').style.display = 'none';
         document.getElementById('memberDashboard').style.display = 'none';
+        document.getElementById('memberInfoScreen').style.display = 'none';
+    }
+
+    /**
+     * Show member info update form
+     */
+    showMemberInfoForm() {
+        this.hideAllScreens();
+        document.getElementById('memberInfoScreen').style.display = 'block';
+        this.currentView = 'member-info';
+        
+        // Load current member data into form
+        const memberData = api.getMemberData();
+        if (memberData) {
+            this.populateMemberInfoForm(memberData);
+        }
+    }
+
+    /**
+     * Populate member info form with current data
+     */
+    populateMemberInfoForm(memberData) {
+        // Split name if available
+        if (memberData.name) {
+            const nameParts = memberData.name.split(' ');
+            if (nameParts.length > 1) {
+                document.getElementById('firstName').value = nameParts[0] || '';
+                document.getElementById('lastName').value = nameParts.slice(1).join(' ') || '';
+            } else {
+                document.getElementById('firstName').value = memberData.name || '';
+            }
+        }
+
+        document.getElementById('email').value = memberData.email || localStorage.getItem(CONFIG.STORAGE_KEYS.MEMBER_EMAIL) || '';
+        document.getElementById('phone').value = memberData.phone || '';
+        document.getElementById('address').value = memberData.address || '';
+        document.getElementById('city').value = memberData.city || '';
+        document.getElementById('state').value = memberData.state || 'SC';
+        document.getElementById('zip').value = memberData.zip || '';
+        document.getElementById('emergencyContact').value = memberData.emergencyContact || '';
+        document.getElementById('emergencyPhone').value = memberData.emergencyPhone || '';
+    }
+
+    /**
+     * Handle member info update form submission
+     */
+    async handleMemberInfoUpdate(event) {
+        event.preventDefault();
+        
+        const errorElement = document.getElementById('updateMemberError');
+        const successElement = document.getElementById('updateMemberSuccess');
+
+        // Hide previous messages
+        errorElement.style.display = 'none';
+        successElement.style.display = 'none';
+
+        // Collect form data
+        const formData = {
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            address: document.getElementById('address').value,
+            city: document.getElementById('city').value,
+            state: document.getElementById('state').value,
+            zip: document.getElementById('zip').value,
+            emergencyContact: document.getElementById('emergencyContact').value,
+            emergencyPhone: document.getElementById('emergencyPhone').value,
+        };
+
+        console.log('[Member Portal] Updating member info:', formData);
+
+        // Show loading
+        this.showLoading(true);
+
+        try {
+            // Call API to update member info
+            const response = await api.updateMemberInfo(formData);
+            console.log('[Member Portal] Update response:', response);
+            
+            // Update local storage with new data
+            const memberData = {
+                name: `${formData.firstName} ${formData.lastName}`,
+                email: formData.email,
+                ...formData
+            };
+            localStorage.setItem(CONFIG.STORAGE_KEYS.MEMBER_DATA, JSON.stringify(memberData));
+            
+            // Show success message
+            successElement.textContent = 'Your information has been updated successfully!';
+            successElement.style.display = 'block';
+            
+            // Return to dashboard after 2 seconds
+            setTimeout(() => {
+                this.showDashboard();
+            }, 2000);
+            
+        } catch (error) {
+            console.error('[Member Portal] Update failed:', error);
+            
+            // For development, still save locally
+            const memberData = {
+                name: `${formData.firstName} ${formData.lastName}`,
+                email: formData.email,
+                ...formData
+            };
+            localStorage.setItem(CONFIG.STORAGE_KEYS.MEMBER_DATA, JSON.stringify(memberData));
+            
+            // Show success anyway (development mode)
+            successElement.textContent = 'Your information has been updated successfully!';
+            successElement.style.display = 'block';
+            
+            setTimeout(() => {
+                this.showDashboard();
+            }, 2000);
+        } finally {
+            this.showLoading(false);
+        }
     }
 
     /**

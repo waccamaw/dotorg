@@ -135,12 +135,20 @@ body {
 	padding: var(--spacing-lg) 0;
 }
 
+.auth-container {
+	width: 100%;
+	max-width: var(--max-width);
+	padding: 0 var(--spacing-md);
+	display: flex;
+	justify-content: center;
+}
+
 .auth-card {
 	background: var(--bg-white);
 	border-radius: var(--radius-lg);
 	box-shadow: var(--shadow-lg);
 	padding: var(--spacing-xl);
-	max-width: 500px;
+	max-width: 550px;
 	width: 100%;
 }
 
@@ -251,6 +259,18 @@ body {
 
 .btn-block {
 	width: 100%;
+}
+
+/* Form Actions */
+.form-actions {
+	display: flex;
+	gap: var(--spacing-md);
+	justify-content: flex-end;
+	margin-top: var(--spacing-md);
+}
+
+.form-actions .btn {
+	min-width: 120px;
 }
 
 /* Auth Footer */
@@ -621,6 +641,18 @@ body {
 	.nav-link {
 		flex: 1;
 		text-align: center;
+	}
+
+	.form-actions {
+		flex-direction: column;
+	}
+
+	.form-actions .btn {
+		width: 100%;
+	}
+
+	.auth-card {
+		max-width: 100% !important;
 	}
 }
 

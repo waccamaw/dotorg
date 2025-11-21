@@ -13,7 +13,15 @@ class MemberPortalApp {
         
         // Check for token in URL (from email link)
         const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
+        let token = urlParams.get('token');
+        
+        // Also check for token in path like /verify/{token}
+        if (!token) {
+            const pathMatch = window.location.pathname.match(/\/verify\/([a-f0-9]+)/);
+            if (pathMatch) {
+                token = pathMatch[1];
+            }
+        }
         
         if (token) {
             // User clicked verification link
@@ -106,10 +114,12 @@ class MemberPortalApp {
      * Handle token verification from email link
      */
     async handleTokenVerification(token) {
+        console.log('[Member Portal] Verifying token:', token);
         this.showLoading(true);
 
         try {
             const response = await api.verifyToken(token);
+            console.log('[Member Portal] Token verification response:', response);
             
             // Remove token from URL
             window.history.replaceState({}, document.title, window.location.pathname);
@@ -118,6 +128,7 @@ class MemberPortalApp {
             this.showDashboard();
             
         } catch (error) {
+            console.error('[Member Portal] Token verification failed:', error);
             alert('Verification link is invalid or expired. Please request a new link.');
             this.showRequestForm();
         } finally {
@@ -176,15 +187,19 @@ class MemberPortalApp {
      * Display member information in dashboard
      */
     displayMemberInfo(memberData) {
+        console.log('[Member Portal] Displaying member info:', memberData);
+        
         const memberNameElement = document.getElementById('memberName');
-        if (memberNameElement && memberData.name) {
-            memberNameElement.textContent = memberData.name;
+        if (memberNameElement) {
+            // Use name if available, otherwise fall back to email
+            const displayName = memberData.name || memberData.email || 'Member';
+            memberNameElement.textContent = displayName;
         }
         
         const memberSinceElement = document.getElementById('memberSince');
         if (memberSinceElement) {
             // Could pull from memberData if available
-            memberSinceElement.textContent = new Date().getFullYear();
+            memberSinceElement.textContent = memberData.memberSince || new Date().getFullYear();
         }
 
         // Update stats - these would come from actual data
