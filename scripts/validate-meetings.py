@@ -82,9 +82,11 @@ def validate_front_matter(filepath):
                 warnings.append("microblog: true but content is longer than 280 characters")
         
         # Validate categories format
+        # Note: Micro.blog accepts both list format and comma-separated string
+        # We're using comma-separated string to avoid bracket interpretation issues
         if 'categories' in data and data['categories']:
-            if not isinstance(data['categories'], list):
-                errors.append(f"categories should be a list, got: {type(data['categories'])}")
+            if not isinstance(data['categories'], (list, str)):
+                errors.append(f"categories should be a list or string, got: {type(data['categories'])}")
         
         # Check for invalid control characters in content
         if '\x00' in content:
