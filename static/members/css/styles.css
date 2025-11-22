@@ -134,15 +134,13 @@ box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
 
 /* Member Metadata Grid */
 .member-metadata {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-gap: 0.75rem;
-margin-top: 1.5rem;
-padding-top: 1.5rem;
-border-top: 1px solid #f0f0f0;
-}
-
-.member-info {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 0.75rem;
+	margin-top: 1.5rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid #f0f0f0;
+}.member-info {
 margin: 0;
 padding: 0.75rem;
 background: #fff5eb;

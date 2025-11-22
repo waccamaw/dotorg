@@ -608,15 +608,17 @@ class MemberPortalApp {
         
         if (!memberPhoto || !photoPlaceholder) return;
         
-        // Check if member has a photo in SharePoint
-        const memberId = statusResponse?.status?.memberId;
+        // Use Tribal ID (from hierarchy: T_Nbr > ID0 > ID) instead of SharePoint item ID
+        const tribalId = statusResponse?.status?.tribalId;
         
         console.log('[Member Photo] Photo path from SharePoint:', photoPath);
-        console.log('[Member Photo] Member ID:', memberId);
+        console.log('[Member Photo] Tribal ID:', tribalId);
         
         // Update photo source and toggle photo/placeholder visibility
-        if (photoPath && photoPath.trim() !== '' && memberId) {
+        if (photoPath && photoPath.trim() !== '' && tribalId) {
             // Use API proxy endpoint to load photo from SharePoint
+            // Uses member's SharePoint item ID for the API endpoint (for lookup)
+            const memberId = statusResponse?.status?.memberId;
             const photoUrl = CONFIG.API_BASE_URL + CONFIG.ENDPOINTS.MEMBER_PHOTO.replace(':itemId', memberId);
             console.log('[Member Photo] Loading photo from:', photoUrl);
             
