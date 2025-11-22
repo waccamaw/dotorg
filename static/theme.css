@@ -102,6 +102,24 @@ img {
 	object-fit: contain;
 }
 
+/* Site Wordmark (text logo alternative) */
+.site-wordmark {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+	font-size: 1.5rem;
+	font-weight: 600;
+	color: #0033cc;
+	letter-spacing: -0.5px;
+	text-decoration: none;
+	display: inline-block;
+	padding: 0.25rem 0;
+	border-bottom: 2px solid transparent;
+	transition: border-color 0.3s ease;
+}
+
+.site-logo:hover .site-wordmark {
+	border-bottom-color: #0033cc;
+}
+
 .site-title a {
 	font-size: 1.5rem;
 	font-weight: 600;
