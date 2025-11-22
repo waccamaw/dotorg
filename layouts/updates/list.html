@@ -6,22 +6,19 @@
 </div>
 
 <div class="h-feed updates-feed">
-	{{/* Get all pages with 'updates' in their categories (handles both list and string formats) */}}
+	{{/* Get all pages from the updates section or with 'updates' category */}}
 	{{ $pages := slice }}
 	{{ range .Site.RegularPages }}
-		{{ $hasUpdates := false }}
-		{{ if .Params.categories }}
-			{{ if reflect.IsSlice .Params.categories }}
-				{{ if in .Params.categories "updates" }}
-					{{ $hasUpdates = true }}
-				{{ end }}
-			{{ else }}
-				{{ if in (string .Params.categories) "updates" }}
-					{{ $hasUpdates = true }}
-				{{ end }}
+		{{ $include := false }}
+		{{ if eq .Section "updates" }}
+			{{ $include = true }}
+		{{ else if .Params.categories }}
+			{{ $catStr := printf "%v" .Params.categories }}
+			{{ if in $catStr "updates" }}
+				{{ $include = true }}
 			{{ end }}
 		{{ end }}
-		{{ if $hasUpdates }}
+		{{ if $include }}
 			{{ $pages = $pages | append . }}
 		{{ end }}
 	{{ end }}
@@ -45,16 +42,12 @@
 					{{ end }}
 				{{ if .Params.categories }}
 					<span class="post-categories">
-						{{ if reflect.IsSlice .Params.categories }}
-							{{ range .Params.categories }}
-								<span class="category-badge">{{ . }}</span>
-							{{ end }}
-						{{ else }}
-							{{/* Handle comma-separated string */}}
-							{{ $cats := split (string .Params.categories) ", " }}
-							{{ range $cats }}
-								<span class="category-badge">{{ . }}</span>
-							{{ end }}
+						{{ $catStr := printf "%v" .Params.categories }}
+						{{ $cats := split $catStr ", " }}
+						{{ range $cats }}
+							{{ $cat := trim . "[]" }}
+							{{ $cat = trim $cat " " }}
+							<span class="category-badge">{{ $cat }}</span>
 						{{ end }}
 					</span>
 				{{ end }}
