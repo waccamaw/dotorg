@@ -30,17 +30,11 @@
 				{{ if .Params.categories }}
 					<span class="post-categories">
 						{{ $cats := .Params.categories }}
-						{{ if reflect.IsSlice $cats }}
-							{{ range $cats }}
-								<span class="category-badge">{{ . }}</span>
-							{{ end }}
-						{{ else }}
-							{{ $catStr := printf "%v" $cats }}
-							{{ $catList := split $catStr ", " }}
-							{{ range $catList }}
-								{{ $cat := trim . " " }}
-								<span class="category-badge">{{ $cat }}</span>
-							{{ end }}
+						{{ $catStr := printf "%v" $cats }}
+						{{ $catList := split $catStr ", " }}
+						{{ range $catList }}
+							{{ $cat := trim . " []" }}
+							<span class="category-badge">{{ $cat }}</span>
 						{{ end }}
 					</span>
 				{{ end }}
