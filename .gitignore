@@ -4,3 +4,5 @@ public/
 .env
 content/
 apps/**
+
+content-export*
