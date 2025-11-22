@@ -29,8 +29,14 @@ install: git-setup
 serve: 
     hugo server --watch --bind="0.0.0.0" --port="1313" --baseURL="http://localhost:1313/"
 
+# Validate meeting markdown files for Micro.blog compatibility
+validate-meetings:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    python3 scripts/validate-meetings.py
+
 # Export cleaned content for Micro.blog import
-export-content:
+export-content: validate-meetings
     #!/usr/bin/env bash
     set -euo pipefail
     

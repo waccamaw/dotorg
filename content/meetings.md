@@ -1,5 +1,6 @@
 ---
 title: "Tribal Meetings"
+date: 2025-11-17T17:15:37-05:00
 menu: "main"
 layout: "meetings"
 ---
