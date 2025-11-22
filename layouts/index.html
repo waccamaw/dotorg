@@ -1,7 +1,7 @@
 {{ define "main" }}
 
 <!-- Featured Hero Carousel -->
-{{ $featured := where .Site.RegularPages "Params.featured" true }}
+{{ $featured := where .Site.RegularPages ".Params.categories" "intersect" (slice "featured") }}
 {{ if $featured }}
 	<div class="hero-carousel">
 		{{ range first 1 $featured }}
