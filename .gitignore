@@ -3,3 +3,4 @@
 public/
 .env
 content/
+apps/**

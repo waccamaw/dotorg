@@ -1,10 +1,15 @@
 // Configuration for Member Portal
 const CONFIG = {
-    // API Base URL - Update this to point to your member-services endpoint
-    API_BASE_URL: 'https://members.waccamaw.org',
+    // API Base URL - Auto-detect environment
+    // Use localhost:8787 in dev container, production URL otherwise
+    API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:8787'
+        : 'https://members.waccamaw.org',
     
     // Environment
-    ENV: 'development',
+    ENV: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'development'
+        : 'production',
     
     // Local Storage Keys
     STORAGE_KEYS: {
@@ -18,7 +23,8 @@ const CONFIG = {
         // Email Verification Flow
         REQUEST_UPDATE: '/api/request-update',
         VERIFY_TOKEN: '/api/verify/:token',
-        UPDATE_MEMBER: '/api/update-member'
+        UPDATE_MEMBER: '/api/update-member',
+        MEMBER_STATUS: '/api/member-status'
     },
     
     // Settings

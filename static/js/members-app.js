@@ -186,7 +186,7 @@ class MemberPortalApp {
     /**
      * Show dashboard
      */
-    showDashboard() {
+    async showDashboard() {
         this.hideAllScreens();
         document.getElementById('memberDashboard').style.display = 'block';
         document.getElementById('logoutBtn').style.display = 'inline-block';
@@ -196,6 +196,99 @@ class MemberPortalApp {
         const memberData = api.getMemberData();
         if (memberData) {
             this.displayMemberInfo(memberData);
+        }
+        
+        // Fetch and display member status
+        await this.fetchAndDisplayMemberStatus();
+    }
+
+    /**
+     * Fetch and display member status
+     */
+    async fetchAndDisplayMemberStatus() {
+        try {
+            console.log('[Member Portal] Fetching member status...');
+            const statusResponse = await api.getMemberStatus();
+            console.log('[Member Portal] Status response:', statusResponse);
+            
+            if (statusResponse.success && statusResponse.status) {
+                const { active, statusText, memberSince, lastActive, position, voter, expires } = statusResponse.status;
+                console.log('[Member Portal] Status data:', { active, statusText, memberSince, lastActive, position, voter, expires });
+                
+                // Update status badge
+                const statusBadge = document.getElementById('statusBadge');
+                const statusIndicator = document.getElementById('statusIndicator');
+                const statusTextElement = document.getElementById('statusText');
+                
+                if (statusBadge && statusTextElement) {
+                    // Remove all status classes
+                    statusBadge.classList.remove('active', 'inactive');
+                    
+                    // Add appropriate class based on status
+                    if (statusText && statusText.toLowerCase() === 'active') {
+                        statusBadge.classList.add('active');
+                    } else if (statusText && statusText.toLowerCase() === 'inactive') {
+                        statusBadge.classList.add('inactive');
+                    }
+                    // If neither active nor inactive, it stays grey (default)
+                    
+                    statusTextElement.textContent = statusText || 'Unknown';
+                    console.log('[Member Portal] Updated status badge:', statusText);
+                }
+                
+                // Update member since date
+                const memberSinceElement = document.getElementById('memberSince');
+                if (memberSinceElement) {
+                    memberSinceElement.textContent = memberSince ? this.formatDate(memberSince) : '-';
+                    console.log('[Member Portal] Updated member since:', memberSince);
+                }
+                
+                // Update last active date
+                const lastActiveElement = document.getElementById('lastActive');
+                if (lastActiveElement) {
+                    lastActiveElement.textContent = lastActive ? this.formatDate(lastActive) : '-';
+                    console.log('[Member Portal] Updated last active:', lastActive);
+                }
+                
+                // Update position
+                const memberPositionElement = document.getElementById('memberPosition');
+                if (memberPositionElement) {
+                    memberPositionElement.textContent = position || '-';
+                    console.log('[Member Portal] Updated position:', position);
+                }
+                
+                // Update voter status
+                const memberVoterElement = document.getElementById('memberVoter');
+                if (memberVoterElement) {
+                    memberVoterElement.textContent = voter || '-';
+                    console.log('[Member Portal] Updated voter status:', voter);
+                }
+                
+                // Update expires date
+                const memberExpiresElement = document.getElementById('memberExpires');
+                if (memberExpiresElement) {
+                    memberExpiresElement.textContent = expires ? this.formatDate(expires) : '-';
+                    console.log('[Member Portal] Updated expires:', expires);
+                }
+                
+                // Update debug view (local only)
+                this.updateDebugView(statusResponse);
+            } else {
+                console.warn('[Member Portal] Invalid status response:', statusResponse);
+            }
+        } catch (error) {
+            console.error('[Member Portal] Failed to fetch member status:', error);
+            console.error('[Member Portal] Error details:', error.message, error.stack);
+            // Don't show error to user, just log it
+            // Set default values
+            const memberSinceElement = document.getElementById('memberSince');
+            if (memberSinceElement) {
+                memberSinceElement.textContent = '-';
+            }
+            const lastActiveElement = document.getElementById('lastActive');
+            if (lastActiveElement) {
+                lastActiveElement.textContent = '-';
+            }
         }
     }
 
@@ -208,12 +301,6 @@ class MemberPortalApp {
         const memberNameElement = document.getElementById('memberName');
         if (memberNameElement && memberData.name) {
             memberNameElement.textContent = memberData.name;
-        }
-        
-        const memberSinceElement = document.getElementById('memberSince');
-        if (memberSinceElement) {
-            // Could pull from memberData if available
-            memberSinceElement.textContent = memberData.memberSince || new Date().getFullYear();
         }
     }
 
@@ -359,6 +446,91 @@ class MemberPortalApp {
         const date = new Date(dateString);
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         return date.toLocaleDateString('en-US', options);
+    }
+
+    /**
+     * Update debug view with member data (local development only)
+     */
+    updateDebugView(statusResponse) {
+        // Only show debug view on localhost
+        const isLocal = window.location.hostname === 'localhost' || 
+                       window.location.hostname === '127.0.0.1' ||
+                       window.location.hostname === '';
+        
+        const debugView = document.getElementById('debugView');
+        if (!debugView) return;
+        
+        if (!isLocal) {
+            debugView.style.display = 'none';
+            return;
+        }
+        
+        // Show debug view
+        debugView.style.display = 'block';
+        
+        const debugContent = document.getElementById('debugContent');
+        if (!debugContent) return;
+        
+        // Get all raw fields from the API response
+        const rawFields = statusResponse?.rawFields || {};
+        
+        // If we have raw fields, show them all
+        if (Object.keys(rawFields).length > 0) {
+            let html = '<table class="debug-table">';
+            html += '<thead><tr><th>Field Name</th><th>Value</th></tr></thead>';
+            html += '<tbody>';
+            
+            // Sort fields alphabetically for easier reading
+            const sortedKeys = Object.keys(rawFields).sort();
+            
+            for (const key of sortedKeys) {
+                const value = rawFields[key];
+                const displayValue = this.formatDebugValue(value);
+                html += `<tr><td>${this.escapeHtml(key)}</td><td>${displayValue}</td></tr>`;
+            }
+            
+            html += '</tbody></table>';
+            debugContent.innerHTML = html;
+        } else {
+            debugContent.innerHTML = '<p class="debug-placeholder">No raw field data available</p>';
+        }
+    }
+    
+    /**
+     * Format debug value with appropriate styling
+     */
+    formatDebugValue(value) {
+        if (value === null || value === undefined) {
+            return '<span class="debug-null">null</span>';
+        }
+        if (value === '') {
+            return '<span class="debug-null">(empty string)</span>';
+        }
+        if (typeof value === 'boolean') {
+            return `<span class="debug-boolean">${value}</span>`;
+        }
+        if (typeof value === 'number') {
+            return `<span class="debug-number">${value}</span>`;
+        }
+        if (typeof value === 'object') {
+            // Handle arrays and objects
+            const jsonStr = JSON.stringify(value, null, 2);
+            return `<span class="debug-object">${this.escapeHtml(jsonStr)}</span>`;
+        }
+        // Escape HTML for string values
+        return this.escapeHtml(String(value));
+    }
+    
+    /**
+     * Escape HTML characters
+     */
+    escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
     }
 }
 

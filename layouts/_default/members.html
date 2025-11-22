@@ -1,4 +1,5 @@
 {{ define "main" }}
+<link rel="stylesheet" href="/theme.css">
 <link rel="stylesheet" href="/members/css/styles.css">
 
 <div class="member-portal-wrapper">
@@ -56,8 +57,35 @@
         <div class="dashboard-container">
             <!-- Welcome Section -->
             <div class="dashboard-header">
-                <h2>Welcome, <span id="memberName">Member</span></h2>
-                <p class="member-info">Member since <span id="memberSince">2025</span></p>
+                <div class="dashboard-title">
+                    <h2>Welcome, <span id="memberName">Member</span></h2>
+                    <div class="member-status-badge" id="statusBadge">
+                        <span class="status-indicator" id="statusIndicator"></span>
+                        <span class="status-text" id="statusText">Active</span>
+                    </div>
+                </div>
+                <div class="member-metadata">
+                    <p class="member-info">
+                        <span class="info-label">Member since:</span> 
+                        <span id="memberSince">-</span>
+                    </p>
+                    <p class="member-info">
+                        <span class="info-label">Last active:</span> 
+                        <span id="lastActive">-</span>
+                    </p>
+                    <p class="member-info">
+                        <span class="info-label">Expires:</span> 
+                        <span id="memberExpires">-</span>
+                    </p>
+                    <p class="member-info">
+                        <span class="info-label">Position:</span> 
+                        <span id="memberPosition">-</span>
+                    </p>
+                    <p class="member-info">
+                        <span class="info-label">Voter status:</span> 
+                        <span id="memberVoter">-</span>
+                    </p>
+                </div>
                 <button id="logoutBtn" class="btn btn-secondary">Logout</button>
             </div>
 
@@ -71,18 +99,16 @@
                         <div class="action-icon">👤</div>
                         <div class="action-title">Update Member Information</div>
                     </a>
-                    <a href="#" class="action-card">
-                        <div class="action-icon">📧</div>
-                        <div class="action-title">Contact Council</div>
-                    </a>
-                    <a href="#" class="action-card">
-                        <div class="action-icon">📚</div>
-                        <div class="action-title">Resources</div>
-                    </a>
-                    <a href="#" class="action-card">
-                        <div class="action-icon">❓</div>
-                        <div class="action-title">Help & Support</div>
-                    </a>
+                    <div class="action-card action-disabled">
+                        <div class="action-icon">💳</div>
+                        <div class="action-title">Order ID Card</div>
+                        <div class="action-subtitle">Coming Soon</div>
+                    </div>
+                    <div class="action-card action-disabled">
+                        <div class="action-icon">💵</div>
+                        <div class="action-title">Pay Membership Fees</div>
+                        <div class="action-subtitle">Coming Soon</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -155,6 +181,25 @@
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
         <div class="spinner"></div>
     </div>
+
+    <!-- Debug View (Local Development Only) -->
+    <section id="debugView" class="debug-section" style="display: none;">
+        <div class="debug-container">
+            <div class="debug-header">
+                <div class="debug-title">
+                    <h3>🔧 Development Debug Panel</h3>
+                    <span class="debug-badge">LOCAL ONLY</span>
+                </div>
+                <p class="debug-description">Complete database record for authenticated member</p>
+            </div>
+            <div id="debugContent" class="debug-content">
+                <div class="debug-loader">
+                    <div class="debug-spinner"></div>
+                    <p>Loading member data...</p>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 
 <!-- Member Portal Scripts -->

@@ -124,6 +124,16 @@ class APIClient {
     }
 
     /**
+     * Get member status information
+     * @returns {Promise<Object>} Status data including active status, memberSince, lastActive
+     */
+    async getMemberStatus() {
+        return this.request(CONFIG.ENDPOINTS.MEMBER_STATUS, {
+            method: 'GET'
+        });
+    }
+
+    /**
      * Get member data from local storage
      */
     getMemberData() {
