@@ -78,6 +78,60 @@ class MemberPortalApp {
                 this.showDashboard();
             });
         }
+
+        // Photo upload button
+        const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
+        if (uploadPhotoBtn) {
+            uploadPhotoBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.openPhotoUploadModal();
+            });
+        }
+
+        // Photo upload modal close buttons
+        const closePhotoModal = document.getElementById('closePhotoModal');
+        const cancelPhotoUpload = document.getElementById('cancelPhotoUpload');
+        if (closePhotoModal) {
+            closePhotoModal.addEventListener('click', () => this.closePhotoUploadModal());
+        }
+        if (cancelPhotoUpload) {
+            cancelPhotoUpload.addEventListener('click', () => this.closePhotoUploadModal());
+        }
+
+        // Photo file input
+        const photoFileInput = document.getElementById('photoFileInput');
+        const photoUploadArea = document.getElementById('photoUploadArea');
+        if (photoFileInput) {
+            photoFileInput.addEventListener('change', (e) => this.handlePhotoSelect(e));
+        }
+        if (photoUploadArea) {
+            photoUploadArea.addEventListener('click', () => photoFileInput?.click());
+        }
+
+        // Drag and drop for photo upload
+        if (photoUploadArea) {
+            photoUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                photoUploadArea.classList.add('drag-over');
+            });
+            photoUploadArea.addEventListener('dragleave', () => {
+                photoUploadArea.classList.remove('drag-over');
+            });
+            photoUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                photoUploadArea.classList.remove('drag-over');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    this.handlePhotoFile(files[0]);
+                }
+            });
+        }
+
+        // Submit photo upload
+        const submitPhotoUpload = document.getElementById('submitPhotoUpload');
+        if (submitPhotoUpload) {
+            submitPhotoUpload.addEventListener('click', () => this.handlePhotoUpload());
+        }
     }
 
     /**
@@ -212,8 +266,8 @@ class MemberPortalApp {
             console.log('[Member Portal] Status response:', statusResponse);
             
             if (statusResponse.success && statusResponse.status) {
-                const { active, statusText, memberSince, lastActive, position, voter, expires } = statusResponse.status;
-                console.log('[Member Portal] Status data:', { active, statusText, memberSince, lastActive, position, voter, expires });
+                const { active, statusText, memberSince, lastActive, position, voter, expires, tribalId } = statusResponse.status;
+                console.log('[Member Portal] Status data:', { active, statusText, memberSince, lastActive, position, voter, expires, tribalId });
                 
                 // Update status badge
                 const statusBadge = document.getElementById('statusBadge');
@@ -270,6 +324,16 @@ class MemberPortalApp {
                     memberExpiresElement.textContent = expires ? this.formatDate(expires) : '-';
                     console.log('[Member Portal] Updated expires:', expires);
                 }
+                
+                // Update tribal ID
+                const tribalIdElement = document.getElementById('tribalId');
+                if (tribalIdElement) {
+                    tribalIdElement.textContent = tribalId || '-';
+                    console.log('[Member Portal] Updated tribal ID:', tribalId);
+                }
+                
+                // Update member photo
+                this.updateMemberPhoto(statusResponse);
                 
                 // Update debug view (local only)
                 this.updateDebugView(statusResponse);
@@ -531,6 +595,229 @@ class MemberPortalApp {
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
+    }
+
+    /**
+     * Update member photo display
+     */
+    updateMemberPhoto(statusResponse) {
+        const photoPath = statusResponse?.rawFields?.ID_x0020_Picture;
+        const memberPhoto = document.getElementById('memberPhoto');
+        const photoPlaceholder = document.getElementById('photoPlaceholder');
+        const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
+        
+        if (!memberPhoto || !photoPlaceholder) return;
+        
+        // Check if member has a photo in SharePoint
+        const memberId = statusResponse?.status?.memberId;
+        
+        console.log('[Member Photo] Photo path from SharePoint:', photoPath);
+        console.log('[Member Photo] Member ID:', memberId);
+        
+        // Update photo source and toggle photo/placeholder visibility
+        if (photoPath && photoPath.trim() !== '' && memberId) {
+            // Use API proxy endpoint to load photo from SharePoint
+            const photoUrl = CONFIG.API_BASE_URL + CONFIG.ENDPOINTS.MEMBER_PHOTO.replace(':itemId', memberId);
+            console.log('[Member Photo] Loading photo from:', photoUrl);
+            
+            memberPhoto.src = photoUrl;
+            memberPhoto.style.display = 'block';
+            photoPlaceholder.style.display = 'none';
+            
+            // Handle photo load errors (e.g., 404)
+            memberPhoto.onerror = () => {
+                console.log('[Member Photo] Failed to load photo, showing placeholder');
+                memberPhoto.style.display = 'none';
+                photoPlaceholder.style.display = 'flex';
+            };
+        } else {
+            console.log('[Member Photo] No photo path, showing placeholder');
+            memberPhoto.style.display = 'none';
+            photoPlaceholder.style.display = 'flex';
+        }
+        
+        // Show/hide upload button based on configuration
+        if (uploadPhotoBtn && CONFIG.FEATURES.PHOTO_UPLOAD) {
+            uploadPhotoBtn.style.display = 'flex';
+        } else if (uploadPhotoBtn) {
+            uploadPhotoBtn.style.display = 'none';
+        }
+    }
+
+    /**
+     * Open photo upload modal
+     */
+    openPhotoUploadModal() {
+        const modal = document.getElementById('photoUploadModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            // Reset the form
+            this.resetPhotoUploadForm();
+        }
+    }
+
+    /**
+     * Close photo upload modal
+     */
+    closePhotoUploadModal() {
+        const modal = document.getElementById('photoUploadModal');
+        if (modal) {
+            modal.style.display = 'none';
+            this.resetPhotoUploadForm();
+        }
+    }
+
+    /**
+     * Reset photo upload form
+     */
+    resetPhotoUploadForm() {
+        const fileInput = document.getElementById('photoFileInput');
+        const preview = document.getElementById('photoPreview');
+        const previewImg = document.getElementById('photoPreviewImg');
+        const uploadArea = document.getElementById('photoUploadArea');
+        const submitBtn = document.getElementById('submitPhotoUpload');
+        
+        if (fileInput) fileInput.value = '';
+        if (preview) preview.style.display = 'none';
+        if (previewImg) previewImg.src = '';
+        if (uploadArea) uploadArea.style.display = 'block';
+        if (submitBtn) submitBtn.disabled = true;
+        
+        this.selectedPhotoFile = null;
+    }
+
+    /**
+     * Handle photo file selection from input
+     */
+    handlePhotoSelect(event) {
+        const files = event.target.files;
+        if (files.length > 0) {
+            this.handlePhotoFile(files[0]);
+        }
+    }
+
+    /**
+     * Handle photo file (from input or drag-drop)
+     */
+    handlePhotoFile(file) {
+        // Validate file type
+        if (!CONFIG.FEATURES.PHOTO_ALLOWED_TYPES.includes(file.type)) {
+            alert(`Invalid file type. Please upload: ${CONFIG.FEATURES.PHOTO_ALLOWED_TYPES.join(', ')}`);
+            return;
+        }
+        
+        // Validate file size
+        if (file.size > CONFIG.FEATURES.PHOTO_MAX_SIZE) {
+            const maxSizeMB = CONFIG.FEATURES.PHOTO_MAX_SIZE / (1024 * 1024);
+            alert(`File too large. Maximum size is ${maxSizeMB}MB.`);
+            return;
+        }
+        
+        // Store the file
+        this.selectedPhotoFile = file;
+        
+        // Show preview
+        this.showPhotoPreview(file);
+        
+        // Enable submit button
+        const submitBtn = document.getElementById('submitPhotoUpload');
+        if (submitBtn) submitBtn.disabled = false;
+    }
+
+    /**
+     * Show photo preview
+     */
+    showPhotoPreview(file) {
+        const uploadArea = document.getElementById('photoUploadArea');
+        const preview = document.getElementById('photoPreview');
+        const previewImg = document.getElementById('photoPreviewImg');
+        
+        if (!preview || !previewImg) return;
+        
+        // Hide upload area, show preview
+        if (uploadArea) uploadArea.style.display = 'none';
+        preview.style.display = 'block';
+        
+        // Read and display the file
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            previewImg.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    /**
+     * Handle photo upload submission
+     */
+    async handlePhotoUpload() {
+        if (!this.selectedPhotoFile) {
+            alert('Please select a photo to upload.');
+            return;
+        }
+        
+        const submitBtn = document.getElementById('submitPhotoUpload');
+        const uploadStatus = document.getElementById('uploadStatus');
+        
+        try {
+            // Disable button and show loading
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Uploading...';
+            }
+            if (uploadStatus) {
+                uploadStatus.textContent = 'Uploading photo...';
+                uploadStatus.style.display = 'block';
+            }
+            
+            // Create form data
+            const formData = new FormData();
+            formData.append('photo', this.selectedPhotoFile);
+            
+            // Call API endpoint
+            const response = await fetch(CONFIG.API_BASE_URL + CONFIG.ENDPOINTS.UPLOAD_PHOTO, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${api.getSessionToken()}`
+                },
+                body: formData
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                if (uploadStatus) {
+                    uploadStatus.textContent = 'Photo uploaded successfully!';
+                    uploadStatus.style.color = '#28a745';
+                }
+                
+                // Wait a moment then close modal and refresh
+                setTimeout(() => {
+                    this.closePhotoUploadModal();
+                    // Force reload the photo by adding cache buster
+                    const memberPhoto = document.getElementById('memberPhoto');
+                    if (memberPhoto && memberPhoto.src) {
+                        const url = new URL(memberPhoto.src);
+                        url.searchParams.set('t', Date.now());
+                        memberPhoto.src = url.toString();
+                    }
+                    this.fetchAndDisplayMemberStatus(); // Refresh to show new photo
+                }, 1500);
+            } else {
+                throw new Error(result.error || 'Upload failed');
+            }
+        } catch (error) {
+            console.error('[Member Portal] Photo upload failed:', error);
+            if (uploadStatus) {
+                uploadStatus.textContent = `Upload failed: ${error.message}`;
+                uploadStatus.style.color = '#dc3545';
+            }
+            
+            // Re-enable button
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Upload Photo';
+            }
+        }
     }
 }
 

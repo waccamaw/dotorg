@@ -58,13 +58,29 @@
             <!-- Welcome Section -->
             <div class="dashboard-header">
                 <div class="dashboard-title">
-                    <h2>Welcome, <span id="memberName">Member</span></h2>
-                    <div class="member-status-badge" id="statusBadge">
-                        <span class="status-indicator" id="statusIndicator"></span>
-                        <span class="status-text" id="statusText">Active</span>
+                    <div class="member-header-top">
+                        <div class="member-photo-container">
+                            <img id="memberPhoto" src="" alt="Member Photo" class="member-photo" style="display: none;">
+                            <div class="member-photo-placeholder" id="photoPlaceholder">
+                                <span>👤</span>
+                            </div>
+                            <button id="uploadPhotoBtn" class="upload-photo-btn" style="display: none;" title="Upload Photo">
+                                📷
+                            </button>
+                        </div>
+                        <div class="member-title-info">
+                            <h2>Welcome, <span id="memberName">Member</span></h2>
+                            <div class="member-status-badge" id="statusBadge">
+                                <span class="status-indicator" id="statusIndicator"></span>
+                                <span class="status-text" id="statusText">Active</span>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="member-metadata">
+                    <div class="member-metadata">
+                    <p class="member-info">
+                        <span class="info-label">Tribal ID:</span> 
+                        <span id="tribalId">-</span>
+                    </p>
                     <p class="member-info">
                         <span class="info-label">Member since:</span> 
                         <span id="memberSince">-</span>
@@ -180,6 +196,35 @@
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
         <div class="spinner"></div>
+    </div>
+
+    <!-- Photo Upload Modal -->
+    <div id="photoUploadModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Upload Member Photo</h3>
+                <button class="modal-close" id="closePhotoModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="photo-upload-area">
+                    <input type="file" id="photoFileInput" accept="image/*" style="display: none;">
+                    <div id="photoUploadArea" class="photo-drop-zone">
+                        <div class="upload-icon">📷</div>
+                        <p>Click to select or drag and drop your photo</p>
+                        <small>JPG, PNG or GIF (Max 5MB)</small>
+                    </div>
+                    <div id="photoPreview" class="photo-preview" style="display: none;">
+                        <img id="photoPreviewImg" src="" alt="Photo preview">
+                        <button id="changePhotoBtn" class="btn btn-secondary" onclick="document.getElementById('photoFileInput').click();">Choose Different Photo</button>
+                    </div>
+                </div>
+                <div class="upload-status" id="uploadStatus" style="display: none;"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="cancelPhotoUpload" class="btn btn-secondary">Cancel</button>
+                <button id="submitPhotoUpload" class="btn btn-primary" disabled>Upload Photo</button>
+            </div>
+        </div>
     </div>
 
     <!-- Debug View (Local Development Only) -->

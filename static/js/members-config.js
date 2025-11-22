@@ -24,7 +24,16 @@ const CONFIG = {
         REQUEST_UPDATE: '/api/request-update',
         VERIFY_TOKEN: '/api/verify/:token',
         UPDATE_MEMBER: '/api/update-member',
-        MEMBER_STATUS: '/api/member-status'
+        MEMBER_STATUS: '/api/member-status',
+        MEMBER_PHOTO: '/api/member-photo/:itemId',
+        UPLOAD_PHOTO: '/api/upload-photo'
+    },
+    
+    // Feature Flags
+    FEATURES: {
+        PHOTO_UPLOAD: true, // Toggle photo upload capability
+        PHOTO_MAX_SIZE: 5 * 1024 * 1024, // 5MB
+        PHOTO_ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/gif']
     },
     
     // Settings
