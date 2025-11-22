@@ -1024,8 +1024,14 @@ main {
 .meeting-info ul li,
 .e-content ol li,
 .e-content ul li {
-	margin-bottom: 0.5rem;
-	line-height: 1.6;
+	margin-bottom: 0.75rem;
+	line-height: 1.7;
+}
+
+/* Preserve indentation for nested list items (from scraped content) */
+.meeting-info p,
+.e-content p {
+	white-space: pre-wrap;
 }
 
 .meeting-info ol ol,
@@ -1038,6 +1044,28 @@ main {
 .e-content ul ol {
 	margin-top: 0.5rem;
 	margin-bottom: 0.5rem;
+}
+
+/* Style code blocks in meeting content to look like normal text */
+.meeting-info pre,
+.meeting-info code,
+.e-content pre,
+.e-content code {
+	background: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+	font-family: inherit;
+	font-size: inherit;
+	color: inherit;
+	white-space: pre-wrap;
+	word-wrap: break-word;
+}
+
+.meeting-info pre code,
+.e-content pre code {
+	display: block;
+	line-height: 1.7;
 }
 
 .meeting-title {

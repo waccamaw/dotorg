@@ -136,12 +136,59 @@ def clean_content_body(body):
     # Remove scraper artifacts: "-\n\nMichelle Hatcher\n- Sep 23\n- 31 min read"
     body = re.sub(r'-\s*\n\s*(?:Michelle|Doug)\s+Hatcher\s*\n-[^\n]+\n-\s*\d+\s*min\s*read\s*\n', '', body)
     
-    # Remove standalone hyphens and empty list items
+    # Remove standalone hyphens (empty list items)
     body = re.sub(r'^\s*-\s*$', '', body, flags=re.MULTILINE)
-    body = re.sub(r'^\s*\d+\.\s*$', '', body, flags=re.MULTILINE)
     
-    # Fix excessive numbered list nesting (just numbers with no content)
-    body = re.sub(r'(\n\s*\d+\.\s*\n)+', '\n\n', body)
+    # Fix list formatting: merge standalone list markers with their content
+    # Use 3-space indentation per level (markdown standard for nested ordered lists)
+    # Auto-detect nesting level based on number value
+    lines = body.split('\n')
+    cleaned_lines = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        # Check if this is a standalone list marker
+        list_match = re.match(r'^(\s*)([0-9]+|[a-z]|[A-Z]|[ivxIVX]+)\.\s*$', line)
+        if list_match and i + 1 < len(lines):
+            indent_spaces = len(list_match.group(1))
+            marker = list_match.group(2)
+            
+            # Determine nesting level intelligently:
+            # - If marker is a number > 10, treat as top-level (0 indent)
+            # - Otherwise use original indentation but cap at 3 levels
+            if marker.isdigit() and int(marker) > 10:
+                # High numbers are sequential top-level items
+                nest_level = 0
+            else:
+                # Low numbers, letters = actual nesting based on indentation
+                nest_level = indent_spaces // 2  # Original has 2-space increments
+                nest_level = min(nest_level, 3)  # Cap at 3 levels
+            
+            markdown_indent = '   ' * nest_level  # Markdown uses 3-space increments
+            
+            # Look ahead for content (skip max 2 blank lines)
+            j = i + 1
+            blanks_skipped = 0
+            while j < len(lines) and not lines[j].strip() and blanks_skipped < 2:
+                blanks_skipped += 1
+                j += 1
+            if j < len(lines) and lines[j].strip():
+                # Merge: add proper markdown indentation, marker, and content on same line
+                content = lines[j].strip()
+                cleaned_lines.append(f"{markdown_indent}{marker}. {content}")
+                i = j + 1
+                continue
+        cleaned_lines.append(line)
+        i += 1
+    
+    body = '\n'.join(cleaned_lines)
+    
+    # ONLY remove leading spaces from high-numbered items (10+) that should be top-level
+    # Don't touch properly indented sub-items (1-9 with indentation are legitimate nesting)
+    body = re.sub(r'^ {4,}([1-9]\d+\.)', r'\1', body, flags=re.MULTILINE)  # Only numbers >= 10
+    
+    # Clean up excessive blank lines
+    body = re.sub(r'\n{3,}', '\n\n', body)
     
     # Remove "Tags:" section at end (we're using proper categories now)
     body = re.sub(r'\n+Tags:\s*\n[\s\S]*$', '', body)
