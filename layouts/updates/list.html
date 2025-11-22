@@ -6,7 +6,25 @@
 </div>
 
 <div class="h-feed updates-feed">
-	{{ $pages := where .Site.RegularPages ".Params.categories" "intersect" (slice "updates") }}
+	{{/* Get all pages with 'updates' in their categories (handles both list and string formats) */}}
+	{{ $pages := slice }}
+	{{ range .Site.RegularPages }}
+		{{ $hasUpdates := false }}
+		{{ if .Params.categories }}
+			{{ if reflect.IsSlice .Params.categories }}
+				{{ if in .Params.categories "updates" }}
+					{{ $hasUpdates = true }}
+				{{ end }}
+			{{ else }}
+				{{ if in (string .Params.categories) "updates" }}
+					{{ $hasUpdates = true }}
+				{{ end }}
+			{{ end }}
+		{{ end }}
+		{{ if $hasUpdates }}
+			{{ $pages = $pages | append . }}
+		{{ end }}
+	{{ end }}
 	{{ $paginator := .Paginate $pages 15 }}
 	
 	{{ range $paginator.Pages }}
