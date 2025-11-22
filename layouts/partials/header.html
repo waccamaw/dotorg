@@ -1,8 +1,11 @@
 <header class="site-header">
 	<div class="header-container">
 		<div class="site-branding">
-			<a href="/" class="site-logo">
-				<img src="/logos/doug-2025/logo.svg" alt="{{ .Site.Title }}">
+			<a href="/" class="site-logo" id="siteLogo">
+				<!-- Logo image (toggled via JavaScript) -->
+				<img src="/logos/doug-2025/logo.svg" alt="{{ .Site.Title }}" id="logoImage" style="display: none;">
+				<!-- Text wordmark (default) -->
+				<span class="site-wordmark" id="logoText">Waccamaw.org</span>
 			</a>
 		</div>
 

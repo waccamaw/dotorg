@@ -11,6 +11,9 @@ class MemberPortalApp {
     async init() {
         console.log('Initializing Waccamaw Member Portal...');
         
+        // Apply logo toggle
+        this.applyLogoToggle();
+        
         // Check for token in URL (from email link)
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
@@ -28,6 +31,24 @@ class MemberPortalApp {
 
         // Setup event listeners
         this.setupEventListeners();
+    }
+
+    /**
+     * Apply logo toggle based on configuration
+     */
+    applyLogoToggle() {
+        const logoImage = document.getElementById('logoImage');
+        const logoText = document.getElementById('logoText');
+        
+        if (logoImage && logoText) {
+            if (CONFIG.FEATURES.SHOW_LOGO) {
+                logoImage.style.display = 'inline-block';
+                logoText.style.display = 'none';
+            } else {
+                logoImage.style.display = 'none';
+                logoText.style.display = 'inline-block';
+            }
+        }
     }
 
     /**

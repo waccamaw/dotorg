@@ -33,7 +33,8 @@ const CONFIG = {
     FEATURES: {
         PHOTO_UPLOAD: true, // Toggle photo upload capability
         PHOTO_MAX_SIZE: 5 * 1024 * 1024, // 5MB
-        PHOTO_ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/gif']
+        PHOTO_ALLOWED_TYPES: ['image/jpeg', 'image/png', 'image/gif'],
+        SHOW_LOGO: false // Toggle logo image (true) or text wordmark (false)
     },
     
     // Settings
