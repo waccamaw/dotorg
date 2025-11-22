@@ -51,21 +51,35 @@
 					<div class="year-meetings">
 			{{ end }}
 			
-			<article class="meeting-item h-entry">
-				<div class="meeting-header">
-					<h3 class="meeting-title p-name">
-						<a href="{{ .RelPermalink }}" class="u-url">{{ .Title }}</a>
+			<a href="{{ .RelPermalink }}" class="meeting-item" data-year="{{ $year }}">
+				<div class="meeting-calendar">
+					<div class="calendar-month">{{ .Date.Format "Jan" }}</div>
+					{{ if in .Title "Open Meeting" }}
+						<div class="calendar-label">Open<br>Meeting</div>
+					{{ else if in .Title "Executive" }}
+						<div class="calendar-label">Executive</div>
+					{{ else }}
+						<div class="calendar-label">Meeting</div>
+					{{ end }}
+				</div>
+				<div class="meeting-info">
+					<h3 class="meeting-title">
+						{{ .Title }}
 					</h3>
-					<time class="meeting-date dt-published" datetime="{{ .Date.Format "2006-01-02" }}">
-						{{ .Date.Format "January 2, 2006" }}
-					</time>
-				</div>
-				{{ if .Summary }}
-				<div class="meeting-summary p-summary">
-					{{ .Summary }}
-				</div>
+				{{ with .Params.author }}
+					{{ if reflect.IsMap . }}
+						{{ if .full_name }}
+							<span class="meeting-author">Posted by {{ .full_name }}</span>
+						{{ end }}
+					{{ else }}
+						<span class="meeting-author">Posted by {{ . }}</span>
+					{{ end }}
 				{{ end }}
-			</article>
+					{{ if .Summary }}
+						<p class="meeting-summary">{{ .Summary | truncate 150 }}</p>
+					{{ end }}
+				</div>
+			</a>
 			
 			{{ $currentYear = $year }}
 		{{ end }}

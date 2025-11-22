@@ -1,0 +1,40 @@
+{{ define "main" }}
+
+<article class="h-entry meeting-single">
+	<header class="post-header">
+		<h1 class="p-name post-title">{{ .Title }}</h1>
+		
+		<div class="post-meta">
+			<time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
+				{{ .Date.Format "January 2, 2006" }}
+			</time>
+			{{ with .Params.author }}
+				{{ if reflect.IsMap . }}
+					{{ if .full_name }}
+						by <span class="p-author h-card">{{ .full_name }}</span>
+					{{ end }}
+				{{ else }}
+					by <span class="p-author h-card">{{ . }}</span>
+				{{ end }}
+			{{ end }}
+		</div>
+	</header>
+
+	<div class="e-content post-content">
+		{{ .Content }}
+	</div>
+
+	<footer class="post-footer">
+		{{ with .Params.categories }}
+			<div class="post-categories">
+				{{ range . }}
+					<a href="{{ "/categories/" | relURL }}{{ . | urlize }}" class="category-badge">{{ . }}</a>
+				{{ end }}
+			</div>
+		{{ end }}
+		
+		<a href="{{ "/meetings/" | relURL }}" class="back-link">← Back to All Meetings</a>
+	</footer>
+</article>
+
+{{ end }}

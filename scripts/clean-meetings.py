@@ -76,8 +76,17 @@ def clean_front_matter(front_matter, actual_date, filename):
             value = line.split(':', 1)[1].strip() if ':' in line else ''
             fields[key] = value
     
-    # Extract meeting month/type from title
+    # Extract meeting month/type from title or generate from filename
     title = fields.get('title', '').strip('"')
+    
+    # If title is empty, generate from filename
+    if not title:
+        # Convert filename like "march-open-meeting-summary-michelle.md" to "March Open Meeting Summary"
+        title_base = filename.replace('.md', '').replace('-', ' ').title()
+        # Remove author names from title
+        title = re.sub(r'\b(Michelle|Doug|Hatcher)\b', '', title_base).strip()
+        # Clean up extra spaces
+        title = ' '.join(title.split())
     
     # Set correct author (Michelle Hatcher writes all meeting summaries)
     author_name = "Michelle Hatcher"
@@ -111,19 +120,33 @@ def clean_front_matter(front_matter, actual_date, filename):
 def clean_content_body(body):
     """Remove scraper artifacts and clean up content"""
     
-    # Remove the duplicate title at start
-    body = re.sub(r'^#\s+[^\n]+\n+', '', body, count=1)
+    # Strip leading whitespace FIRST
+    body = body.lstrip()
+    
+    # Remove ALL markdown headers at the start (# Title lines)
+    # This handles the duplicate title that appears in the body
+    while body.startswith('#'):
+        # Find the end of this header line
+        first_newline = body.find('\n')
+        if first_newline != -1:
+            body = body[first_newline+1:].lstrip()
+        else:
+            break
     
     # Remove scraper artifacts: "-\n\nMichelle Hatcher\n- Sep 23\n- 31 min read"
-    body = re.sub(r'-\s*\n\s*Michelle Hatcher\s*\n-[^\n]+\n-\s*\d+\s*min\s*read\s*\n', '', body)
+    body = re.sub(r'-\s*\n\s*(?:Michelle|Doug)\s+Hatcher\s*\n-[^\n]+\n-\s*\d+\s*min\s*read\s*\n', '', body)
     
-    # Remove standalone hyphens
+    # Remove standalone hyphens and empty list items
     body = re.sub(r'^\s*-\s*$', '', body, flags=re.MULTILINE)
+    body = re.sub(r'^\s*\d+\.\s*$', '', body, flags=re.MULTILINE)
+    
+    # Fix excessive numbered list nesting (just numbers with no content)
+    body = re.sub(r'(\n\s*\d+\.\s*\n)+', '\n\n', body)
     
     # Remove "Tags:" section at end (we're using proper categories now)
     body = re.sub(r'\n+Tags:\s*\n[\s\S]*$', '', body)
     
-    # Clean up excessive whitespace
+    # Clean up excessive whitespace but preserve paragraph breaks
     body = re.sub(r'\n{3,}', '\n\n', body)
     
     return body.strip()

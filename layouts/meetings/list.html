@@ -62,15 +62,20 @@
 				{{ $currentYear = $year }}
 			{{ end }}
 			
-			<article class="meeting-item" data-year="{{ $year }}">
-				<div class="meeting-date">
-					<time datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
-						{{ .Date.Format "Jan 2" }}
-					</time>
+			<a href="{{ .Permalink }}" class="meeting-item" data-year="{{ $year }}">
+				<div class="meeting-calendar">
+					<div class="calendar-month">{{ .Date.Format "Jan" }}</div>
+					{{ if in .Title "Open Meeting" }}
+						<div class="calendar-label">Open<br>Meeting</div>
+					{{ else if in .Title "Executive" }}
+						<div class="calendar-label">Executive</div>
+					{{ else }}
+						<div class="calendar-label">Meeting</div>
+					{{ end }}
 				</div>
 				<div class="meeting-info">
 					<h3 class="meeting-title">
-						<a href="{{ .Permalink }}">{{ .Title }}</a>
+						{{ .Title }}
 					</h3>
 				{{ with .Params.author }}
 					{{ if reflect.IsMap . }}
@@ -85,7 +90,7 @@
 						<p class="meeting-summary">{{ .Summary | truncate 150 }}</p>
 					{{ end }}
 				</div>
-			</article>
+			</a>
 		{{ end }}
 		
 		{{ if ne $currentYear "" }}
