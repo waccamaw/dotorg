@@ -1,6 +1,6 @@
 {
 	"name": "Waccamaw.org",
-	"image": "mcr.microsoft.com/devcontainers/base:noble",
+	"image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
 	"features": {
 		"ghcr.io/devcontainers/features/hugo:1": {
 			"version": "0.91.2"
@@ -18,10 +18,12 @@
 		},
 		"ghcr.io/guiyomh/features/just:0": {},
 		"ghcr.io/devcontainers/features/github-cli:1": {},
-		"ghcr.io/devcontainers-extra/features/actions-runner:1": {}
+		// "ghcr.io/devcontainers-extra/features/actions-runner:1": {},
+		"ghcr.io/christophermacgown/devcontainer-features/direnv:1": {}
+
 
 	},
-	"postCreateCommand": "just install",
-	"postAttachCommand": "just serve",
-	"forwardPorts": [1313]
+	"postCreateCommand": "just install && cd apps/member-services && just deps",
+	"postAttachCommand": "just serve & (cd apps/member-services && just dev-bg) && wait",
+	"forwardPorts": [1313, 8787]
 }
