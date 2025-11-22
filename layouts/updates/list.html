@@ -6,22 +6,9 @@
 </div>
 
 <div class="h-feed updates-feed">
-	{{/* Get all pages from the updates section or with 'updates' category */}}
-	{{ $pages := slice }}
-	{{ range .Site.RegularPages }}
-		{{ $include := false }}
-		{{ if eq .Section "updates" }}
-			{{ $include = true }}
-		{{ else if .Params.categories }}
-			{{ $catStr := printf "%v" .Params.categories }}
-			{{ if in $catStr "updates" }}
-				{{ $include = true }}
-			{{ end }}
-		{{ end }}
-		{{ if $include }}
-			{{ $pages = $pages | append . }}
-		{{ end }}
-	{{ end }}
+	{{/* Get all pages from the updates section */}}
+	{{- $pages := where .Site.RegularPages "Section" "updates" -}}
+	{{- $pages = sort $pages ".Date" "desc" -}}
 	{{ $paginator := .Paginate $pages 15 }}
 	
 	{{ range $paginator.Pages }}
@@ -42,12 +29,8 @@
 					{{ end }}
 				{{ if .Params.categories }}
 					<span class="post-categories">
-						{{ $catStr := printf "%v" .Params.categories }}
-						{{ $cats := split $catStr ", " }}
-						{{ range $cats }}
-							{{ $cat := trim . "[]" }}
-							{{ $cat = trim $cat " " }}
-							<span class="category-badge">{{ $cat }}</span>
+						{{ range .Params.categories }}
+							<span class="category-badge">{{ . }}</span>
 						{{ end }}
 					</span>
 				{{ end }}
