@@ -11,8 +11,12 @@
 				{{ .Date.Format "January 2, 2006" }}
 			</time>
 			{{ with .Params.author }}
-				{{ if .full_name }}
-					by <span class="p-author h-card">{{ .full_name }}</span>
+				{{ if reflect.IsMap . }}
+					{{ if .full_name }}
+						by <span class="p-author h-card">{{ .full_name }}</span>
+					{{ end }}
+				{{ else }}
+					by <span class="p-author h-card">{{ . }}</span>
 				{{ end }}
 			{{ end }}
 		</div>

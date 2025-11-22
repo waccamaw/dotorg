@@ -78,8 +78,12 @@
 							</div>
 						{{ end }}
 						{{ with .Params.author }}
-							{{ if .full_name }}
-								<span class="post-author">by {{ .full_name }}</span>
+							{{ if reflect.IsMap . }}
+								{{ if .full_name }}
+									<span class="post-author">by {{ .full_name }}</span>
+								{{ end }}
+							{{ else }}
+								<span class="post-author">by {{ . }}</span>
 							{{ end }}
 						{{ end }}
 					</div>
@@ -112,8 +116,12 @@
 								</div>
 							{{ end }}
 							{{ with .Params.author }}
-								{{ if .full_name }}
-									<span class="post-author">by {{ .full_name }}</span>
+								{{ if reflect.IsMap . }}
+									{{ if .full_name }}
+										<span class="post-author">by {{ .full_name }}</span>
+									{{ end }}
+								{{ else }}
+									<span class="post-author">by {{ . }}</span>
 								{{ end }}
 							{{ end }}
 						</div>

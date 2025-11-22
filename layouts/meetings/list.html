@@ -62,11 +62,15 @@
 					<h3 class="meeting-title">
 						<a href="{{ .Permalink }}">{{ .Title }}</a>
 					</h3>
-					{{ with .Params.author }}
+				{{ with .Params.author }}
+					{{ if reflect.IsMap . }}
 						{{ if .full_name }}
 							<span class="meeting-author">Posted by {{ .full_name }}</span>
 						{{ end }}
+					{{ else }}
+						<span class="meeting-author">Posted by {{ . }}</span>
 					{{ end }}
+				{{ end }}
 					{{ if .Summary }}
 						<p class="meeting-summary">{{ .Summary | truncate 150 }}</p>
 					{{ end }}
