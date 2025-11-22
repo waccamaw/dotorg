@@ -198,16 +198,17 @@ gap: 1.5rem;
 background: #fff5eb;
 border: 1px solid #e0e0e0;
 border-radius: 12px;
-padding: 2rem;
+padding: 1.25rem 1.5rem;
 text-align: center;
 text-decoration: none;
 color: #2a2a2a;
 transition: all 0.3s ease;
 display: flex;
 flex-direction: column;
-gap: 0.5rem;
+gap: 0.4rem;
 align-items: center;
 cursor: pointer;
+min-height: 100px;
 }
 
 .action-card:hover {
@@ -233,7 +234,7 @@ box-shadow: none;
 }
 
 .action-icon {
-font-size: 2rem;
+font-size: 1.75rem;
 line-height: 1;
 }
 
@@ -243,14 +244,14 @@ opacity: 0.5;
 
 .action-title {
 font-weight: 500;
-font-size: 0.9rem;
+font-size: 0.875rem;
 }
 
 .action-subtitle {
-font-size: 0.75rem;
+font-size: 0.7rem;
 color: #9e9e9e;
 font-style: italic;
-margin-top: 0.25rem;
+margin-top: 0.15rem;
 }
 
 /* Auth Screens */
@@ -465,6 +466,23 @@ animation: spin 0.8s linear infinite;
 
 @keyframes spin {
 to { transform: rotate(360deg); }
+}
+
+/* Date Warning Styles */
+.date-warning {
+    background-color: #fff9c4; /* Light yellow */
+    color: #f57c00; /* Dark orange text */
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+}
+
+.date-expired {
+    background-color: #ffccbc; /* Light salmon */
+    color: #d32f2f; /* Dark red text */
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
 }
 
 /* Debug Section (Local Development Only) */

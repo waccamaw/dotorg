@@ -266,8 +266,8 @@ class MemberPortalApp {
             console.log('[Member Portal] Status response:', statusResponse);
             
             if (statusResponse.success && statusResponse.status) {
-                const { active, statusText, memberSince, lastActive, position, voter, expires, tribalId } = statusResponse.status;
-                console.log('[Member Portal] Status data:', { active, statusText, memberSince, lastActive, position, voter, expires, tribalId });
+                const { active, statusText, memberSince, lastActive, position, voter, expires, tribalId, warningThresholdDays } = statusResponse.status;
+                console.log('[Member Portal] Status data:', { active, statusText, memberSince, lastActive, position, voter, expires, tribalId, warningThresholdDays });
                 
                 // Update status badge
                 const statusBadge = document.getElementById('statusBadge');
@@ -297,10 +297,11 @@ class MemberPortalApp {
                     console.log('[Member Portal] Updated member since:', memberSince);
                 }
                 
-                // Update last active date
+                // Update last active date with color coding
                 const lastActiveElement = document.getElementById('lastActive');
                 if (lastActiveElement) {
                     lastActiveElement.textContent = lastActive ? this.formatDate(lastActive) : '-';
+                    this.applyDateWarning(lastActiveElement.parentElement, lastActive, warningThresholdDays);
                     console.log('[Member Portal] Updated last active:', lastActive);
                 }
                 
@@ -318,10 +319,11 @@ class MemberPortalApp {
                     console.log('[Member Portal] Updated voter status:', voter);
                 }
                 
-                // Update expires date
+                // Update expires date with color coding
                 const memberExpiresElement = document.getElementById('memberExpires');
                 if (memberExpiresElement) {
                     memberExpiresElement.textContent = expires ? this.formatDate(expires) : '-';
+                    this.applyDateWarning(memberExpiresElement.parentElement, expires, warningThresholdDays);
                     console.log('[Member Portal] Updated expires:', expires);
                 }
                 
@@ -510,6 +512,40 @@ class MemberPortalApp {
         const date = new Date(dateString);
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         return date.toLocaleDateString('en-US', options);
+    }
+
+    /**
+     * Apply date-based warning classes to a field
+     * @param {HTMLElement} element - The parent element containing the date field
+     * @param {string} dateString - The date string to evaluate
+     * @param {number} warningThresholdDays - Days before expiry to show warning
+     */
+    applyDateWarning(element, dateString, warningThresholdDays = 90) {
+        if (!element || !dateString) return;
+
+        // Remove existing warning classes
+        element.classList.remove('date-warning', 'date-expired');
+
+        try {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = date - now;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            console.log('[Member Portal] Date comparison:', { dateString, diffDays, warningThresholdDays });
+
+            if (diffDays < 0) {
+                // Date is in the past - salmon/red
+                element.classList.add('date-expired');
+                console.log('[Member Portal] Applied date-expired class (past date)');
+            } else if (diffDays <= warningThresholdDays) {
+                // Date is approaching - yellow warning
+                element.classList.add('date-warning');
+                console.log('[Member Portal] Applied date-warning class (approaching)');
+            }
+        } catch (error) {
+            console.error('[Member Portal] Error applying date warning:', error);
+        }
     }
 
     /**
