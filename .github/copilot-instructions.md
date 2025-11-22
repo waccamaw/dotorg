@@ -104,6 +104,7 @@ dotorg/
 - Use proper front matter with title, date, categories
 - Date format: ISO 8601 (e.g., `2025-11-18T10:30:00-05:00`)
 - Use descriptive filenames (lowercase, hyphens)
+- **CRITICAL**: Never create both `content/section.md` AND `content/section/_index.md` - see `.github/MICROBLOG_QUIRKS.md`
 
 ### CSS Styles
 - Main styles in `static/theme.css`
@@ -416,6 +417,16 @@ hugo --verbose
 2. Check Micro.blog dashboard for sync status
 3. Manually trigger sync in Micro.blog settings
 4. Verify `main` branch has latest commits
+
+### Micro.blog Platform Quirks
+
+Micro.blog has specific behaviors that differ from local Hugo builds. **See `.github/MICROBLOG_QUIRKS.md`** for detailed documentation.
+
+**Critical Issues:**
+- **Never create both** `content/section.md` and `content/section/_index.md` - causes 404s on Micro.blog
+- Use `_index.md` for sections with multiple posts
+- Use single `.md` files only for standalone pages
+- Test locally with `hugo` build before pushing
 
 ## Best Practices
 
