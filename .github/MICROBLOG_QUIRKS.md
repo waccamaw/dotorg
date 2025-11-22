@@ -14,17 +14,23 @@ A section page that works locally at `http://localhost:1313/updates/` returns 40
 
 ### Root Cause
 
-**Conflicting content files** - Having both a single-page file AND a directory with `_index.md` for the same URL path:
+**Missing tracked files in git due to `.gitignore`** - The `content/` directory is in `.gitignore`, which means most content files are NOT tracked by git. Micro.blog syncs from GitHub, so it only gets the files that are explicitly tracked (added with `git add -f`).
+
+For a section to work on Micro.blog, you need **BOTH** files tracked in git:
 
 ```
 content/
-├── updates.md          # ❌ Single page file
-└── updates/            # ❌ Directory with same name
-    ├── _index.md       # ❌ Section index file
-    └── post-1.md
+├── section.md          # ✅ Must be tracked in git (git add -f)
+└── section/            
+    ├── _index.md       # ✅ Must be tracked in git (git add -f)
+    └── post-1.md       # Can be untracked (managed by Micro.blog)
 ```
 
-This creates ambiguity about which file should render at `/updates/`. Hugo may handle this gracefully locally, but **Micro.blog's build process rejects this structure** and returns 404.
+**Why this matters:**
+- Local Hugo builds use ALL files in `content/` (even untracked ones)
+- Micro.blog only gets files tracked in git
+- If either `.md` or `_index.md` is missing from git, the section 404s on Micro.blog
+- But it works locally because the files exist on disk
 
 ### Symptoms
 
@@ -35,106 +41,126 @@ This creates ambiguity about which file should render at `/updates/`. Hugo may h
 
 ### Solution
 
-**Choose ONE structure per URL path:**
+**Ensure BOTH section files are tracked in git** (even though `content/` is in `.gitignore`):
 
-#### Option 1: Section with Multiple Posts (Recommended)
+```bash
+# For a section with posts:
+git add -f content/section.md
+git add -f content/section/_index.md
+git commit -m "Add section files for Micro.blog"
+git push
+```
 
-Use `_index.md` inside a directory:
+**The pattern that works:**
 
 ```
 content/
+├── meetings.md         # ✅ Tracked in git (defines section)
+├── meetings/           
+│   └── [posts]         # Untracked (managed by Micro.blog)
+├── updates.md          # ✅ Tracked in git (defines section)  
 └── updates/
-    ├── _index.md       # ✅ Section index page
-    ├── post-1.md       # Individual posts
-    └── post-2.md
+    ├── _index.md       # ✅ Tracked in git (section index page)
+    └── [posts]         # Untracked (managed by Micro.blog)
 ```
-
-#### Option 2: Single Standalone Page
-
-Use a single `.md` file (no directory):
-
-```
-content/
-└── about.md            # ✅ Single page at /about/
-```
-
-**NEVER mix both approaches for the same URL path.**
 
 ### How to Fix Existing Issues
 
-1. **Identify conflicting files:**
+1. **Check what content files are tracked in git:**
    ```bash
-   cd content/
-   # Find directories
-   find . -type d -maxdepth 1 | sed 's|^\./||' | sort > /tmp/dirs.txt
-   # Find .md files
-   find . -maxdepth 1 -name "*.md" | sed 's|^\./||' | sed 's|\.md$||' | sort > /tmp/files.txt
-   # Find conflicts
-   comm -12 /tmp/dirs.txt /tmp/files.txt
+   git ls-files content/
    ```
 
-2. **Choose the right structure:**
-   - If the section has multiple posts → Keep the directory + `_index.md`, delete the `.md` file
-   - If it's a single page with no subsections → Keep the `.md` file, delete the directory
-
-3. **Remove the conflicting file:**
+2. **For sections that 404 on Micro.blog but work locally:**
    ```bash
-   # If keeping directory structure:
-   git rm content/section-name.md
+   # Check if BOTH files exist locally
+   ls -la content/section.md
+   ls -la content/section/_index.md
    
-   # If keeping single page:
-   git rm -r content/section-name/
-   ```
-
-4. **Update `_index.md` if necessary:**
-   - Ensure front matter includes: `title`, `date`, `menu` (if in navigation)
-   - Copy content from the deleted file if needed
-
-5. **Test locally:**
-   ```bash
-   hugo --quiet
-   ls -la public/section-name/index.html  # Should exist
-   ```
-
-6. **Commit and push:**
-   ```bash
-   git add .
-   git commit -m "Fix conflicting content structure for /section-name/"
+   # Add both to git (force because content/ is ignored)
+   git add -f content/section.md
+   git add -f content/section/_index.md
+   
+   # Commit and push
+   git commit -m "Add section files for Micro.blog sync"
    git push
    ```
 
-7. **Verify on Micro.blog:**
-   - Wait for auto-deploy (usually 1-2 minutes)
-   - Check `https://waccamaw.micro.blog/section-name/`
-   - Should no longer 404
+3. **Wait for Micro.blog to rebuild** (usually 1-2 minutes after push)
+
+4. **Test the URL:** `https://waccamaw.micro.blog/section/`
 
 ### Prevention
 
-**Before creating new content:**
+**Critical understanding: `content/` is in `.gitignore`**
 
-1. **Check if the URL path exists:**
+Most content is managed directly on Micro.blog and NOT synced via GitHub. Only structural files need to be tracked in git.
+
+**Before creating a new section:**
+
+1. **Create the section files:**
    ```bash
-   ls -la content/my-new-section*
+   # Create the section definition file
+   cat > content/newsection.md << 'EOF'
+   ---
+   title: "New Section"
+   date: 2025-11-22T12:00:00-05:00
+   menu: "main"
+   layout: "newsection"
+   ---
+   
+   Description of the section.
+   EOF
+   
+   # Create the section index
+   mkdir -p content/newsection
+   cat > content/newsection/_index.md << 'EOF'
+   ---
+   title: "New Section"
+   date: 2025-11-22T12:00:00-05:00
+   ---
+   
+   Section description.
+   EOF
    ```
 
-2. **Choose the right structure FIRST:**
-   - Multiple posts/pages in a section? → Create directory with `_index.md`
-   - Single standalone page? → Create single `.md` file
+2. **Force-add both files to git:**
+   ```bash
+   git add -f content/newsection.md
+   git add -f content/newsection/_index.md
+   ```
 
-3. **Never create both** a file and directory with the same name
+3. **Commit and push:**
+   ```bash
+   git commit -m "Add new section structure"
+   git push
+   ```
 
-4. **Use consistent patterns:**
-   - **Sections with posts**: `content/section-name/_index.md` + post files
-   - **Standalone pages**: `content/page-name.md`
-   - **Homepage**: `layouts/index.html` (special case)
+4. **Verify locally AND on Micro.blog:**
+   - Local: `http://localhost:1313/newsection/`
+   - Production: `https://waccamaw.micro.blog/newsection/`
+
+**What to track vs. what to ignore:**
+
+✅ **Track in git** (git add -f):
+- `content/section.md` - Section definition files
+- `content/section/_index.md` - Section index pages
+- Any standalone pages needed for site structure
+
+❌ **Don't track** (let Micro.blog manage):
+- Individual blog posts in date folders
+- Meeting notes
+- Photo posts
+- Any content created through Micro.blog web interface
 
 ### Hugo Best Practices for Micro.blog
 
-1. **Section Indexes**: Always use `_index.md` for section list pages
-2. **Single Pages**: Use standalone `.md` files only for pages without subsections
-3. **URL Conflicts**: Never reuse the same URL path for different content types
-4. **Menu Integration**: Add `menu: "main"` to front matter for navigation
-5. **Testing**: Always rebuild locally with `hugo` before pushing to catch issues
+1. **Section Structure**: Sections need BOTH `.md` and `_index.md` files tracked in git
+2. **Gitignore Awareness**: Remember `content/` is ignored - use `git add -f` for structural files
+3. **Local vs Production**: Local Hugo sees all files; Micro.blog only sees tracked files
+4. **Testing**: Always test on Micro.blog after pushing structural changes
+5. **Content Management**: Let Micro.blog manage individual posts (don't track them in git)
+6. **Verify Tracking**: Use `git ls-files content/` to see what Micro.blog will receive
 
 ### Related Files
 
@@ -144,29 +170,44 @@ content/
 
 ### Examples in This Repository
 
-✅ **Correct Structures:**
+✅ **Correct Structure (Working):**
 
 ```
 content/
-├── about.md              # Single page (no subsections)
-├── meetings/             # Section with many posts
-│   ├── [_index.md would go here if needed]
-│   ├── 2024-01-12-meeting.md
-│   └── 2024-02-09-meeting.md
-└── updates/              # Section with posts
-    ├── _index.md         # ✅ Section index
-    └── 2025-10-05-announcement.md
+├── meetings.md           # ✅ Tracked in git
+├── meetings/             # Directory exists
+│   ├── [150+ posts]     # ❌ NOT tracked (managed by Micro.blog)
+│   └── [No _index.md]   # Not needed for this section
+│
+├── updates.md            # ✅ Tracked in git  
+└── updates/              # Directory exists
+    ├── _index.md         # ✅ Tracked in git
+    └── [posts]           # ❌ NOT tracked (managed by Micro.blog)
 ```
 
-❌ **Incorrect Structure (FIXED):**
+**Key insight:** Both `meetings.md` and `updates.md` are tracked in git. The `updates/_index.md` is also tracked. Individual posts are NOT tracked.
+
+**Git tracking status:**
+```bash
+$ git ls-files content/
+content/meetings.md
+content/members.md
+content/style-guide.md
+content/updates.md
+content/updates/_index.md
+```
+
+❌ **What Was Broken:**
 
 ```
+# Before fix - updates.md was deleted
 content/
-├── updates.md            # ❌ REMOVED - conflicted with directory
-└── updates/              # ✅ KEPT - proper section structure
-    ├── _index.md
-    └── posts...
+├── updates/
+│   └── _index.md        # ✅ Tracked in git
+└── [no updates.md]      # ❌ MISSING - caused 404 on Micro.blog
 ```
+
+**Result:** Worked locally (file exists on disk) but 404 on Micro.blog (file not in git)
 
 ### When to Update This Document
 
