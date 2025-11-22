@@ -6,7 +6,7 @@
 </div>
 
 <div class="h-feed updates-feed">
-	{{ $pages := where .Site.RegularPages "Section" "updates" }}
+	{{ $pages := where .Site.RegularPages ".Params.categories" "intersect" (slice "updates") }}
 	{{ $paginator := .Paginate $pages 15 }}
 	
 	{{ range $paginator.Pages }}

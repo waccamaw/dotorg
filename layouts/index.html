@@ -37,7 +37,7 @@
 <div class="h-feed home-feed">
 	<h2>Recent Updates</h2>
 	
-	{{ $updates := where .Site.RegularPages "Section" "updates" }}
+	{{ $updates := where .Site.RegularPages ".Params.categories" "intersect" (slice "updates") }}
 	{{ $recentUpdates := first 5 $updates }}
 	
 	{{ range $recentUpdates }}

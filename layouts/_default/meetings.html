@@ -10,16 +10,7 @@
 		{{ end }}
 	</header>
 
-	{{- $allPages := .Site.RegularPages -}}
-	{{- $meetings := slice -}}
-	{{- range $allPages -}}
-		{{- $titleLower := lower .Title -}}
-		{{- $urlPath := .RelPermalink -}}
-		{{- $fileName := path.Base .File.Path -}}
-		{{- if and (or (in $titleLower "meeting") (in $titleLower "executive") (in $fileName "meeting")) (ne $urlPath "/meetings/") (gt .Date.Year 2000) -}}
-			{{- $meetings = $meetings | append . -}}
-		{{- end -}}
-	{{- end -}}
+	{{- $meetings := where .Site.RegularPages ".Params.categories" "intersect" (slice "meetings") -}}
 	{{- $meetings = sort $meetings ".Date" "desc" -}}
 	
 	<!-- Year Filter Timeline -->
