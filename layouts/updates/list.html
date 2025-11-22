@@ -25,13 +25,21 @@
 					{{ with .Params.author }}
 						by <span class="p-author h-card">{{ . }}</span>
 					{{ end }}
-					{{ if .Params.categories }}
-						<span class="post-categories">
+				{{ if .Params.categories }}
+					<span class="post-categories">
+						{{ if reflect.IsSlice .Params.categories }}
 							{{ range .Params.categories }}
 								<span class="category-badge">{{ . }}</span>
 							{{ end }}
-						</span>
-					{{ end }}
+						{{ else }}
+							{{/* Handle comma-separated string */}}
+							{{ $cats := split (string .Params.categories) ", " }}
+							{{ range $cats }}
+								<span class="category-badge">{{ . }}</span>
+							{{ end }}
+						{{ end }}
+					</span>
+				{{ end }}
 				</div>
 			</header>
 

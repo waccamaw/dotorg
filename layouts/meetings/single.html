@@ -27,8 +27,16 @@
 	<footer class="post-footer">
 		{{ with .Params.categories }}
 			<div class="post-categories">
-				{{ range . }}
-					<a href="{{ "/categories/" | relURL }}{{ . | urlize }}" class="category-badge">{{ . }}</a>
+				{{ if reflect.IsSlice . }}
+					{{ range . }}
+						<a href="{{ "/categories/" | relURL }}{{ . | urlize }}" class="category-badge">{{ . }}</a>
+					{{ end }}
+				{{ else }}
+					{{/* Handle comma-separated string */}}
+					{{ $cats := split (string .) ", " }}
+					{{ range $cats }}
+						<a href="{{ "/categories/" | relURL }}{{ . | urlize }}" class="category-badge">{{ . }}</a>
+					{{ end }}
 				{{ end }}
 			</div>
 		{{ end }}
