@@ -1,8 +1,10 @@
 {{ define "main" }}
 
 {{ $allPosts := where .Site.RegularPages "Type" "post" }}
+{{ $paginator := .Paginate $allPosts 10 }}
 
-<!-- Featured Hero Carousel -->
+<!-- Featured Hero Carousel (only on page 1) -->
+{{ if eq $paginator.PageNumber 1 }}
 {{ $featured := where .Site.RegularPages ".Params.categories" "intersect" (slice "featured") }}
 {{ if $featured }}
 	<div class="hero-carousel">
@@ -71,14 +73,13 @@
 	</div>
 </div>
 {{ end }}
+{{ end }}
 
 <!-- Recent Posts Feed -->
 <div class="h-feed home-feed">
 	<h2>Latest Updates</h2>
 	
-	{{ $recentPosts := first 5 $allPosts }}
-	
-	{{ range $recentPosts }}
+	{{ range $paginator.Pages }}
 		<article class="h-entry post-preview">
 			<header class="post-header">
 				{{ if .Title }}
@@ -134,6 +135,27 @@
 				<a href="{{ .Permalink }}" class="u-url read-more">Read more →</a>
 			</div>
 		</article>
+	{{ end }}
+	
+	<!-- Pagination Controls -->
+	{{ if or $paginator.HasPrev $paginator.HasNext }}
+	<nav class="pagination">
+		{{ if $paginator.HasPrev }}
+			<a href="{{ $paginator.Prev.URL }}" class="pagination-prev">← Newer posts</a>
+		{{ else }}
+			<span class="pagination-prev disabled">← Newer posts</span>
+		{{ end }}
+		
+		<span class="pagination-info">
+			Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}
+		</span>
+		
+		{{ if $paginator.HasNext }}
+			<a href="{{ $paginator.Next.URL }}" class="pagination-next">Older posts →</a>
+		{{ else }}
+			<span class="pagination-next disabled">Older posts →</span>
+		{{ end }}
+	</nav>
 	{{ end }}
 </div>
 
