@@ -2325,3 +2325,233 @@ font-size: 0.85rem;
 font-size: 2rem;
 }
 }
+
+/* Learn Page Styles */
+.learn-page {
+max-width: var(--max-width);
+margin: 0 auto;
+padding: 2rem 1.5rem;
+}
+
+.learn-page .page-header {
+text-align: center;
+margin-bottom: 3rem;
+}
+
+.learn-page .page-header h1 {
+font-size: 2.5rem;
+color: var(--text-color);
+margin-bottom: 1rem;
+}
+
+.learn-page .page-description {
+font-size: 1.1rem;
+color: var(--text-light);
+max-width: 600px;
+margin: 0 auto;
+}
+
+.learn-content {
+display: flex;
+flex-direction: column;
+gap: 4rem;
+}
+
+.learn-content section {
+padding-bottom: 2rem;
+border-bottom: 1px solid var(--border-color);
+}
+
+.learn-content section:last-child {
+border-bottom: none;
+}
+
+.learn-content h2 {
+font-size: 1.8rem;
+color: var(--text-color);
+margin-bottom: 1.5rem;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.learn-content h3 {
+font-size: 1.2rem;
+color: var(--text-color);
+margin-bottom: 0.5rem;
+}
+
+.learn-content p {
+font-size: 1rem;
+line-height: 1.8;
+color: var(--text-color);
+margin-bottom: 1rem;
+}
+
+/* Governing Body Grid */
+.governing-body-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+gap: 2rem;
+margin: 2rem 0;
+}
+
+.governing-body-card {
+background: var(--bg-white);
+border: 1px solid var(--border-color);
+border-radius: 8px;
+overflow: hidden;
+transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.governing-body-card:hover {
+transform: translateY(-4px);
+box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.governing-body-card img {
+width: 100%;
+height: 300px;
+object-fit: cover;
+display: block;
+}
+
+.governing-body-card .card-content {
+padding: 1.5rem;
+}
+
+.governing-body-card h3 {
+font-size: 1.25rem;
+color: var(--text-color);
+margin-bottom: 0.5rem;
+}
+
+.governing-body-card .title {
+font-size: 0.95rem;
+color: var(--text-light);
+margin: 0;
+}
+
+.governing-body-card .member-name {
+font-size: 1rem;
+color: var(--text-color);
+margin: 0.5rem 0 0 0;
+}
+
+/* Featured Chief */
+.chief-section {
+margin: 2rem 0;
+display: flex;
+justify-content: center;
+}
+
+.featured-chief {
+max-width: 400px;
+width: 100%;
+}
+
+.featured-chief img {
+height: 400px;
+}
+
+/* Council Sections */
+.second-chiefs-section,
+.retired-chiefs-section,
+.acting-chiefs-section,
+.chief-of-council-section {
+margin: 2rem 0;
+}
+
+.chief-of-council-section .governing-body-card {
+max-width: 350px;
+margin: 0 auto;
+}
+
+/* Lists for non-photo sections */
+.elders-list,
+.judicial-list,
+.administrative-list {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+gap: 1.5rem;
+margin: 1.5rem 0;
+}
+
+.elder-item,
+.judicial-item,
+.administrative-item {
+background: var(--bg-white);
+border: 1px solid var(--border-color);
+border-radius: 8px;
+padding: 1.5rem;
+}
+
+.elder-item h3,
+.judicial-item h3,
+.administrative-item h3 {
+font-size: 1.1rem;
+color: var(--text-color);
+margin-bottom: 0.25rem;
+}
+
+.elder-item .title,
+.judicial-item .title,
+.administrative-item .title {
+font-size: 0.9rem;
+color: var(--text-light);
+margin: 0;
+}
+
+/* External Resource */
+.external-resource {
+background: var(--bg-secondary);
+border-left: 4px solid var(--primary-color);
+padding: 1.5rem;
+margin: 2rem 0;
+border-radius: 4px;
+}
+
+.external-resource h3 {
+margin-top: 0;
+}
+
+.external-resource a {
+color: var(--primary-color);
+font-weight: 600;
+}
+
+/* Attribution Section */
+.attribution-section {
+text-align: center;
+}
+
+.attribution-content {
+max-width: 500px;
+margin: 0 auto;
+}
+
+/* Responsive Design for Learn Page */
+@media (max-width: 768px) {
+.learn-page .page-header h1 {
+font-size: 2rem;
+}
+
+.governing-body-grid {
+grid-template-columns: 1fr;
+gap: 1.5rem;
+}
+
+.elders-list,
+.judicial-list,
+.administrative-list {
+grid-template-columns: 1fr;
+}
+
+.featured-chief img {
+height: 350px;
+}
+
+.governing-body-card img {
+height: 250px;
+}
+}
+

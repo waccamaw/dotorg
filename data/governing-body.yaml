@@ -1,0 +1,83 @@
+# Waccamaw Indian People - Governing Body Structure
+# This file contains the organizational structure of the tribal government
+
+chief:
+  name: "Chief Hatcher"
+  title: "Leader of the Waccamaw"
+  image: "/governing-body/chief-hatcher.jpg"
+
+second_chiefs:
+  - name: "Alan Faver"
+    title: "2nd Chief External"
+    image: "/governing-body/2nd-chief-external-alan-faver.png"
+  - name: "John Turner"
+    title: "2nd Chief External"
+    image: "/governing-body/2nd-chief-external-john-turner.png"
+
+retired_chiefs:
+  - name: "2nd Chief Internal Retired"
+    title: "2nd Chief Internal Retired"
+    image: "/governing-body/2nd-chief-internal-retired.jpg"
+
+acting_chiefs:
+  - name: "Susan"
+    title: "Acting Chief"
+    image: "/governing-body/acting-chief-susan.avif"
+
+council:
+  chief_of_council:
+    name: "Chris Hatcher"
+    title: "Chief of Council"
+    image: "/governing-body/chief-of-council-chris-hatcher.jpg"
+  
+  seats:
+    - seat_number: 2
+      name: "Glenn Cook"
+      image: "/governing-body/seat-2-glenn-cook.png"
+    - seat_number: 3
+      name: "Marion Craddock"
+      image: "/governing-body/seat-3-marion-craddock.jpg"
+    - seat_number: 4
+      name: ""
+      image: "/governing-body/seat-4.jpg"
+    - seat_number: 5
+      name: ""
+      image: "/governing-body/seat-5.jpg"
+    - seat_number: 6
+      name: ""
+      image: "/governing-body/seat-6.jpg"
+    - seat_number: 7
+      name: ""
+      image: ""
+
+council_of_elders:
+  - name: "Rebecca Smith"
+    title: "Chief of Elders"
+  - name: ""
+    title: "Elder"
+  - name: "Larry Jernigan"
+    title: "Elder"
+  - name: "Glenn Turner"
+    title: "Elder"
+  - name: "Ronnie Hatcher"
+    title: "Elder"
+  - name: "Charles Ray Hughes"
+    title: "Elder"
+  - name: "Scott Beaver"
+    title: "Elder"
+  - name: "Phillip White"
+    title: "Elder"
+
+judicial:
+  - name: "Ronnie Floyd"
+    title: "Tribal Judge"
+  - name: "David Charlie Blue Windburn Sr."
+    title: "Chief of Constables"
+
+administrative:
+  - name: "Carol Harmon"
+    title: "Tribal Treasurer"
+  - name: "Emily White"
+    title: "Tribal Files Committee Chairperson"
+  - name: "Jennifer Michelle Hatcher"
+    title: "Tribal Secretary"
