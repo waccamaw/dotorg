@@ -263,6 +263,16 @@ main {
 	color: var(--text-light);
 	font-size: 0.9rem;
 	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	flex-wrap: wrap;
+}
+
+.post-meta .p-author {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
 }
 
 .post-summary {
@@ -1769,16 +1779,31 @@ color: white;
 	margin-bottom: 1.5rem;
 	font-size: 0.95rem;
 	color: var(--text-white-muted);
+	align-items: center;
 }
 
 .hero-meta time {
 	font-weight: 500;
 }
 
+.hero-author {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
 .hero-author::before {
 	content: "•";
 	margin-right: 0.5rem;
 	color: var(--text-white-dim);
+}
+
+.author-avatar {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	object-fit: cover;
+	vertical-align: middle;
 }
 
 .hero-excerpt {

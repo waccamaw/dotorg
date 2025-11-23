@@ -16,14 +16,21 @@
 					<div class="hero-text">
 						<span class="hero-label">Featured</span>
 						<h1 class="hero-title">{{ .Title }}</h1>
-						<div class="hero-meta">
-							<time datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
-								{{ .Date.Format "January 2, 2006" }}
-							</time>
-							{{ with .Params.author }}
+					<div class="hero-meta">
+						<time datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
+							{{ .Date.Format "January 2, 2006" }}
+						</time>
+						{{ with .Params.author }}
+							{{ if reflect.IsMap . }}
+								<span class="hero-author">
+									{{ with .avatar }}<img src="{{ . }}" alt="{{ $.Params.author.full_name }}" class="author-avatar"> {{ end }}
+									{{ .full_name | default .name }}
+								</span>
+							{{ else }}
 								<span class="hero-author">{{ . }}</span>
 							{{ end }}
-						</div>
+						{{ end }}
+					</div>
 						<p class="hero-excerpt">{{ .Summary }}</p>
 						<a href="{{ .Permalink }}" class="hero-cta">Read Full Story</a>
 					</div>
@@ -33,14 +40,14 @@
 	</div>
 {{ end }}
 
-<!-- Recent Updates -->
+<!-- Recent Posts - Summary Format -->
 <div class="h-feed home-feed">
-	<h2>Recent Updates</h2>
+	<h2>Latest Updates</h2>
 	
-	{{ $updates := where .Site.RegularPages ".Params.categories" "intersect" (slice "updates") }}
-	{{ $recentUpdates := first 5 $updates }}
+	{{ $allPosts := .Site.RegularPages }}
+	{{ $recentPosts := first 5 $allPosts }}
 	
-	{{ range $recentUpdates }}
+	{{ range $recentPosts }}
 		<article class="h-entry post-preview">
 			<header class="post-header">
 				{{ if .Title }}
@@ -54,7 +61,14 @@
 						{{ .Date.Format "January 2, 2006" }}
 					</time>
 					{{ with .Params.author }}
-						by <span class="p-author h-card">{{ . }}</span>
+						{{ if reflect.IsMap . }}
+							by <span class="p-author h-card">
+								{{ with .avatar }}<img src="{{ . }}" alt="{{ $.Params.author.full_name }}" class="author-avatar"> {{ end }}
+								{{ .full_name | default .name }}
+							</span>
+						{{ else }}
+							by <span class="p-author h-card">{{ . }}</span>
+						{{ end }}
 					{{ end }}
 				</div>
 			</header>
@@ -72,10 +86,30 @@
 			</div>
 		</article>
 	{{ end }}
+</div>
 
-	<div class="view-all">
-		<a href="/updates/" class="btn-primary">View All Updates →</a>
-	</div>
+<!-- Additional Recent Posts - List Format -->
+<div class="recent-posts-list">
+	<h2>More Recent Posts</h2>
+	
+	{{ $morePosts := first 25 $allPosts }}
+	{{ $morePosts = after 5 $morePosts }}
+	
+	<ul class="post-list">
+		{{ range $morePosts }}
+			<li class="h-entry">
+				<time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
+					{{ .Date.Format "Jan 2, 2006" }}
+				</time>
+				<span class="post-separator">·</span>
+				{{ if .Title }}
+					<a href="{{ .Permalink }}" class="p-name u-url">{{ .Title }}</a>
+				{{ else }}
+					<a href="{{ .Permalink }}" class="u-url">{{ truncate 100 .Plain }}</a>
+				{{ end }}
+			</li>
+		{{ end }}
+	</ul>
 </div>
 
 {{ end }}

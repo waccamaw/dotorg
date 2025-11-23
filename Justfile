@@ -26,6 +26,10 @@ git-setup:
 install: git-setup
     @echo "Installation complete."
 
+# Build the site (useful when server is already running with --watch)
+build:
+    hugo
+
 serve: 
     hugo server --watch --bind="0.0.0.0" --port="1313" --baseURL="http://localhost:1313/"
 
@@ -46,40 +50,21 @@ export-content: validate-meetings
     EXPORT_DIR=$(mktemp -d)
     EXPORT_FILE="content-export-$(date +%Y%m%d-%H%M%S).zip"
     
-    # Copy content directory structure
-    echo "📋 Copying content files..."
+    # Copy entire content directory structure
+    echo "📋 Copying all content files..."
+    mkdir -p "$EXPORT_DIR/content"
+    cp -r content/* "$EXPORT_DIR/content/" 2>/dev/null || true
     
-    # Copy cleaned meetings from content/meetings/
-    if [ -d "content/meetings" ]; then
-        mkdir -p "$EXPORT_DIR/content/meetings"
-        cp -r content/meetings/* "$EXPORT_DIR/content/meetings/" 2>/dev/null || true
-        MEETING_COUNT=$(find content/meetings -name '*.md' | wc -l)
-        echo "  ✓ Copied $MEETING_COUNT meeting files"
-    fi
+    # Count files by type
+    MEETING_COUNT=$(find "$EXPORT_DIR/content/meetings" -name '*.md' 2>/dev/null | wc -l || echo 0)
+    UPDATE_COUNT=$(find "$EXPORT_DIR/content/updates" -name '*.md' 2>/dev/null | wc -l || echo 0)
+    REPLY_COUNT=$(find "$EXPORT_DIR/content/replies" -name '*.md' 2>/dev/null | wc -l || echo 0)
+    PAGE_COUNT=$(find "$EXPORT_DIR/content" -maxdepth 1 -name '*.md' 2>/dev/null | wc -l || echo 0)
     
-    # Copy updates from content/updates/ if it exists
-    if [ -d "content/updates" ]; then
-        mkdir -p "$EXPORT_DIR/content/updates"
-        cp -r content/updates/* "$EXPORT_DIR/content/updates/" 2>/dev/null || true
-        UPDATE_COUNT=$(find content/updates -name '*.md' 2>/dev/null | wc -l)
-        echo "  ✓ Copied $UPDATE_COUNT update files"
-    fi
-    
-    # Copy replies from content/replies/ if it exists
-    if [ -d "content/replies" ]; then
-        mkdir -p "$EXPORT_DIR/content/replies"
-        cp -r content/replies/* "$EXPORT_DIR/content/replies/" 2>/dev/null || true
-        REPLY_COUNT=$(find content/replies -name '*.md' 2>/dev/null | wc -l)
-        echo "  ✓ Copied $REPLY_COUNT reply files"
-    fi
-    
-    # Copy static pages (about, meetings, photos, etc.)
-    for file in content/*.md; do
-        if [ -f "$file" ]; then
-            cp "$file" "$EXPORT_DIR/content/"
-            echo "  ✓ Copied $(basename $file)"
-        fi
-    done
+    echo "  ✓ Copied $MEETING_COUNT meeting files"
+    echo "  ✓ Copied $UPDATE_COUNT update files"
+    echo "  ✓ Copied $REPLY_COUNT reply files"
+    echo "  ✓ Copied $PAGE_COUNT top-level pages"
     
     # Count total files
     TOTAL_FILES=$(find "$EXPORT_DIR/content" -name '*.md' | wc -l)

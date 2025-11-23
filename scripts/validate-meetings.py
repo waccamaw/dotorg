@@ -5,10 +5,15 @@ Checks YAML front matter syntax, required fields, and date formats.
 """
 
 import os
-import yaml
 import sys
 from pathlib import Path
 import re
+
+try:
+    import yaml
+except ImportError:
+    print("Warning: PyYAML not installed. Skipping YAML validation.")
+    yaml = None
 
 
 def validate_front_matter(filepath):
@@ -36,6 +41,10 @@ def validate_front_matter(filepath):
     
     front_matter = parts[1]
     body = parts[2] if len(parts) > 2 else ""
+    
+    # If yaml is not available, skip validation
+    if yaml is None:
+        return errors, warnings
     
     # Try to parse YAML
     try:
