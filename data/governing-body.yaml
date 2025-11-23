@@ -14,13 +14,11 @@ second_chiefs:
     title: "2nd Chief External"
     image: "/governing-body/2nd-chief-external-john-turner.png"
 
-retired_chiefs:
-  - name: "2nd Chief Internal Retired"
-    title: "2nd Chief Internal Retired"
-    image: "/governing-body/2nd-chief-internal-retired.jpg"
-
 acting_chiefs:
-  - name: "Susan"
+  - name: "Cheryl Cail"
+    title: "2nd Chief Internal"
+    image: "/governing-body/2nd-chief-internal-retired.jpg"
+  - name: "Susan Hayes-Hatcher"
     title: "Acting Chief"
     image: "/governing-body/acting-chief-susan.avif"
 
@@ -81,3 +79,7 @@ administrative:
     title: "Tribal Files Committee Chairperson"
   - name: "Jennifer Michelle Hatcher"
     title: "Tribal Secretary"
+  - name: "Doug Hatcher"
+    title: "Chief Technology Officer"
+  - name: "Austin Serio"
+    title: "Org Administrator"
