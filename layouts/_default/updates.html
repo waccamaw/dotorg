@@ -86,6 +86,14 @@
 			</div>
 		</article>
 	{{ end }}
+	
+	<!-- Pagination -->
+	<nav class="pagination">
+		<span class="pagination-info">
+			Showing {{ len $displayPosts }} of {{ len $allPosts }} total posts
+		</span>
+		<a href="/updates/" class="pagination-link">View all updates →</a>
+	</nav>
 </div>
 
 {{ end }}
