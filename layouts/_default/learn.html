@@ -18,7 +18,7 @@
     <section class="governing-body-section">
       <h2>GOVERNING BODY</h2>
       
-      {{ $data := index .Site.Data "governing-body" }}
+      {{ $data := partial "learn/governing-body-data.html" . }}
       
       <!-- Chief -->
       {{ with $data.chief }}

@@ -1,0 +1,68 @@
+{{/* Governing Body Data - embedded as Hugo dict since Micro.blog may not support data/ directory */}}
+{{ return (dict
+  "chief" (dict
+    "name" "Chief Hatcher"
+    "title" "Leader of the Waccamaw"
+    "image" "/governing-body/chief-hatcher.jpg"
+  )
+  "second_chiefs" (slice
+    (dict
+      "name" "Alan Faver"
+      "title" "2nd Chief External"
+      "image" "/governing-body/2nd-chief-external-alan-faver.png"
+    )
+    (dict
+      "name" "John Turner"
+      "title" "2nd Chief External"
+      "image" "/governing-body/2nd-chief-external-john-turner.png"
+    )
+  )
+  "retired_chiefs" (slice
+    (dict
+      "name" "Cheryl Hatcher"
+      "title" "2nd Chief Internal Retired"
+      "image" "/governing-body/2nd-chief-internal-retired.jpg"
+    )
+  )
+  "acting_chiefs" (slice
+    (dict
+      "name" "Susan"
+      "title" "Acting Chief"
+      "image" "/governing-body/acting-chief-susan.avif"
+    )
+  )
+  "council" (dict
+    "chief_of_council" (dict
+      "name" "Chris Hatcher"
+      "title" "Chief of Council"
+      "image" "/governing-body/chief-of-council-chris-hatcher.jpg"
+    )
+    "seats" (slice
+      (dict "seat_number" 2 "name" "Glenn Cook" "image" "/governing-body/seat-2-glenn-cook.png")
+      (dict "seat_number" 3 "name" "Marion Craddock" "image" "/governing-body/seat-3-marion-craddock.jpg")
+      (dict "seat_number" 4 "name" "" "image" "/governing-body/seat-4.jpg")
+      (dict "seat_number" 5 "name" "" "image" "/governing-body/seat-5.jpg")
+      (dict "seat_number" 6 "name" "" "image" "/governing-body/seat-6.jpg")
+      (dict "seat_number" 7 "name" "" "image" "")
+    )
+  )
+  "council_of_elders" (slice
+    (dict "name" "Rebecca Smith" "title" "Chief of Elders")
+    (dict "name" "" "title" "Elder")
+    (dict "name" "Larry Jernigan" "title" "Elder")
+    (dict "name" "Glenn Turner" "title" "Elder")
+    (dict "name" "Ronnie Hatcher" "title" "Elder")
+    (dict "name" "Charles Ray Hughes" "title" "Elder")
+    (dict "name" "Scott Beaver" "title" "Elder")
+    (dict "name" "Phillip White" "title" "Elder")
+  )
+  "judicial" (slice
+    (dict "name" "Ronnie Floyd" "title" "Tribal Judge")
+    (dict "name" "David Charlie Blue Windburn Sr." "title" "Chief of Constables")
+  )
+  "administrative" (slice
+    (dict "name" "Carol Harmon" "title" "Tribal Treasurer")
+    (dict "name" "Emily White" "title" "Tribal Files Committee Chairperson")
+    (dict "name" "Jennifer Michelle Hatcher" "title" "Tribal Secretary")
+  )
+) }}
