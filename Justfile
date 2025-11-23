@@ -39,8 +39,22 @@ validate-meetings:
     set -euo pipefail
     python3 scripts/validate-meetings.py
 
-# Export cleaned content for Micro.blog import
-export-content: validate-meetings
+# Export content directory as zip
+export-content:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    
+    EXPORT_FILE="content-export-$(date +%Y%m%d-%H%M%S).zip"
+    
+    echo "📦 Creating content export..."
+    zip -r "$EXPORT_FILE" content/ -q
+    
+    echo "✅ Export complete!"
+    echo "📦 Archive: $EXPORT_FILE"
+    echo "💾 Size: $(du -h $EXPORT_FILE | cut -f1)"
+
+# Export cleaned content for Micro.blog import (deprecated - use export-content instead)
+export-content-deprecated: validate-meetings
     #!/usr/bin/env bash
     set -euo pipefail
     
