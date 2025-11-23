@@ -1,5 +1,7 @@
 {{ define "main" }}
 
+{{ $allPosts := where .Site.RegularPages "Type" "post" }}
+
 <!-- Featured Hero Carousel -->
 {{ $featured := where .Site.RegularPages ".Params.categories" "intersect" (slice "featured") }}
 {{ if $featured }}
@@ -40,35 +42,43 @@
 	</div>
 {{ end }}
 
-<!-- Category Filter -->
-{{ $categories := slice }}
-{{ $allPosts := where .Site.RegularPages "Type" "post" }}
-{{ range $allPosts }}
-	{{ range .Params.categories }}
-		{{ $categories = $categories | append . }}
-	{{ end }}
-{{ end }}
-{{ $categories = $categories | uniq }}
-
-{{ if $categories }}
-<div class="category-filter">
-	<span class="filter-label">Filter by category:</span>
-	<div class="category-links">
-		<a href="/" class="category-link">All</a>
-		{{ range sort $categories }}
-			<a href="/categories/{{ . | urlize }}/" class="category-link">{{ . }}</a>
+<!-- Featured Posts Row (3 cards) -->
+{{ $featuredPosts := after 1 (first 4 $featured) }}
+{{ if $featuredPosts }}
+<div class="featured-row">
+	<h2 class="section-heading">Featured Stories</h2>
+	<div class="featured-grid">
+		{{ range $featuredPosts }}
+			<article class="featured-card h-entry">
+				{{ if .Params.photos }}
+					<div class="card-image">
+						<img src="{{ index .Params.photos 0 }}" alt="{{ .Title }}" loading="lazy">
+					</div>
+				{{ end }}
+				<div class="card-content">
+					<h3 class="card-title p-name">
+						<a href="{{ .Permalink }}">{{ .Title }}</a>
+					</h3>
+					<div class="card-meta">
+						<time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
+							{{ .Date.Format "Jan 2, 2006" }}
+						</time>
+					</div>
+					<p class="card-excerpt">{{ .Summary | truncate 120 }}</p>
+				</div>
+			</article>
 		{{ end }}
 	</div>
 </div>
 {{ end }}
 
-<!-- Recent Posts Feed with Pagination -->
+<!-- Recent Posts Feed -->
 <div class="h-feed home-feed">
 	<h2>Latest Updates</h2>
 	
-	{{ $paginator := .Paginate $allPosts 10 }}
+	{{ $recentPosts := first 5 $allPosts }}
 	
-	{{ range $paginator.Pages }}
+	{{ range $recentPosts }}
 		<article class="h-entry post-preview">
 			<header class="post-header">
 				{{ if .Title }}
@@ -124,22 +134,6 @@
 				<a href="{{ .Permalink }}" class="u-url read-more">Read more →</a>
 			</div>
 		</article>
-	{{ end }}
-
-	{{ if or $paginator.HasPrev $paginator.HasNext }}
-		<nav class="pagination">
-			{{ if $paginator.HasPrev }}
-				<a href="{{ $paginator.Prev.URL }}" class="pagination-prev">← Newer posts</a>
-			{{ end }}
-			
-			<span class="pagination-info">
-				Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}
-			</span>
-			
-			{{ if $paginator.HasNext }}
-				<a href="{{ $paginator.Next.URL }}" class="pagination-next">Older posts →</a>
-			{{ end }}
-		</nav>
 	{{ end }}
 </div>
 
