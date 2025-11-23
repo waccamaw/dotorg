@@ -4,9 +4,32 @@
 	<h1>{{ .Title }}</h1>
 	
 	{{ $allPosts := where .Site.RegularPages "Type" "post" }}
-	{{ $allPosts := first 50 $allPosts }}
 	
+	<!-- Category Filter -->
+	{{ $categories := slice }}
 	{{ range $allPosts }}
+		{{ range .Params.categories }}
+			{{ $categories = $categories | append . }}
+		{{ end }}
+	{{ end }}
+	{{ $categories = $categories | uniq }}
+	
+	{{ if $categories }}
+	<div class="category-filter">
+		<span class="filter-label">Filter by category:</span>
+		<div class="category-links">
+			<a href="/updates/" class="category-link">All</a>
+			{{ range sort $categories }}
+				<a href="/categories/{{ . | urlize }}/" class="category-link">{{ . }}</a>
+			{{ end }}
+		</div>
+	</div>
+	{{ end }}
+	
+	<!-- Show first 10 posts -->
+	{{ $displayPosts := first 10 $allPosts }}
+	
+	{{ range $displayPosts }}
 		<article class="h-entry post-preview">
 			<header class="post-header">
 				{{ if .Title }}
