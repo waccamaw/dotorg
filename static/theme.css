@@ -601,9 +601,21 @@ main {
 	margin: 0 auto;
 	padding: 0 1.5rem;
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	grid-template-columns: repeat(4, 1fr);
 	gap: 2rem;
 	margin-bottom: 2rem;
+}
+
+@media (max-width: 968px) {
+	.footer-container {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 600px) {
+	.footer-container {
+		grid-template-columns: 1fr;
+	}
 }
 
 .footer-section h3 {
@@ -628,6 +640,24 @@ main {
 }
 
 .social-menu li {
+	margin-bottom: 0.5rem;
+}
+
+.map-container {
+	border-radius: 8px;
+	overflow: hidden;
+	margin-bottom: 0.5rem;
+}
+
+.navigate-link {
+	display: inline-block;
+	font-weight: 600;
+	color: var(--text-white) !important;
+}
+
+.footer-section p {
+	color: var(--text-white-muted);
+	line-height: 1.8;
 	margin-bottom: 0.5rem;
 }
 
