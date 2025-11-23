@@ -40,14 +40,35 @@
 	</div>
 {{ end }}
 
-<!-- Recent Posts - Summary Format -->
+<!-- Category Filter -->
+{{ $categories := slice }}
+{{ $allPosts := where .Site.RegularPages "Type" "post" }}
+{{ range $allPosts }}
+	{{ range .Params.categories }}
+		{{ $categories = $categories | append . }}
+	{{ end }}
+{{ end }}
+{{ $categories = $categories | uniq }}
+
+{{ if $categories }}
+<div class="category-filter">
+	<span class="filter-label">Filter by category:</span>
+	<div class="category-links">
+		<a href="/" class="category-link">All</a>
+		{{ range sort $categories }}
+			<a href="/categories/{{ . | urlize }}/" class="category-link">{{ . }}</a>
+		{{ end }}
+	</div>
+</div>
+{{ end }}
+
+<!-- Recent Posts Feed with Pagination -->
 <div class="h-feed home-feed">
 	<h2>Latest Updates</h2>
 	
-	{{ $allPosts := .Site.RegularPages }}
-	{{ $recentPosts := first 5 $allPosts }}
+	{{ $paginator := .Paginate $allPosts 10 }}
 	
-	{{ range $recentPosts }}
+	{{ range $paginator.Pages }}
 		<article class="h-entry post-preview">
 			<header class="post-header">
 				{{ if .Title }}
@@ -70,6 +91,13 @@
 							by <span class="p-author h-card">{{ . }}</span>
 						{{ end }}
 					{{ end }}
+					{{ if .Params.categories }}
+						<span class="post-categories">
+							{{ range .Params.categories }}
+								<a href="/categories/{{ . | urlize }}/" class="category-badge">{{ . }}</a>
+							{{ end }}
+						</span>
+					{{ end }}
 				</div>
 			</header>
 
@@ -81,35 +109,38 @@
 				{{ end }}
 			</div>
 
+			{{ if .Params.photos }}
+				<div class="post-photos-preview">
+					{{ range first 3 .Params.photos }}
+						<img src="{{ . }}" alt="" loading="lazy">
+					{{ end }}
+					{{ if gt (len .Params.photos) 3 }}
+						<span class="more-photos">+{{ sub (len .Params.photos) 3 }} more</span>
+					{{ end }}
+				</div>
+			{{ end }}
+
 			<div class="post-footer">
 				<a href="{{ .Permalink }}" class="u-url read-more">Read more →</a>
 			</div>
 		</article>
 	{{ end }}
-</div>
 
-<!-- Additional Recent Posts - List Format -->
-<div class="recent-posts-list">
-	<h2>More Recent Posts</h2>
-	
-	{{ $morePosts := first 25 $allPosts }}
-	{{ $morePosts = after 5 $morePosts }}
-	
-	<ul class="post-list">
-		{{ range $morePosts }}
-			<li class="h-entry">
-				<time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
-					{{ .Date.Format "Jan 2, 2006" }}
-				</time>
-				<span class="post-separator">·</span>
-				{{ if .Title }}
-					<a href="{{ .Permalink }}" class="p-name u-url">{{ .Title }}</a>
-				{{ else }}
-					<a href="{{ .Permalink }}" class="u-url">{{ truncate 100 .Plain }}</a>
-				{{ end }}
-			</li>
-		{{ end }}
-	</ul>
+	{{ if or $paginator.HasPrev $paginator.HasNext }}
+		<nav class="pagination">
+			{{ if $paginator.HasPrev }}
+				<a href="{{ $paginator.Prev.URL }}" class="pagination-prev">← Newer posts</a>
+			{{ end }}
+			
+			<span class="pagination-info">
+				Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}
+			</span>
+			
+			{{ if $paginator.HasNext }}
+				<a href="{{ $paginator.Next.URL }}" class="pagination-next">Older posts →</a>
+			{{ end }}
+		</nav>
+	{{ end }}
 </div>
 
 {{ end }}
