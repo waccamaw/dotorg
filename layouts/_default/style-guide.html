@@ -193,6 +193,7 @@
 
 		<div class="readme-content">
 			{{ $readme := readFile "static/logos/doug-2025/README.md" }}
+			{{ $readme = replace $readme "./logo.svg" "/logos/doug-2025/logo.svg" }}
 			{{ $readme | markdownify }}
 		</div>
 	</section>
