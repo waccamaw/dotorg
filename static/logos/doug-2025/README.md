@@ -2,6 +2,8 @@
 
 ![Waccamaw Indian People Logo](./logo.svg)
 
+https://svgmaker.io/share/sAzAw9tz6Yu58sqaWqNe
+
 ## Colors
 
 - **Primary**: `#004384` (dark blue - rgb(0, 67, 132))
