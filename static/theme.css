@@ -2718,3 +2718,150 @@ width: 100%;
 }
 }
 
+/* Zeffy Membership Fees Page */
+.zeffy-page-wrapper {
+	min-height: 100vh;
+	background: var(--bg-color);
+	padding: 2rem 0;
+}
+
+.zeffy-container {
+	max-width: 100%;
+	margin: 0 auto;
+	padding: 0;
+}
+
+.zeffy-header {
+	text-align: center;
+	margin-bottom: 2rem;
+	padding: 1rem 1.5rem;
+}
+
+.zeffy-header h1 {
+	font-size: 2.5rem;
+	color: var(--text-color);
+	margin-bottom: 0.5rem;
+	font-weight: 700;
+}
+
+.zeffy-header h2 {
+	font-size: 1.8rem;
+	color: var(--primary-color);
+	margin-bottom: 1rem;
+	font-weight: 600;
+}
+
+.zeffy-description {
+	font-size: 1.1rem;
+	color: var(--text-light);
+	max-width: 700px;
+	margin: 0 auto;
+	line-height: 1.8;
+}
+
+.zeffy-embed-container {
+	background: var(--bg-white);
+	border: none;
+	border-radius: 0;
+	padding: 0;
+	margin-bottom: 1rem;
+	box-shadow: none;
+}
+
+.zeffy-frame-wrapper {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.zeffy-frame-wrapper iframe {
+	width: 100%;
+	height: 1600px;
+	min-height: 1600px;
+	border: none;
+	border-radius: 0;
+	overflow: visible;
+}
+
+.zeffy-footer {
+	text-align: center;
+	padding: 2rem 1.5rem;
+	max-width: 1200px;
+	margin: 0 auto;
+}
+
+.zeffy-footer .help-text {
+	font-size: 1rem;
+	color: var(--text-light);
+	margin-bottom: 1rem;
+}
+
+.zeffy-footer .help-text a {
+	color: var(--link-color);
+	font-weight: 600;
+}
+
+.zeffy-footer .help-text a:hover {
+	color: var(--link-hover);
+	text-decoration: underline;
+}
+
+/* Responsive Zeffy Page */
+@media (max-width: 768px) {
+	.zeffy-page-wrapper {
+		padding: 1rem 0;
+	}
+
+	.zeffy-container {
+		padding: 0 1rem;
+	}
+
+	.zeffy-header {
+		margin-bottom: 2rem;
+		padding: 1rem 0;
+	}
+
+	.zeffy-header h1 {
+		font-size: 1.8rem;
+	}
+
+	.zeffy-header h2 {
+		font-size: 1.4rem;
+	}
+
+	.zeffy-description {
+		font-size: 1rem;
+	}
+
+	.zeffy-embed-container {
+		padding: 1rem;
+		border-radius: 8px;
+	}
+
+	.zeffy-frame-wrapper iframe {
+		height: 1400px;
+		min-height: 1400px;
+	}
+}
+
+@media (max-width: 480px) {
+	.zeffy-header h1 {
+		font-size: 1.5rem;
+	}
+
+	.zeffy-header h2 {
+		font-size: 1.2rem;
+	}
+
+	.zeffy-embed-container {
+		padding: 0;
+	}
+
+	.zeffy-frame-wrapper iframe {
+		height: 1300px;
+		min-height: 1300px;
+	}
+}
+
+

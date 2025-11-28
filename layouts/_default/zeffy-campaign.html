@@ -1,0 +1,49 @@
+{{ define "main" }}
+
+<style>
+	.site-header {
+		margin-bottom: 0 !important;
+	}
+	main {
+		max-width: 100% !important;
+		padding: 0 !important;
+		margin: 0 !important;
+	}
+	.donate-section {
+		display: none !important;
+	}
+	.site-footer {
+		margin-top: 0 !important;
+	}
+	.zeffy-campaign-wrapper {
+		width: 100%;
+		margin: 0;
+		padding: 0;
+	}
+	.zeffy-campaign-iframe {
+		width: 100%;
+		height: 100vh;
+		border: none;
+		display: block;
+	}
+</style>
+
+{{ if .Params.zeffy_url }}
+<div class="zeffy-campaign-wrapper">
+	<iframe 
+		class="zeffy-campaign-iframe"
+		title="{{ .Title }}"
+		src="{{ .Params.zeffy_url }}"
+		allowpaymentrequest 
+		allowTransparency="true"
+		frameborder="0"></iframe>
+</div>
+{{ else }}
+<div style="padding: 2rem; text-align: center;">
+	<h1>{{ .Title }}</h1>
+	<p style="color: #dc3545;">Error: No zeffy_url specified in front matter.</p>
+	<p><a href="/members/">← Return to Member Portal</a></p>
+</div>
+{{ end }}
+
+{{ end }}
