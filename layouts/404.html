@@ -1,0 +1,317 @@
+{{ define "main" }}
+<div class="not-found-container">
+	<div class="not-found-content">
+		<div class="not-found-header">
+			<h1 class="not-found-title">Page Not Found</h1>
+			<p class="not-found-subtitle">Don't worry — the content you're looking for is still here!</p>
+		</div>
+		
+		<div class="not-found-notice">
+			<div class="notice-icon">ℹ️</div>
+			<div class="notice-content">
+				<h2>We Recently Updated Our Website</h2>
+				<p>In November 2025, we migrated from Wix to a new platform. Your bookmarked links may have changed, but all our content is still available. Use the navigation below to find what you're looking for.</p>
+			</div>
+		</div>
+
+		<div class="not-found-suggestions">
+			<h3>Quick Links</h3>
+			<div class="quick-links-grid">
+				<a href="/" class="quick-link">
+					<span class="link-icon">🏠</span>
+					<span class="link-text">Home</span>
+				</a>
+				<a href="/updates/" class="quick-link">
+					<span class="link-icon">📰</span>
+					<span class="link-text">News & Updates</span>
+				</a>
+				<a href="/meetings/" class="quick-link">
+					<span class="link-icon">📋</span>
+					<span class="link-text">Meeting Minutes</span>
+				</a>
+				<a href="/photos/" class="quick-link">
+					<span class="link-icon">📸</span>
+					<span class="link-text">Photo Gallery</span>
+				</a>
+				<a href="/members/" class="quick-link">
+					<span class="link-icon">👥</span>
+					<span class="link-text">Members Portal</span>
+				</a>
+				<a href="/archive/" class="quick-link">
+					<span class="link-icon">📚</span>
+					<span class="link-text">Archive</span>
+				</a>
+			</div>
+		</div>
+
+		<div class="not-found-search">
+			<h3>Search Our Site</h3>
+			<form action="https://www.google.com/search" method="get" target="_blank" class="search-form">
+				<input type="hidden" name="q" value="site:waccamaw.org">
+				<div class="search-wrapper">
+					<input type="text" name="q" placeholder="Search for tribal news, events, meetings..." class="search-input">
+					<button type="submit" class="search-button">
+						<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="11" cy="11" r="8"></circle>
+							<path d="m21 21-4.35-4.35"></path>
+						</svg>
+						Search
+					</button>
+				</div>
+			</form>
+		</div>
+
+		<div class="not-found-help">
+			<p>Still can't find what you need? <a href="mailto:WaccamawChief@gmail.com">Let us know</a> and we'll help you find it.</p>
+		</div>
+	</div>
+</div>
+
+<style>
+.not-found-container {
+	max-width: var(--max-width, 900px);
+	margin: 0 auto;
+	padding: 2rem 1.5rem 4rem;
+	min-height: 60vh;
+}
+
+.not-found-content {
+	background: var(--bg-white, #ffffff);
+	border-radius: 12px;
+	padding: 3rem 2.5rem;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.not-found-header {
+	text-align: center;
+	margin-bottom: 2.5rem;
+	padding-bottom: 2rem;
+	border-bottom: 2px solid var(--bg-secondary, #fff5eb);
+}
+
+.not-found-title {
+	color: var(--primary-color, #0033cc);
+	font-size: 2.5rem;
+	margin-bottom: 0.75rem;
+	font-weight: 700;
+}
+
+.not-found-subtitle {
+	color: var(--text-light, #6b6b6b);
+	font-size: 1.2rem;
+	margin: 0;
+	font-weight: 400;
+}
+
+.not-found-notice {
+	background: linear-gradient(135deg, #fff5eb 0%, #ffe8d6 100%);
+	border-left: 5px solid #ff9800;
+	border-radius: 8px;
+	padding: 1.75rem;
+	margin-bottom: 2.5rem;
+	display: flex;
+	gap: 1.25rem;
+	align-items: start;
+}
+
+.notice-icon {
+	font-size: 2rem;
+	flex-shrink: 0;
+	line-height: 1;
+}
+
+.notice-content h2 {
+	color: #e65100;
+	margin: 0 0 0.5rem 0;
+	font-size: 1.3rem;
+	font-weight: 600;
+}
+
+.notice-content p {
+	margin: 0;
+	color: var(--text-color, #2a2a2a);
+	line-height: 1.6;
+}
+
+.not-found-suggestions {
+	margin: 2.5rem 0;
+}
+
+.not-found-suggestions h3 {
+	color: var(--text-color, #2a2a2a);
+	margin-bottom: 1.25rem;
+	font-size: 1.3rem;
+	font-weight: 600;
+}
+
+.quick-links-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 1rem;
+}
+
+.quick-link {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 1.5rem 1rem;
+	background: var(--bg-color, #faf8f3);
+	border: 2px solid var(--border-color, #e0e0e0);
+	border-radius: 8px;
+	text-decoration: none;
+	transition: all 0.2s ease;
+	min-height: 100px;
+}
+
+.quick-link:hover {
+	background: var(--bg-white, #ffffff);
+	border-color: var(--primary-color, #0033cc);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 51, 204, 0.15);
+	text-decoration: none;
+}
+
+.link-icon {
+	font-size: 2rem;
+	margin-bottom: 0.5rem;
+	display: block;
+}
+
+.link-text {
+	color: var(--text-color, #2a2a2a);
+	font-weight: 600;
+	font-size: 0.95rem;
+	text-align: center;
+}
+
+.quick-link:hover .link-text {
+	color: var(--primary-color, #0033cc);
+}
+
+.not-found-search {
+	margin: 2.5rem 0;
+	padding: 2rem;
+	background: var(--bg-color, #faf8f3);
+	border-radius: 8px;
+}
+
+.not-found-search h3 {
+	margin: 0 0 1rem 0;
+	color: var(--text-color, #2a2a2a);
+	font-size: 1.3rem;
+	font-weight: 600;
+}
+
+.search-wrapper {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.search-input {
+	flex: 1;
+	padding: 0.875rem 1.25rem;
+	border: 2px solid var(--border-color, #e0e0e0);
+	border-radius: 8px;
+	font-size: 1rem;
+	font-family: inherit;
+	transition: border-color 0.2s;
+}
+
+.search-input:focus {
+	outline: none;
+	border-color: var(--primary-color, #0033cc);
+}
+
+.search-button {
+	padding: 0.875rem 1.75rem;
+	background: var(--primary-color, #0033cc);
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-size: 1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	white-space: nowrap;
+}
+
+.search-button svg {
+	width: 18px;
+	height: 18px;
+}
+
+.search-button:hover {
+	background: var(--primary-hover, #0028a3);
+}
+
+.not-found-help {
+	text-align: center;
+	padding-top: 2rem;
+	margin-top: 2rem;
+	border-top: 2px solid var(--bg-secondary, #fff5eb);
+	color: var(--text-light, #6b6b6b);
+}
+
+.not-found-help a {
+	color: var(--link-color, #0033cc);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.not-found-help a:hover {
+	text-decoration: underline;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+	.not-found-content {
+		padding: 2rem 1.5rem;
+	}
+
+	.not-found-title {
+		font-size: 2rem;
+	}
+
+	.not-found-subtitle {
+		font-size: 1.05rem;
+	}
+
+	.not-found-notice {
+		flex-direction: column;
+		text-align: center;
+		align-items: center;
+	}
+
+	.quick-links-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
+
+	.search-wrapper {
+		flex-direction: column;
+	}
+
+	.search-button {
+		width: 100%;
+		justify-content: center;
+	}
+}
+
+@media (max-width: 480px) {
+	.not-found-container {
+		padding: 1rem;
+	}
+
+	.not-found-content {
+		padding: 1.5rem 1rem;
+	}
+
+	.quick-links-grid {
+		grid-template-columns: 1fr;
+	}
+}
+</style>
+{{ end }}

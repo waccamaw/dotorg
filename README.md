@@ -106,6 +106,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed contribution guidelines an
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - 🤝 How to contribute with GitHub Copilot
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** - 🏛️ System architecture and routing
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - 🚀 Deployment procedures
+- **[404_REDIRECT_GUIDE.md](./404_REDIRECT_GUIDE.md)** - 🔀 Handle broken links & redirects
 - **[DOCS.md](./DOCS.md)** - 📖 Documentation index and learning paths
 - **[DIAGRAMS.md](./DIAGRAMS.md)** - 📊 Visual architecture diagrams
 - **[.github/copilot-instructions.md](./.github/copilot-instructions.md)** - 🤖 Copilot agent guidelines
@@ -115,6 +116,7 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed contribution guidelines an
 - **New to the project?** → [DOCS.md](./DOCS.md) for learning path
 - **Want to contribute?** → [CONTRIBUTING.md](./CONTRIBUTING.md) for workflow
 - **Need quick help?** → [QUICKREF.md](./QUICKREF.md) for commands
+- **Managing 404s & redirects?** → [404_REDIRECT_GUIDE.md](./404_REDIRECT_GUIDE.md) for Wix migration
 - **Understanding architecture?** → [ARCHITECTURE.md](./ARCHITECTURE.md) or [DIAGRAMS.md](./DIAGRAMS.md)
 
 ## Key Features

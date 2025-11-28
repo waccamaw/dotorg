@@ -9,6 +9,7 @@ This document describes how to deploy changes to the Waccamaw.org website. The s
 - [Content Deployment](#content-deployment)
 - [Template Deployment](#template-deployment)
 - [Infrastructure Deployment](#infrastructure-deployment)
+- [404 Pages & Redirects](#404-pages--redirects)
 - [Rollback Procedures](#rollback-procedures)
 - [Monitoring & Verification](#monitoring--verification)
 - [Troubleshooting](#troubleshooting)
@@ -421,6 +422,205 @@ git push origin main
 **DNS**:
 - Edit record back to previous value
 - Save (immediate, but propagation takes time)
+
+## 404 Pages & Redirects
+
+### Overview
+
+The site includes a styled 404 page and redirect system to handle:
+- Broken links from Wix migration
+- Old URLs that were changed
+- Typos in URLs
+- Deleted content
+
+### 404 Page
+
+**Location**: `layouts/404.html` and `content/404.md`
+
+**Features**:
+- Branded styling matching site theme
+- Helpful navigation links
+- Site search via Google
+- Migration notice for Wix users
+- Contact information for reporting issues
+
+**Testing 404 Page**:
+```bash
+# Local testing
+hugo server
+# Visit: http://localhost:1313/does-not-exist
+
+# Production testing
+curl -I https://waccamaw.org/does-not-exist
+# Should return HTTP 404
+```
+
+### Creating Redirects
+
+Hugo supports redirects using the `redirect` layout. Already configured at `layouts/redirect/single.html`.
+
+**Step 1: Create redirect file**
+
+Create a file in `content/redirects/` (or anywhere in `content/`):
+
+```bash
+# Example: content/redirects/old-about.md
+```
+
+**Step 2: Add front matter**
+
+```yaml
+---
+title: "Redirect: Old About Page"
+type: redirect
+redirect: /  # Destination URL
+url: /about-us  # Old URL to redirect FROM
+---
+```
+
+**Step 3: Test locally**
+
+```bash
+hugo server
+# Visit: http://localhost:1313/about-us
+# Should redirect to destination
+```
+
+**Step 4: Deploy**
+
+```bash
+git add content/redirects/old-about.md
+git commit -m "Add redirect: /about-us → /"
+git push origin main
+```
+
+### Common Redirect Examples
+
+See `content/redirects/README.md` for detailed examples.
+
+**Example redirects already created**:
+- `/about-us` → `/`
+- `/contact` → `/`
+- `/blog` → `/updates/`
+- `/events` → `/updates/`
+- `/gallery` → `/photos/`
+- `/news` → `/updates/`
+
+### Finding URLs to Redirect
+
+**Method 1: Monitor 404 errors**
+- Check web server logs (if available)
+- Use Google Search Console
+- Review analytics for 404 pages
+
+**Method 2: Wix sitemap**
+If old Wix site is accessible:
+1. Visit `/sitemap.xml`
+2. Note all page URLs
+3. Create redirects for important pages
+
+**Method 3: Web Archive**
+1. Visit https://web.archive.org/
+2. Enter old domain: `waccamaw.org`
+3. Browse snapshots
+4. Note navigation menu URLs
+
+**Method 4: Google Search**
+```
+site:waccamaw.org
+```
+Review all indexed pages, create redirects for old URLs.
+
+### Redirect Priority
+
+**High Priority** (create first):
+1. Main navigation pages (about, contact, etc.)
+2. Most-visited blog posts
+3. Pages linked from social media
+4. Pages with external backlinks
+
+**Medium Priority**:
+1. Category/tag pages
+2. Archive pages
+3. Secondary content pages
+
+**Low Priority**:
+1. Test pages
+2. Rarely-visited content
+3. Duplicate URLs
+
+### Monitoring Redirects
+
+**Check redirect effectiveness**:
+
+```bash
+# Test specific redirect
+curl -I https://waccamaw.org/old-url
+
+# Should return:
+# HTTP/1.1 301 Moved Permanently (or 302 Found)
+# Location: https://waccamaw.org/new-url
+```
+
+**Analytics**:
+- Monitor 404 rate over time
+- Create redirects for frequently-requested 404s
+- Review monthly and add new redirects as needed
+
+### Bulk Redirects
+
+For many redirects, create multiple files:
+
+```bash
+# Create redirect files programmatically
+cd content/redirects/
+
+# Example: Loop through old URLs
+for url in about-us contact events gallery news; do
+  cat > "${url}.md" << EOF
+---
+title: "Redirect: ${url}"
+type: redirect
+redirect: /updates/
+url: /${url}
+---
+EOF
+done
+```
+
+### Redirect Maintenance
+
+**Monthly Review**:
+1. Check Google Search Console for 404 errors
+2. Create redirects for top 10 404s
+3. Update redirect documentation
+4. Remove redirects for URLs no longer requested (after 6 months)
+
+**Annual Audit**:
+1. Review all redirects
+2. Update destinations if content moved
+3. Archive old redirects (move to `content/redirects/archived/`)
+4. Document redirect history
+
+### Troubleshooting Redirects
+
+**Redirect not working**:
+1. Check front matter syntax
+2. Verify `type: redirect` is set
+3. Ensure `url:` matches old URL exactly
+4. Test locally with `hugo server`
+5. Check Hugo build output for errors
+
+**Redirect loops**:
+1. Ensure destination URL is different from source URL
+2. Check for circular redirects (A→B→A)
+3. Use absolute URLs when possible
+
+**404 still showing**:
+1. Clear browser cache
+2. Wait 5-10 minutes for deployment
+3. Check that file was committed and pushed
+4. Verify Micro.blog pulled latest changes
 
 ## Monitoring & Verification
 
