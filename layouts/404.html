@@ -1,4 +1,9 @@
-{{ define "main" }}
+<!DOCTYPE html>
+<html lang="en">
+{{ partial "head.html" . }}
+<body>
+{{ partial "header.html" . }}
+<main>
 <div class="not-found-container">
 	<div class="not-found-content">
 		<div class="not-found-header">
@@ -314,4 +319,10 @@
 	}
 }
 </style>
-{{ end }}
+</div>
+</main>
+{{ partial "donate.html" . }}
+{{ partial "footer.html" . }}
+{{ partial "custom_footer.html" . }}
+</body>
+</html>
