@@ -48,8 +48,10 @@
 		{{ range first 3 $allPosts }}
 			<article class="update-item h-entry">
 				{{ if .Params.photos }}
-					<div class="update-image" onclick="openLightbox('{{ index .Params.photos 0 }}')">
-						<img src="{{ index .Params.photos 0 }}" alt="{{ .Title }}" loading="lazy">
+					{{ $originalImage := index .Params.photos 0 }}
+					{{ $resizedImage := printf "https://micro.blog/photos/900x/%s" $originalImage }}
+					<div class="update-image" onclick="openLightbox('{{ $originalImage }}')">
+						<img src="{{ $resizedImage }}" alt="{{ .Title }}" loading="lazy">
 					</div>
 				{{ end }}
 				<div class="update-content">
@@ -110,9 +112,11 @@ document.addEventListener('keydown', function(e) {
 				{{ $colorIndex := mod $index 6 }}
 				<article class="post-card h-entry">
 					{{ if .Params.photos }}
+						{{ $originalImage := index .Params.photos 0 }}
+						{{ $resizedImage := printf "https://micro.blog/photos/400x/%s" $originalImage }}
 						<div class="post-card-image">
 							<a href="{{ .Permalink }}">
-								<img src="{{ index .Params.photos 0 }}" alt="{{ .Title }}" loading="lazy">
+								<img src="{{ $resizedImage }}" alt="{{ .Title }}" loading="lazy">
 							</a>
 						</div>
 					{{ else }}
