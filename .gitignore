@@ -2,7 +2,15 @@
 .hugo_build.lock
 public/
 .env
-content/
+
+# Ignore Micro.blog synced content (blog posts by date)
+content/20*/
+content/replies/
+
+# But allow static content files
+!content/*.md
+!content/redirects/
+
 apps/**
 
 content-export*
