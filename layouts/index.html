@@ -1,10 +1,8 @@
 {{ define "main" }}
 
 {{ $allPosts := where .Site.RegularPages "Type" "post" }}
-{{ $paginator := .Paginate $allPosts 10 }}
 
-<!-- Featured Hero Carousel (only on page 1) -->
-{{ if eq $paginator.PageNumber 1 }}
+<!-- Featured Hero (1 post only) -->
 {{ $featured := where .Site.RegularPages ".Params.categories" "intersect" (slice "featured") }}
 {{ if $featured }}
 	<div class="hero-carousel">
@@ -44,119 +42,130 @@
 	</div>
 {{ end }}
 
-<!-- Featured Posts Row (3 cards) -->
-{{ $featuredPosts := after 1 (first 4 $featured) }}
-{{ if $featuredPosts }}
-<div class="featured-row">
-	<h2 class="section-heading">Featured Stories</h2>
-	<div class="featured-grid">
-		{{ range $featuredPosts }}
-			<article class="featured-card h-entry">
+<!-- Last 3 Blog Posts -->
+<div class="recent-updates">
+	<div class="updates-list">
+		{{ range first 3 $allPosts }}
+			<article class="update-item h-entry">
 				{{ if .Params.photos }}
-					<div class="card-image">
+					<div class="update-image" onclick="openLightbox('{{ index .Params.photos 0 }}')">
 						<img src="{{ index .Params.photos 0 }}" alt="{{ .Title }}" loading="lazy">
 					</div>
 				{{ end }}
-				<div class="card-content">
-					<h3 class="card-title p-name">
+				<div class="update-content">
+					<h3 class="p-name update-title">
 						<a href="{{ .Permalink }}">{{ .Title }}</a>
 					</h3>
-					<div class="card-meta">
+					<div class="update-meta">
 						<time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
-							{{ .Date.Format "Jan 2, 2006" }}
+							{{ .Date.Format "January 2, 2006" }}
 						</time>
+						{{ if .Params.categories }}
+							<span class="update-categories">
+								{{ range .Params.categories }}
+									<span class="category-badge">{{ . }}</span>
+								{{ end }}
+							</span>
+						{{ end }}
 					</div>
-					<p class="card-excerpt">{{ .Summary | truncate 120 }}</p>
+					<p class="update-excerpt">{{ .Summary | truncate 200 }}</p>
+					<a href="{{ .Permalink }}" class="u-url update-link">Read more →</a>
 				</div>
 			</article>
 		{{ end }}
 	</div>
 </div>
-{{ end }}
-{{ end }}
 
-<!-- Recent Posts Feed -->
-<div class="h-feed home-feed">
-	<h2>Latest Updates</h2>
-	
-	{{ range $paginator.Pages }}
-		<article class="h-entry post-preview">
-			<header class="post-header">
-				{{ if .Title }}
-					<h3 class="p-name post-title">
-						<a href="{{ .Permalink }}">{{ .Title }}</a>
-					</h3>
-				{{ end }}
-				
-				<div class="post-meta">
-					<time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
-						{{ .Date.Format "January 2, 2006" }}
-					</time>
-					{{ with .Params.author }}
-						{{ if reflect.IsMap . }}
-							by <span class="p-author h-card">
-								{{ with .avatar }}<img src="{{ . }}" alt="{{ $.Params.author.full_name }}" class="author-avatar"> {{ end }}
-								{{ .full_name | default .name }}
-							</span>
-						{{ else }}
-							by <span class="p-author h-card">{{ . }}</span>
-						{{ end }}
-					{{ end }}
-					{{ if .Params.categories }}
-						<span class="post-categories">
-							{{ range .Params.categories }}
-								<a href="/categories/{{ . | urlize }}/" class="category-badge">{{ . }}</a>
-							{{ end }}
-						</span>
-					{{ end }}
-				</div>
-			</header>
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+	<span class="lightbox-close">×</span>
+	<img id="lightbox-img" src="" alt="">
+</div>
 
-			<div class="p-summary post-summary">
-				{{ if .Title }}
-					{{ .Summary }}
-				{{ else }}
-					{{ .Content }}
-				{{ end }}
-			</div>
+<script>
+function openLightbox(src) {
+	event.stopPropagation();
+	document.getElementById('lightbox').classList.add('active');
+	document.getElementById('lightbox-img').src = src;
+	document.body.style.overflow = 'hidden';
+}
 
-			{{ if .Params.photos }}
-				<div class="post-photos-preview">
-					{{ range first 3 .Params.photos }}
-						<img src="{{ . }}" alt="" loading="lazy">
+function closeLightbox() {
+	document.getElementById('lightbox').classList.remove('active');
+	document.body.style.overflow = 'auto';
+}
+
+document.addEventListener('keydown', function(e) {
+	if (e.key === 'Escape') {
+		closeLightbox();
+	}
+});
+</script>
+
+<!-- Recent Updates Grid (all content) -->
+<div class="homepage-sections">
+	<div class="other-posts-section">
+		<div class="posts-grid">
+			{{ range $index, $post := after 3 (first 18 $allPosts) }}
+				{{ $colorIndex := mod $index 6 }}
+				<article class="post-card h-entry">
+					{{ if .Params.photos }}
+						<div class="post-card-image">
+							<a href="{{ .Permalink }}">
+								<img src="{{ index .Params.photos 0 }}" alt="{{ .Title }}" loading="lazy">
+							</a>
+						</div>
+					{{ else }}
+						<div class="post-card-placeholder post-card-color-{{ $colorIndex }}">
+							<a href="{{ .Permalink }}">
+								<span class="placeholder-icon">📄</span>
+							</a>
+						</div>
 					{{ end }}
-					{{ if gt (len .Params.photos) 3 }}
-						<span class="more-photos">+{{ sub (len .Params.photos) 3 }} more</span>
-					{{ end }}
-				</div>
+					<div class="post-card-content">
+						<h3 class="p-name post-card-title">
+							<a href="{{ .Permalink }}">{{ .Title }}</a>
+						</h3>
+						<time class="dt-published post-card-date" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
+							{{ .Date.Format "Jan 2, 2006" }}
+						</time>
+					</div>
+				</article>
 			{{ end }}
+		</div>
+		<a href="/updates/" class="view-all-link">View all updates →</a>
+	</div>
 
-			<div class="post-footer">
-				<a href="{{ .Permalink }}" class="u-url read-more">Read more →</a>
-			</div>
-		</article>
-	{{ end }}
-	
-	<!-- Pagination Controls -->
-	{{ if or $paginator.HasPrev $paginator.HasNext }}
-	<nav class="pagination">
-		{{ if $paginator.HasPrev }}
-			<a href="{{ $paginator.Prev.URL }}" class="pagination-prev">← Newer posts</a>
-		{{ else }}
-			<span class="pagination-prev disabled">← Newer posts</span>
+	<!-- Most Recent Meeting -->
+	<div class="recent-meeting-section">
+		{{ $meetings := where $allPosts ".Params.categories" "intersect" (slice "meetings") }}
+		{{ with index $meetings 0 }}
+			<a href="{{ .Permalink }}" class="meeting-item-home">
+				<div class="meeting-calendar">
+					<div class="calendar-month">{{ .Date.Format "Jan" }}</div>
+					{{ if in .Title "Open Meeting" }}
+						<div class="calendar-label">Open<br>Meeting</div>
+					{{ else if in .Title "Executive" }}
+						<div class="calendar-label">Executive</div>
+					{{ else }}
+						<div class="calendar-label">Meeting</div>
+					{{ end }}
+				</div>
+				<div class="meeting-info">
+					<h3 class="meeting-title">{{ .Title }}</h3>
+					<div class="meeting-meta">
+						<time datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
+							{{ .Date.Format "January 2, 2006" }}
+						</time>
+					</div>
+					{{ if .Summary }}
+						<p class="meeting-summary">{{ .Summary | truncate 300 }}</p>
+					{{ end }}
+				</div>
+			</a>
 		{{ end }}
-		
-		<span class="pagination-info">
-			Page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}
-		</span>
-		
-		{{ if $paginator.HasNext }}
-			<a href="{{ $paginator.Next.URL }}" class="pagination-next">Older posts →</a>
-		{{ else }}
-			<span class="pagination-next disabled">Older posts →</span>
-		{{ end }}
-	</nav>
-	{{ end }}
+		<a href="/categories/meetings/" class="view-all-link">View all meetings →</a>
+	</div>
 </div>
 
 {{ end }}

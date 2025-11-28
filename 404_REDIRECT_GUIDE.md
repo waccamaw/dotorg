@@ -43,9 +43,27 @@ Done! Redirect will be live in 5-10 minutes.
 - Contact information for reporting issues
 - Mobile responsive
 
-**Preview**: Visit any non-existent URL to see it:
-- Local: http://localhost:1313/test-404
-- Production: https://waccamaw.org/test-404 (after deployment)
+**Current Limitation**: 
+Due to Cloudflare Workers routing, the custom 404 page may not display for all broken URLs. The Worker returns a simple "Not Found" text. To fully enable custom 404 pages across the entire site, the Cloudflare Worker needs to be updated to proxy 404 responses from Micro.blog.
+
+**Preview**: 
+- Direct access: https://waccamaw.org/404.html (works)
+- Broken URLs: Currently shows "Not Found" due to Worker routing
+
+**Cloudflare Worker Fix Needed**:
+```javascript
+// In the Cloudflare Worker, when proxying to Micro.blog:
+const response = await fetch('https://waccamaw.micro.blog' + path, {
+  headers: request.headers
+});
+
+// Pass through the response, including 404s with custom HTML
+return new Response(response.body, {
+  status: response.status,
+  statusText: response.statusText,
+  headers: response.headers
+});
+```
 
 ### 2. Redirect System ✅
 
