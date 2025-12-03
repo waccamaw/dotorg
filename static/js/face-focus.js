@@ -6,6 +6,12 @@
 (function() {
 	'use strict';
 
+	// Configuration
+	const SELECTORS = '.governing-body-card img, .featured-chief img';
+	const DEFAULT_POSITION = { x: 50, y: 35 };
+	const GRID_SIZE = 3;
+	const SAMPLE_STEP = 2;
+
 	/**
 	 * Simple face detection using brightness analysis
 	 * Assumes faces are typically in the upper-middle portion of portrait photos
@@ -23,17 +29,16 @@
 				const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
 				const data = imageData.data;
 				
-				// Divide image into a 3x3 grid and find brightest section (likely face)
-				const gridSize = 3;
-				const cellWidth = canvas.width / gridSize;
-				const cellHeight = canvas.height / gridSize;
+				// Divide image into a grid and find brightest section (likely face)
+				const cellWidth = canvas.width / GRID_SIZE;
+				const cellHeight = canvas.height / GRID_SIZE;
 				
 				let maxBrightness = 0;
-				let faceX = 50; // default center
-				let faceY = 35; // default upper-middle
+				let faceX = DEFAULT_POSITION.x;
+				let faceY = DEFAULT_POSITION.y;
 				
-				for (let row = 0; row < gridSize; row++) {
-					for (let col = 0; col < gridSize; col++) {
+				for (let row = 0; row < GRID_SIZE; row++) {
+					for (let col = 0; col < GRID_SIZE; col++) {
 						let brightness = 0;
 						let pixelCount = 0;
 						
@@ -42,8 +47,8 @@
 						const endX = Math.floor((col + 1) * cellWidth);
 						const endY = Math.floor((row + 1) * cellHeight);
 						
-						for (let y = startY; y < endY; y += 2) {
-							for (let x = startX; x < endX; x += 2) {
+						for (let y = startY; y < endY; y += SAMPLE_STEP) {
+							for (let x = startX; x < endX; x += SAMPLE_STEP) {
 								const idx = (y * canvas.width + x) * 4;
 								const r = data[idx];
 								const g = data[idx + 1];
@@ -61,8 +66,8 @@
 						
 						if (adjustedBrightness > maxBrightness) {
 							maxBrightness = adjustedBrightness;
-							faceX = ((col + 0.5) / gridSize) * 100;
-							faceY = ((row + 0.5) / gridSize) * 100;
+							faceX = ((col + 0.5) / GRID_SIZE) * 100;
+							faceY = ((row + 0.5) / GRID_SIZE) * 100;
 						}
 					}
 				}
@@ -70,7 +75,7 @@
 				resolve({ x: faceX, y: faceY });
 			} catch (e) {
 				// If canvas operations fail (e.g., CORS), use default position
-				resolve({ x: 50, y: 35 });
+				resolve(DEFAULT_POSITION);
 			}
 		});
 	}
@@ -79,7 +84,7 @@
 	 * Apply face-focusing to all governing body images
 	 */
 	async function applyFaceFocus() {
-		const images = document.querySelectorAll('.governing-body-card img, .featured-chief img');
+		const images = document.querySelectorAll(SELECTORS);
 		
 		for (const img of images) {
 			// Skip if image hasn't loaded yet
@@ -104,7 +109,7 @@
 
 	// Run on page load
 	if (document.readyState === 'loading') {
-		document.addEventListener('DOMContentLoaded', applyFaceFocus);
+		document.addEventListener('DOMContentLoaded', applyFaceFocus, { once: true });
 	} else {
 		applyFaceFocus();
 	}
