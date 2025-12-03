@@ -69,19 +69,25 @@
             </div>
           </div>
           {{ end }}
+        </div>
+      </div>
 
-          <!-- Retired Chiefs -->
+      <!-- Retired Chiefs - Respectful Minimized Section -->
+      {{ if $data.retired_chiefs }}
+      <div class="retired-chiefs-minimized">
+        <h4>Retired Leadership</h4>
+        <div class="retired-chiefs-list">
           {{ range $data.retired_chiefs }}
-          <div class="governing-body-card">
-            <img src="{{ .image }}" alt="{{ .name }}">
-            <div class="card-content">
-              <h3>{{ .name }}</h3>
+          <div class="retired-chief-item">
+            <div class="retired-chief-content">
+              <h5>{{ .name }}</h5>
               <p class="title">{{ .title }}</p>
             </div>
           </div>
           {{ end }}
         </div>
       </div>
+      {{ end }}
 
       <!-- Council Seats -->
       {{ if $data.council.seats }}

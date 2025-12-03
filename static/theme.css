@@ -2568,6 +2568,53 @@ margin: 0 auto;
 box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
+/* Retired Chiefs - Minimized Respectful Section */
+.retired-chiefs-minimized {
+margin: 3rem 0 2rem 0;
+padding: 1.5rem;
+background: var(--bg-secondary);
+border-left: 3px solid var(--border-color);
+border-radius: 6px;
+}
+
+.retired-chiefs-minimized h4 {
+font-size: 1.1rem;
+color: var(--text-light);
+margin: 0 0 1rem 0;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.retired-chiefs-list {
+display: flex;
+flex-wrap: wrap;
+gap: 1rem;
+}
+
+.retired-chief-item {
+flex: 1 1 200px;
+min-width: 200px;
+}
+
+.retired-chief-content {
+padding: 0.75rem;
+}
+
+.retired-chief-content h5 {
+font-size: 1rem;
+color: var(--text-color);
+margin: 0 0 0.25rem 0;
+font-weight: 600;
+}
+
+.retired-chief-content .title {
+font-size: 0.875rem;
+color: var(--text-light);
+margin: 0;
+font-style: italic;
+}
+
 /* Lists for non-photo sections */
 .elders-list,
 .judicial-list,
