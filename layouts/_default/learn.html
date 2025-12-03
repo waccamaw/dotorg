@@ -33,23 +33,12 @@
       </div>
       {{ end }}
 
-      <!-- Leadership Team Section -->
-      <div class="leadership-team-section">
-        <h3>Leadership Team</h3>
+      <!-- Chiefs Section -->
+      <div class="chiefs-section">
+        <h3>Chiefs</h3>
         <div class="governing-body-grid">
           <!-- Acting Chiefs -->
           {{ range $data.acting_chiefs }}
-          <div class="governing-body-card">
-            <img src="{{ .image }}" alt="{{ .name }}">
-            <div class="card-content">
-              <h3>{{ .name }}</h3>
-              <p class="title">{{ .title }}</p>
-            </div>
-          </div>
-          {{ end }}
-
-          <!-- Chief of Council -->
-          {{ with $data.council.chief_of_council }}
           <div class="governing-body-card">
             <img src="{{ .image }}" alt="{{ .name }}">
             <div class="card-content">
@@ -72,27 +61,27 @@
         </div>
       </div>
 
-      <!-- Retired Chiefs - Respectful Minimized Section -->
-      {{ if $data.retired_chiefs }}
-      <div class="retired-chiefs-minimized">
-        <h4>Retired Leadership</h4>
-        <div class="retired-chiefs-list">
-          {{ range $data.retired_chiefs }}
-          <div class="retired-chief-item">
-            <div class="retired-chief-content">
-              <h5>{{ .name }}</h5>
+      <!-- Tribal Council Section -->
+      <div class="tribal-council-section">
+        <h3>Tribal Council</h3>
+        
+        <!-- Chief of Council -->
+        {{ with $data.council.chief_of_council }}
+        <div class="chief-of-council-wrapper">
+          <div class="governing-body-card">
+            <img src="{{ .image }}" alt="{{ .name }}">
+            <div class="card-content">
+              <h3>{{ .name }}</h3>
               <p class="title">{{ .title }}</p>
             </div>
           </div>
-          {{ end }}
         </div>
-      </div>
-      {{ end }}
+        {{ end }}
 
-      <!-- Council Seats -->
-      {{ if $data.council.seats }}
-      <div class="council-seats-section">
-        <div class="governing-body-grid">
+        <!-- Council Seats -->
+        {{ if $data.council.seats }}
+        <div class="council-seats-grid">
+          <div class="governing-body-grid">
           {{ range $data.council.seats }}
           <div class="governing-body-card">
             {{ if .image }}
@@ -103,6 +92,24 @@
               {{ if .name }}
               <p class="member-name">{{ .name }}</p>
               {{ end }}
+            </div>
+          </div>
+          {{ end }}
+        </div>
+        </div>
+        {{ end }}
+      </div>
+
+      <!-- Retired Chiefs - Respectful Minimized Section -->
+      {{ if $data.retired_chiefs }}
+      <div class="retired-chiefs-minimized">
+        <h4>Retired Leadership</h4>
+        <div class="retired-chiefs-list">
+          {{ range $data.retired_chiefs }}
+          <div class="retired-chief-item">
+            <div class="retired-chief-content">
+              <h5>{{ .name }}</h5>
+              <p class="title">{{ .title }}</p>
             </div>
           </div>
           {{ end }}
