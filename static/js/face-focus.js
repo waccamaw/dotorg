@@ -42,8 +42,8 @@
 						const endX = Math.floor((col + 1) * cellWidth);
 						const endY = Math.floor((row + 1) * cellHeight);
 						
-						for (let y = startY; y < endY; y += 4) {
-							for (let x = startX; x < endX; x += 4) {
+						for (let y = startY; y < endY; y += 2) {
+							for (let x = startX; x < endX; x += 2) {
 								const idx = (y * canvas.width + x) * 4;
 								const r = data[idx];
 								const g = data[idx + 1];
@@ -84,7 +84,7 @@
 		for (const img of images) {
 			// Skip if image hasn't loaded yet
 			if (!img.complete || img.naturalWidth === 0) {
-				img.addEventListener('load', () => applyFocusToImage(img));
+				img.addEventListener('load', () => applyFocusToImage(img), { once: true });
 			} else {
 				await applyFocusToImage(img);
 			}
@@ -92,6 +92,12 @@
 	}
 
 	async function applyFocusToImage(img) {
+		// Skip if already processed
+		if (img.dataset.faceFocusApplied === 'true') {
+			return;
+		}
+		img.dataset.faceFocusApplied = 'true';
+		
 		const position = await detectFacePosition(img);
 		img.style.objectPosition = `${position.x}% ${position.y}%`;
 	}
