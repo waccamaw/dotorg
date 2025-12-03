@@ -184,6 +184,60 @@ Your content here...
 
 ## Template Deployment
 
+### Automated Template Deployment
+
+**Overview**: Template and layout changes are automatically deployed to Micro.blog using GitHub Actions with email-based authentication.
+
+**Triggers**: Changes to the following files automatically trigger deployment:
+- `layouts/**/*.html`
+- `static/**/*`
+- `config.json`
+
+**How It Works**:
+1. Push template changes to `main` branch
+2. GitHub Action authenticates to Micro.blog via email (using cached session cookie)
+3. Triggers theme reload from GitHub
+4. Rebuilds site and monitors completion
+5. Changes live in ~1-2 minutes
+
+**GitHub Secrets & Variables Required**:
+
+Secrets (encrypted):
+- `GMAIL_APP_PASSWORD` - Gmail app password for authentication
+
+Variables (configuration):
+- `GMAIL_EMAIL` - Gmail address for receiving sign-in emails
+- `MICROBLOG_EMAIL` - Micro.blog account email
+- `MICROBLOG_SITE_ID` - Micro.blog site ID (from URL)
+- `MICROBLOG_THEME_ID` - Theme ID (from theme URL)
+
+**Setup Instructions**:
+
+1. **Get Gmail App Password**:
+   - Enable 2-factor auth at https://myaccount.google.com/security
+   - Create app password at https://myaccount.google.com/apppasswords
+   - Name it "Waccamaw Micro.blog Deploy"
+
+2. **Find Micro.blog IDs**:
+   - Site ID: Visit https://micro.blog/account, inspect site settings URL
+   - Theme ID: Go to Design → Edit Custom Themes, check theme URL
+
+3. **Configure GitHub Secrets**:
+   - Go to repo Settings → Secrets and variables → Actions
+   - Add secret `GMAIL_APP_PASSWORD`
+   - Add variables: `GMAIL_EMAIL`, `MICROBLOG_EMAIL`, `MICROBLOG_SITE_ID`, `MICROBLOG_THEME_ID`
+
+4. **Manual Deployment** (if needed):
+   - Go to Actions tab → Deploy to Micro.blog
+   - Click "Run workflow" button
+
+**Monitoring Deployments**:
+- Check Actions tab for workflow status
+- View deployment summary in workflow run
+- Verify changes at https://waccamaw.micro.blog/
+
+For deployment script details, see [.github/deploy/README.md](.github/deploy/README.md).
+
 ### Modifying Layouts
 
 **Files**: `layouts/**/*.html`
@@ -216,7 +270,7 @@ Your content here...
    - Tablet: 820x1180
    - Mobile: 390x844
 
-5. **Deploy**: Standard workflow with **extra testing**
+5. **Deploy**: Standard workflow with **extra testing** (auto-deploys via GitHub Actions)
 
 **Template Deployment Checklist**:
 - [ ] Tested locally with `just serve`
