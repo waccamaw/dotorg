@@ -15,6 +15,8 @@
 	/**
 	 * Simple face detection using brightness analysis
 	 * Assumes faces are typically in the upper-middle portion of portrait photos
+	 * @param {HTMLImageElement} img - The image element to analyze
+	 * @returns {Promise<{x: number, y: number}>} Promise resolving to position percentages
 	 */
 	function detectFacePosition(img) {
 		return new Promise((resolve) => {
@@ -44,17 +46,20 @@
 						
 						const startX = Math.floor(col * cellWidth);
 						const startY = Math.floor(row * cellHeight);
-						const endX = Math.floor((col + 1) * cellWidth);
-						const endY = Math.floor((row + 1) * cellHeight);
+						const endX = Math.min(Math.floor((col + 1) * cellWidth), canvas.width);
+						const endY = Math.min(Math.floor((row + 1) * cellHeight), canvas.height);
 						
 						for (let y = startY; y < endY; y += SAMPLE_STEP) {
 							for (let x = startX; x < endX; x += SAMPLE_STEP) {
 								const idx = (y * canvas.width + x) * 4;
-								const r = data[idx];
-								const g = data[idx + 1];
-								const b = data[idx + 2];
-								brightness += (r + g + b) / 3;
-								pixelCount++;
+								// Ensure we don't exceed array bounds
+								if (idx >= 0 && idx + 2 < data.length) {
+									const r = data[idx];
+									const g = data[idx + 1];
+									const b = data[idx + 2];
+									brightness += (r + g + b) / 3;
+									pixelCount++;
+								}
 							}
 						}
 						
@@ -96,6 +101,11 @@
 		}
 	}
 
+	/**
+	 * Apply face-focusing to a single image
+	 * @param {HTMLImageElement} img - The image element to process
+	 * @returns {Promise<void>}
+	 */
 	async function applyFocusToImage(img) {
 		// Skip if already processed
 		if (img.dataset.faceFocusApplied === 'true') {
