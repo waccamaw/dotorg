@@ -36,6 +36,7 @@
       <!-- Second Chiefs -->
       {{ if $data.second_chiefs }}
       <div class="second-chiefs-section">
+        <h3>Second Chiefs</h3>
         <div class="governing-body-grid">
           {{ range $data.second_chiefs }}
           <div class="governing-body-card">
@@ -53,6 +54,7 @@
       <!-- Retired Chiefs -->
       {{ if $data.retired_chiefs }}
       <div class="retired-chiefs-section">
+        <h3>Retired Chiefs</h3>
         <div class="governing-body-grid">
           {{ range $data.retired_chiefs }}
           <div class="governing-body-card">
@@ -70,6 +72,7 @@
       <!-- Acting Chiefs -->
       {{ if $data.acting_chiefs }}
       <div class="acting-chiefs-section">
+        <h3>Acting Chiefs</h3>
         <div class="governing-body-grid">
           {{ range $data.acting_chiefs }}
           <div class="governing-body-card">
@@ -87,6 +90,7 @@
       <!-- Chief of Council -->
       {{ with $data.council.chief_of_council }}
       <div class="chief-of-council-section">
+        <h3>Chief of Council</h3>
         <div class="governing-body-card">
           <img src="{{ .image }}" alt="{{ .name }}">
           <div class="card-content">

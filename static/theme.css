@@ -2395,20 +2395,26 @@ padding: 2rem 1.5rem;
 
 .learn-page .page-header {
 text-align: center;
-margin-bottom: 3rem;
+margin-bottom: 4rem;
+padding: 2rem 1rem;
+background: linear-gradient(135deg, rgba(139, 69, 19, 0.03) 0%, rgba(210, 180, 140, 0.03) 100%);
+border-radius: 12px;
 }
 
 .learn-page .page-header h1 {
-font-size: 2.5rem;
+font-size: 2.8rem;
 color: var(--text-color);
 margin-bottom: 1rem;
+font-weight: 700;
+letter-spacing: -0.5px;
 }
 
 .learn-page .page-description {
-font-size: 1.1rem;
+font-size: 1.15rem;
 color: var(--text-light);
-max-width: 600px;
+max-width: 650px;
 margin: 0 auto;
+line-height: 1.6;
 }
 
 .learn-content {
@@ -2427,11 +2433,25 @@ border-bottom: none;
 }
 
 .learn-content h2 {
-font-size: 1.8rem;
+font-size: 2rem;
 color: var(--text-color);
-margin-bottom: 1.5rem;
+margin-bottom: 2rem;
 text-transform: uppercase;
-letter-spacing: 0.5px;
+letter-spacing: 1px;
+font-weight: 700;
+position: relative;
+padding-bottom: 0.75rem;
+}
+
+.learn-content h2::after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 0;
+width: 60px;
+height: 4px;
+background: linear-gradient(90deg, #8B4513 0%, #D2B48C 100%);
+border-radius: 2px;
 }
 
 .learn-content h3 {
@@ -2458,14 +2478,16 @@ margin: 2rem 0;
 .governing-body-card {
 background: var(--bg-white);
 border: 1px solid var(--border-color);
-border-radius: 8px;
+border-radius: 12px;
 overflow: hidden;
-transition: transform 0.2s, box-shadow 0.2s;
+transition: all 0.3s ease;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .governing-body-card:hover {
-transform: translateY(-4px);
-box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+transform: translateY(-6px);
+box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+border-color: rgba(139, 69, 19, 0.2);
 }
 
 .governing-body-card img {
@@ -2476,19 +2498,22 @@ display: block;
 }
 
 .governing-body-card .card-content {
-padding: 1.5rem;
+padding: 1.75rem;
+background: linear-gradient(to bottom, transparent 0%, rgba(255, 255, 255, 0.5) 100%);
 }
 
 .governing-body-card h3 {
-font-size: 1.25rem;
+font-size: 1.3rem;
 color: var(--text-color);
 margin-bottom: 0.5rem;
+font-weight: 600;
 }
 
 .governing-body-card .title {
-font-size: 0.95rem;
+font-size: 1rem;
 color: var(--text-light);
 margin: 0;
+font-weight: 500;
 }
 
 .governing-body-card .member-name {
@@ -2499,18 +2524,23 @@ margin: 0.5rem 0 0 0;
 
 /* Featured Chief */
 .chief-section {
-margin: 2rem 0;
+margin: 2.5rem 0;
 display: flex;
 justify-content: center;
 }
 
 .featured-chief {
-max-width: 400px;
+max-width: 450px;
 width: 100%;
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .featured-chief img {
-height: 400px;
+height: 450px;
+}
+
+.featured-chief:hover {
+box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
 }
 
 /* Council Sections */
@@ -2518,12 +2548,22 @@ height: 400px;
 .retired-chiefs-section,
 .acting-chiefs-section,
 .chief-of-council-section {
-margin: 2rem 0;
+margin: 2.5rem 0;
+}
+
+.second-chiefs-section h3,
+.retired-chiefs-section h3,
+.acting-chiefs-section h3 {
+font-size: 1.5rem;
+color: var(--text-color);
+margin-bottom: 1.5rem;
+font-weight: 600;
 }
 
 .chief-of-council-section .governing-body-card {
-max-width: 350px;
+max-width: 380px;
 margin: 0 auto;
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 /* Lists for non-photo sections */
@@ -2531,8 +2571,8 @@ margin: 0 auto;
 .judicial-list,
 .administrative-list {
 display: grid;
-grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-gap: 1.5rem;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 1.75rem;
 margin: 1.5rem 0;
 }
 
@@ -2541,24 +2581,36 @@ margin: 1.5rem 0;
 .administrative-item {
 background: var(--bg-white);
 border: 1px solid var(--border-color);
-border-radius: 8px;
-padding: 1.5rem;
+border-radius: 10px;
+padding: 1.75rem;
+transition: all 0.3s ease;
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.elder-item:hover,
+.judicial-item:hover,
+.administrative-item:hover {
+transform: translateY(-3px);
+box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+border-color: rgba(139, 69, 19, 0.15);
 }
 
 .elder-item h3,
 .judicial-item h3,
 .administrative-item h3 {
-font-size: 1.1rem;
+font-size: 1.15rem;
 color: var(--text-color);
-margin-bottom: 0.25rem;
+margin-bottom: 0.35rem;
+font-weight: 600;
 }
 
 .elder-item .title,
 .judicial-item .title,
 .administrative-item .title {
-font-size: 0.9rem;
+font-size: 0.95rem;
 color: var(--text-light);
 margin: 0;
+font-weight: 500;
 }
 
 /* External Resource */
