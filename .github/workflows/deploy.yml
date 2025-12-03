@@ -20,8 +20,17 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      deployments: write
     
     steps:
+      - name: Start deployment
+        uses: bobheadxi/deployments@v1
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: production
+      
       - name: Checkout repository
         uses: actions/checkout@v4
       
@@ -104,3 +113,14 @@ jobs:
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           git diff --name-only HEAD~1 HEAD | grep -E '(layouts/|static/|config\.json)' || echo "No template files changed"
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+      
+      - name: Update deployment status
+        uses: bobheadxi/deployments@v1
+        if: always()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: ${{ job.status }}
+          env: ${{ steps.deployment.outputs.env }}
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          env_url: https://waccamaw.micro.blog/
