@@ -2,6 +2,61 @@
 
 Thank you for your interest in contributing to the Waccamaw Indian People's website! This guide will help you make contributions using GitHub Copilot, even if you're new to web development.
 
+## 🎯 Content vs Code: Choosing the Right Workflow
+
+### ✅ Use Micro.blog Interface (Easiest for Content)
+
+**Best for non-technical tribal members posting:**
+- Blog posts and news updates
+- Photos from events and ceremonies
+- Meeting announcements
+- Community stories
+
+**👉 Start here:** [Micro.blog Posting Guide](.github/MICROBLOG_POSTING_GUIDE.md)
+
+**Benefits:**
+- No GitHub account needed
+- No coding knowledge required
+- Simple web interface
+- Posts appear immediately
+- Perfect for routine content
+
+### 🔧 Use GitHub (For Code/Structural Changes)
+
+**Required for:**
+- Template modifications (`layouts/` directory)
+- Style changes (`static/theme.css`)
+- Configuration updates (`config.json`)
+- Bug fixes
+- New features
+- Permanent page updates (About, Meetings info)
+
+**Benefits:**
+- Version control and history
+- Peer review process
+- Testing before publishing
+- GitHub Copilot assistance
+- Suitable for complex changes
+
+### Decision Tree
+
+```
+Are you adding a blog post, photo, or news update?
+├─ Yes → Use Micro.blog interface (see posting guide)
+└─ No → Continue below...
+
+Are you changing how the website looks or works?
+├─ Yes, changing templates/code → Use GitHub (this guide)
+└─ No, updating permanent pages → Use GitHub (this guide)
+
+Are you fixing a bug or adding a feature?
+└─ Yes → Use GitHub (this guide)
+```
+
+**Still unsure?** Email WaccamawChief@gmail.com or ask in GitHub Discussions.
+
+---
+
 ## Table of Contents
 
 - [Getting Started](#getting-started)
@@ -127,20 +182,28 @@ Copilot: "I'll check the CSS and template files..."
 
 ### Step 5: Take Screenshots
 
-**REQUIRED**: Every PR must include screenshots showing your changes.
+**REQUIRED**: Every PR must include THREE screenshots showing your changes.
 
 #### Desktop Screenshots
 
 1. Open your browser to the changed page
-2. Make window full-size (1920x1080 or similar)
+2. Make window full-size (1920x1080 or 1440x900)
 3. Take screenshot (`Cmd+Shift+4` on Mac, `Win+Shift+S` on Windows)
 4. Save as `desktop-screenshot.png`
 
-#### Mobile Screenshots
+#### Tablet Screenshots (iPad Pro M4)
 
-1. Open Chrome DevTools (`F12`)
+1. Open Chrome or Safari DevTools (`F12`)
 2. Toggle device toolbar
-3. Select "iPhone 12 Pro" or "Pixel 5"
+3. Select "iPad Pro" and set to 1366x1024 (landscape) or 1024x1366 (portrait)
+4. Screenshot the preview
+5. Save as `tablet-screenshot.png`
+
+#### Mobile Screenshots (iPhone 17 Pro)
+
+1. Open Chrome or Safari DevTools (`F12`)
+2. Toggle device toolbar
+3. Select "iPhone 14 Pro" or use custom dimensions 402x874
 4. Screenshot the preview
 5. Save as `mobile-screenshot.png`
 
@@ -196,7 +259,8 @@ Every pull request **MUST** include:
 **What to capture:**
 
 - **Desktop**: Full browser window at 1920x1080 or 1440x900
-- **Mobile**: iPhone 12 Pro (390x844) or similar
+- **Tablet**: iPad Pro M4 (1366x1024 landscape or 1024x1366 portrait)
+- **Mobile**: iPhone 17 Pro (402x874)
 - Show the **specific changes** you made
 - Capture **before and after** if fixing a bug
 
@@ -218,7 +282,8 @@ Fixes #123
 
 ## Testing
 - [x] Tested on desktop Chrome
-- [x] Tested on mobile (iPhone 12 Pro simulation)
+- [x] Tested on tablet (iPad Pro M4 simulation)
+- [x] Tested on mobile (iPhone 17 Pro simulation)
 - [x] All links work
 - [x] Images load correctly
 - [x] No console errors
@@ -228,7 +293,10 @@ Fixes #123
 ### Desktop
 ![Desktop view](desktop-screenshot.png)
 
-### Mobile  
+### Tablet (iPad Pro M4)
+![Tablet view](tablet-screenshot.png)
+
+### Mobile (iPhone 17 Pro)
 ![Mobile view](mobile-screenshot.png)
 ```
 

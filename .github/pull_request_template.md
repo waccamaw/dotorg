@@ -40,13 +40,20 @@ Fixes #
 - [ ] All images load correctly
 - [ ] Text is readable and properly formatted
 
-### Mobile Testing
-- [ ] Tested on iPhone simulation (390x844)
-- [ ] Tested on iPad simulation (820x1180)
-- [ ] Tested on Android simulation (360x800)
-- [ ] Navigation works on touch devices
+### Tablet Testing (iPad Pro M4)
+- [ ] Tested on Safari (1366x1024 landscape)
+- [ ] Tested on Safari (1024x1366 portrait)
+- [ ] Touch targets adequate (44x44px minimum)
 - [ ] No horizontal scrolling issues
-- [ ] Text is readable on small screens
+- [ ] Navigation works on touch
+- [ ] Text is readable without zoom
+- [ ] Images scale appropriately
+
+### Mobile Testing (iPhone 17 Pro)
+- [ ] Tested on Safari (402x874)
+- [ ] No horizontal scrolling issues
+- [ ] Text is readable without zoom
+- [ ] All interactive elements work
 - [ ] Images scale appropriately
 
 ### Content/Code Quality
@@ -58,9 +65,43 @@ Fixes #
 - [ ] Responsive on all screen sizes
 - [ ] Accessible (proper heading hierarchy, alt text, etc.)
 
+## ⚠️ Template Changes Danger Zone
+
+<!-- ONLY fill out this section if you modified layouts/, static/theme.css, or config.json -->
+<!-- If this is a content-only change, skip this section -->
+
+### Template Change Checklist
+
+- [ ] **Not applicable** - This PR does not modify templates, CSS, or config
+- [ ] I have read [`.github/MICROBLOG_QUIRKS.md`](.github/MICROBLOG_QUIRKS.md)
+- [ ] I tested with 0 posts (empty blog)
+- [ ] I tested with 1 post (single item)
+- [ ] I tested with 50+ posts (full blog)
+- [ ] I verified no infinite loops in `range` statements
+- [ ] I preserved all microformats (h-entry, h-feed, p-name, dt-published, e-content, u-url)
+- [ ] I validated RSS feed at https://validator.w3.org/feed/
+- [ ] I validated JSON feed
+- [ ] I checked with https://indiewebify.me/ that microformats still work
+- [ ] I have a rollback plan if this breaks production
+
+### Files Modified in `layouts/`, `static/`, or `config.json`
+
+<!-- List specific template files you changed -->
+
+- `layouts/path/to/file.html` - Brief description of change
+- `static/theme.css` - Brief description of change
+
+### Breaking Change Assessment
+
+- [ ] **No breaking changes** - Pure visual/CSS update only
+- [ ] **Possible breaking change** - Modified template structure
+- [ ] **Definite breaking change** - Changed feeds, microformats, or core layouts
+
+<!-- If breaking change, explain mitigation strategy: -->
+
 ## Screenshots
 
-<!-- REQUIRED: Include both desktop and mobile screenshots -->
+<!-- REQUIRED: Include desktop, tablet, AND mobile screenshots -->
 
 ### Desktop View
 
@@ -69,11 +110,19 @@ Fixes #
 
 **Desktop screenshot required** (drag image here)
 
-### Mobile View
+### Tablet View (iPad Pro M4)
+
+<!-- Drag and drop tablet screenshot here -->
+<!-- iPad Pro M4: 1366x1024 landscape or 1024x1366 portrait -->
+<!-- Use Safari DevTools or actual device -->
+
+**Tablet screenshot required** (drag image here)
+
+### Mobile View (iPhone 17 Pro)
 
 <!-- Drag and drop mobile screenshot here -->
-<!-- Use Chrome DevTools device simulation -->
-<!-- iPhone 12 Pro (390x844) or similar -->
+<!-- iPhone 17 Pro: 402x874 -->
+<!-- Use Safari DevTools or actual device -->
 
 **Mobile screenshot required** (drag image here)
 

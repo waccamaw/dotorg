@@ -5,8 +5,9 @@
 1. **Hugo server is ALREADY RUNNING on port 1313** - NEVER start additional servers
 2. **Members portal is at `/members/` directory** - served by Hugo at http://localhost:1313/members/
 3. **Stay focused** - Answer the user's actual question without overcomplicating
-4. **Don't test unless asked** - Make the change, trust the code
-5. **Members portal uses vanilla JS** - Not part of Hugo build, just static HTML/CSS/JS files
+4. **Always test template changes** - Use `just serve` to verify any modifications to `layouts/`, `static/theme.css`, or `config.json` before submitting
+5. **Prefer Micro.blog for content** - Blog posts, photos, and news should be added via Micro.blog interface (see `.github/MICROBLOG_POSTING_GUIDE.md`) unless structural changes are needed
+6. **Members portal uses vanilla JS** - Not part of Hugo build, just static HTML/CSS/JS files
 
 ## Project Overview
 
@@ -90,6 +91,35 @@ dotorg/
 └── LICENSE                         # License information
 ```
 
+## Content vs Code Changes
+
+### ✅ Use Micro.blog Interface (Recommended for Content)
+
+**Non-technical tribal members should post content directly via Micro.blog:**
+- Blog posts and news updates
+- Photos from events and ceremonies  
+- Meeting announcements
+- Community stories
+
+**See:** `.github/MICROBLOG_POSTING_GUIDE.md` for detailed instructions.
+
+### 🔧 Use GitHub (For Code/Template Changes)
+
+**Use GitHub pull requests for:**
+- Template modifications (`layouts/` directory)
+- Style changes (`static/theme.css`)
+- Configuration updates (`config.json`)
+- Bug fixes
+- New features
+- Structural content changes (About page, permanent pages)
+
+**Important:** Template changes require:
+- Reading `.github/MICROBLOG_QUIRKS.md`
+- Testing with `just serve`
+- Three screenshots (desktop, tablet, mobile)
+- Microformats preservation verification
+- Feed validation
+
 ## Coding Standards
 
 ### Template Files
@@ -159,7 +189,8 @@ The repository supports multiple output formats:
 Every PR **MUST** include:
 
 - [ ] **Desktop screenshot** (1920x1080 or 1440x900)
-- [ ] **Mobile screenshot** (iPhone 12 Pro 390x844 or similar)
+- [ ] **Tablet screenshot** (iPad Pro M4 - 1366x1024)
+- [ ] **Mobile screenshot** (iPhone 17 Pro - 402x874)
 - [ ] Clear description of changes
 - [ ] Link to related issue
 - [ ] Testing checklist completed
@@ -252,8 +283,8 @@ See `DEPLOYMENT.md` for detailed deployment procedures.
 ### Responsive Testing
 Use browser DevTools (F12) to test:
 - **Desktop**: 1920x1080, 1440x900
-- **Tablet**: 820x1180 (iPad)
-- **Mobile**: 390x844 (iPhone 12 Pro), 360x800 (Android)
+- **Tablet**: iPad Pro M4 (1366x1024 landscape, 1024x1366 portrait)
+- **Mobile**: iPhone 17 Pro (402x874)
 
 ### Template Testing
 1. Verify HTML structure and semantics
@@ -432,14 +463,15 @@ Micro.blog has specific behaviors that differ from local Hugo builds. **See `.gi
 
 ### Do's ✅
 
-- **Always test locally** with `just serve`
-- **Include screenshots** in every PR (desktop + mobile)
+- **Always test locally** with `just serve` (especially template changes)
+- **Include screenshots** in every PR (desktop + tablet + mobile)
 - **Preserve microformats** in templates
 - **Use semantic HTML**
 - **Keep commits atomic** and focused
 - **Update documentation** when needed
 - **Ask Copilot** when unsure
 - **Link to issues** in PRs
+- **Recommend Micro.blog** for simple content additions (see `.github/MICROBLOG_POSTING_GUIDE.md`)
 
 ### Don'ts ❌
 

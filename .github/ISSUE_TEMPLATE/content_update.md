@@ -1,9 +1,23 @@
 ---
 name: Content Update
-about: Add or update blog posts, tribal information, meeting notes
+about: Add or update blog posts, tribal information, meeting notes (GitHub-based)
 title: "[CONTENT] "
 labels: ["content", "copilot-assist"]
 assignees: []
+---
+
+## ℹ️ Note: Consider Using Micro.blog Interface
+
+**For simple blog posts, photos, and news updates**, you can post directly via Micro.blog's web interface without using GitHub!
+
+👉 **See:** [`.github/MICROBLOG_POSTING_GUIDE.md`](.github/MICROBLOG_POSTING_GUIDE.md) for step-by-step instructions.
+
+**Use this GitHub issue template only for:**
+- Structural content changes (modifying permanent pages like About, Meetings info)
+- Content that requires specific formatting or technical features
+- Bulk content updates
+- When you're comfortable with GitHub and want to use version control
+
 ---
 
 ## Content Type
@@ -117,6 +131,7 @@ See [CONTRIBUTING.md](../../CONTRIBUTING.md) for detailed steps.
 
 ### Tips
 
+- **Prefer Micro.blog** for simple content (see [posting guide](.github/MICROBLOG_POSTING_GUIDE.md))
 - Copilot can help format your content
 - Ask Copilot: "Where should I put this blog post?"
 - Ask Copilot: "How do I add front matter to markdown?"
