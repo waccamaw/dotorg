@@ -33,11 +33,33 @@
       </div>
       {{ end }}
 
-      <!-- Second Chiefs -->
-      {{ if $data.second_chiefs }}
-      <div class="second-chiefs-section">
-        <h3>Second Chiefs</h3>
+      <!-- Leadership Team Section -->
+      <div class="leadership-team-section">
+        <h3>Leadership Team</h3>
         <div class="governing-body-grid">
+          <!-- Acting Chiefs -->
+          {{ range $data.acting_chiefs }}
+          <div class="governing-body-card">
+            <img src="{{ .image }}" alt="{{ .name }}">
+            <div class="card-content">
+              <h3>{{ .name }}</h3>
+              <p class="title">{{ .title }}</p>
+            </div>
+          </div>
+          {{ end }}
+
+          <!-- Chief of Council -->
+          {{ with $data.council.chief_of_council }}
+          <div class="governing-body-card">
+            <img src="{{ .image }}" alt="{{ .name }}">
+            <div class="card-content">
+              <h3>{{ .name }}</h3>
+              <p class="title">{{ .title }}</p>
+            </div>
+          </div>
+          {{ end }}
+
+          <!-- Second Chiefs -->
           {{ range $data.second_chiefs }}
           <div class="governing-body-card">
             <img src="{{ .image }}" alt="{{ .name }}">
@@ -47,15 +69,8 @@
             </div>
           </div>
           {{ end }}
-        </div>
-      </div>
-      {{ end }}
 
-      <!-- Retired Chiefs -->
-      {{ if $data.retired_chiefs }}
-      <div class="retired-chiefs-section">
-        <h3>Retired Chiefs</h3>
-        <div class="governing-body-grid">
+          <!-- Retired Chiefs -->
           {{ range $data.retired_chiefs }}
           <div class="governing-body-card">
             <img src="{{ .image }}" alt="{{ .name }}">
@@ -67,39 +82,6 @@
           {{ end }}
         </div>
       </div>
-      {{ end }}
-
-      <!-- Acting Chiefs -->
-      {{ if $data.acting_chiefs }}
-      <div class="acting-chiefs-section">
-        <h3>Acting Chiefs</h3>
-        <div class="governing-body-grid">
-          {{ range $data.acting_chiefs }}
-          <div class="governing-body-card">
-            <img src="{{ .image }}" alt="{{ .name }}">
-            <div class="card-content">
-              <h3>{{ .name }}</h3>
-              <p class="title">{{ .title }}</p>
-            </div>
-          </div>
-          {{ end }}
-        </div>
-      </div>
-      {{ end }}
-
-      <!-- Chief of Council -->
-      {{ with $data.council.chief_of_council }}
-      <div class="chief-of-council-section">
-        <h3>Chief of Council</h3>
-        <div class="governing-body-card">
-          <img src="{{ .image }}" alt="{{ .name }}">
-          <div class="card-content">
-            <h3>{{ .name }}</h3>
-            <p class="title">{{ .title }}</p>
-          </div>
-        </div>
-      </div>
-      {{ end }}
 
       <!-- Council Seats -->
       {{ if $data.council.seats }}
@@ -181,4 +163,7 @@
     </section>
   </div>
 </div>
+
+<!-- Face focusing script -->
+<script src="/js/face-focus.js"></script>
 {{ end }}

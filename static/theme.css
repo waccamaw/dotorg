@@ -2547,13 +2547,15 @@ box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
 .second-chiefs-section,
 .retired-chiefs-section,
 .acting-chiefs-section,
-.chief-of-council-section {
+.chief-of-council-section,
+.leadership-team-section {
 margin: 2.5rem 0;
 }
 
 .second-chiefs-section h3,
 .retired-chiefs-section h3,
-.acting-chiefs-section h3 {
+.acting-chiefs-section h3,
+.leadership-team-section h3 {
 font-size: 1.5rem;
 color: var(--text-color);
 margin-bottom: 1.5rem;
