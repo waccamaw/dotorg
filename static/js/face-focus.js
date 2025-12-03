@@ -52,8 +52,8 @@
 						for (let y = startY; y < endY; y += SAMPLE_STEP) {
 							for (let x = startX; x < endX; x += SAMPLE_STEP) {
 								const idx = (y * canvas.width + x) * 4;
-								// Ensure we don't exceed array bounds
-								if (idx >= 0 && idx + 2 < data.length) {
+								// Ensure we don't exceed array bounds (need 4 bytes for RGBA)
+								if (idx >= 0 && idx + 3 < data.length) {
 									const r = data[idx];
 									const g = data[idx + 1];
 									const b = data[idx + 2];
@@ -63,7 +63,8 @@
 							}
 						}
 						
-						const avgBrightness = brightness / pixelCount;
+						// Prevent division by zero
+						const avgBrightness = pixelCount > 0 ? brightness / pixelCount : 0;
 						
 						// Prioritize upper rows (where faces typically are)
 						const rowBonus = row === 0 ? 1.2 : (row === 1 ? 1.1 : 1.0);
