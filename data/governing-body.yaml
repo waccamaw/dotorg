@@ -45,7 +45,7 @@ council:
       name: "Robert Benton"
       image: "/governing-body/seat-6.jpg"
     - seat_number: 7
-      name: ""
+      name: "Empty"
       image: ""
 
 council_of_elders:
