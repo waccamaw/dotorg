@@ -46,7 +46,7 @@ council:
       image: "/governing-body/seat-6.jpg"
     - seat_number: 7
       name: "Empty"
-      image: ""
+      image: "To be Filled"
 
 council_of_elders:
   - name: "Rebecca Smith"
