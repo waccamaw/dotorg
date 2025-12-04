@@ -36,13 +36,13 @@ council:
       name: "Marion Craddock"
       image: "/governing-body/seat-3-marion-craddock.jpg"
     - seat_number: 4
-      name: ""
+      name: "Emily White"
       image: "/governing-body/seat-4.jpg"
     - seat_number: 5
-      name: ""
+      name: "Rebecca Fecher"
       image: "/governing-body/seat-5.jpg"
     - seat_number: 6
-      name: ""
+      name: "Robert Benton"
       image: "/governing-body/seat-6.jpg"
     - seat_number: 7
       name: ""
