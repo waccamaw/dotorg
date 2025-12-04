@@ -8,6 +8,7 @@ on:
       - 'layouts/**'
       - 'static/**'
       - 'config.json'
+      - 'data/**'
   workflow_dispatch:
     inputs:
       theme_id:
