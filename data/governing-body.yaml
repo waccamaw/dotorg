@@ -1,85 +1,107 @@
 # Waccamaw Indian People - Governing Body Structure
-# This file contains the organizational structure of the tribal government
+# This file is the canonical source of truth for the tribal government structure
+# The template will automatically render whatever is defined here
 
+# Main Chief (displayed prominently)
 chief:
-  name: "Chief Hatcher"
+  name: "Chief Hatcher!"
   title: "Leader of the Waccamaw"
   image: "/governing-body/chief-hatcher.jpg"
 
-second_chiefs:
-  - name: "Alan Faver"
-    title: "2nd Chief External"
-    image: "/governing-body/2nd-chief-external-alan-faver.png"
-  - name: "John Turner"
-    title: "2nd Chief External"
-    image: "/governing-body/2nd-chief-external-john-turner.png"
+# Sections are rendered in the order they appear
+sections:
+  - section_title: "Chiefs"
+    section_id: "chiefs"
+    display_as: "grid"  # grid or list
+    members:
+      - name: "Cheryl Cail"
+        title: "Acting Chief"
+        image: "/governing-body/2nd-chief-internal-retired.jpg"
+      - name: "Alan Faver"
+        title: "2nd Chief External"
+        image: "/governing-body/2nd-chief-external-alan-faver.png"
+      - name: "Vacant"
+        title: "2nd Chief Internal"
+        image: ""
+      - name: "John Turner"
+        title: "2nd Chief External"
+        image: "/governing-body/2nd-chief-external-john-turner.png"
 
-acting_chiefs:
-  - name: "Cheryl Cail"
-    title: "2nd Chief Internal"
-    image: "/governing-body/2nd-chief-internal-retired.jpg"
-  - name: "Susan Hayes-Hatcher"
-    title: "Acting Chief"
-    image: "/governing-body/acting-chief-susan.avif"
+  - section_title: "Tribal Council"
+    section_id: "tribal-council"
+    display_as: "council"  # special handling for council with chief and seats
+    chief_of_council:
+      name: "Susan Hayes-Hatcher"
+      title: "Chief of Council"
+      image: "/governing-body/acting-chief-susan.jpg"
+    seats:
+      - seat_number: 2
+        name: "Glenn Cook"
+        image: "/governing-body/seat-2-glenn-cook.png"
+      - seat_number: 3
+        name: "Marion Craddock"
+        image: "/governing-body/seat-3-marion-craddock.jpg"
+      - seat_number: 4
+        name: "Emily White"
+        image: "/governing-body/seat-4.jpg"
+      - seat_number: 5
+        name: "Rebecca Fecher"
+        image: "/governing-body/seat-5.jpg"
+      - seat_number: 6
+        name: "Robert Benton"
+        image: "/governing-body/seat-6.jpg"
+      - seat_number: 7
+        name: "To be Filled"
+        image: ""
 
-council:
-  chief_of_council:
-    name: "Chris Hatcher"
-    title: "Chief of Council"
-    image: "/governing-body/chief-of-council-chris-hatcher.jpg"
-  
-  seats:
-    - seat_number: 2
-      name: "Glenn Cook"
-      image: "/governing-body/seat-2-glenn-cook.png"
-    - seat_number: 3
-      name: "Marion Craddock"
-      image: "/governing-body/seat-3-marion-craddock.jpg"
-    - seat_number: 4
-      name: "Emily White"
-      image: "/governing-body/seat-4.jpg"
-    - seat_number: 5
-      name: "Rebecca Fecher"
-      image: "/governing-body/seat-5.jpg"
-    - seat_number: 6
-      name: "Robert Benton"
-      image: "/governing-body/seat-6.jpg"
-    - seat_number: 7
-      name: "Empty"
-      image: "To be Filled"
+  - section_title: "Council of Elders"
+    section_id: "elder"
+    list_class: "elders"
+    display_as: "list"
+    members:
+      - name: "Rebecca Smith"
+        title: "Chief of Elders"
+      - name: "Larry Jernigan"
+        title: "Elder"
+      - name: "Glenn Turner"
+        title: "Elder"
+      - name: "Ronnie Hatcher"
+        title: "Elder"
+      - name: "Charles Ray Hughes"
+        title: "Elder"
+      - name: "Scott Beaver"
+        title: "Elder"
+      - name: "Phillip White"
+        title: "Elder"
 
-council_of_elders:
-  - name: "Rebecca Smith"
-    title: "Chief of Elders"
-  - name: ""
-    title: "Elder"
-  - name: "Larry Jernigan"
-    title: "Elder"
-  - name: "Glenn Turner"
-    title: "Elder"
-  - name: "Ronnie Hatcher"
-    title: "Elder"
-  - name: "Charles Ray Hughes"
-    title: "Elder"
-  - name: "Scott Beaver"
-    title: "Elder"
-  - name: "Phillip White"
-    title: "Elder"
+  - section_title: "Judicial"
+    section_id: "judicial"
+    display_as: "list"
+    members:
+      - name: "Ronnie Floyd"
+        title: "Tribal Judge"
+      - name: "David Charlie Blue Windburn Sr."
+        title: "Chief of Constables"
 
-judicial:
-  - name: "Ronnie Floyd"
-    title: "Tribal Judge"
-  - name: "David Charlie Blue Windburn Sr."
-    title: "Chief of Constables"
+  - section_title: "Administrative"
+    section_id: "administrative"
+    display_as: "list"
+    members:
+      - name: "Randi Clark"
+        title: "Tribal Treasurer"
+      - name: "Emily White"
+        title: "Tribal Files Committee Chairperson"
+      - name: "Jennifer Michelle Hatcher"
+        title: "Tribal Operations & Communications"
+      - name: "Doug Hatcher"
+        title: "Chief Technology Officer"
+      - name: "Austin Serio"
+        title: "Google Workspace Admin"
 
-administrative:
-  - name: "Carol Harmon"
-    title: "Tribal Treasurer"
-  - name: "Emily White"
-    title: "Tribal Files Committee Chairperson"
-  - name: "Jennifer Michelle Hatcher"
-    title: "Tribal Secretary"
-  - name: "Doug Hatcher"
-    title: "Chief Technology Officer"
-  - name: "Austin Serio"
-    title: "Org Administrator"
+# Retired leadership (minimized display)
+retired_leadership:
+  section_title: "Retired Leadership"
+  members:
+    - name: "John Turner"
+      title: "2nd Chief Internal Retired"
+

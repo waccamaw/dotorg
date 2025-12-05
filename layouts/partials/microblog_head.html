@@ -35,7 +35,7 @@
 <link rel="micropub" href="https://micro.blog/micropub">
 <link rel="microsub" href="https://micro.blog/microsub">
 
-<link rel="stylesheet" href="{{ "theme.css" | relURL }}?{{ .Site.Params.theme_seconds }}">
+<link rel="stylesheet" href="{{ "theme.css" | relURL }}?v={{ now.Unix }}">
 
 {{ range .Site.Params.plugins_css }}
   <link rel="stylesheet" href="{{ . }}">

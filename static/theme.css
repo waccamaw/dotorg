@@ -2492,7 +2492,7 @@ border-color: rgba(139, 69, 19, 0.2);
 
 .governing-body-card img {
 width: 100%;
-aspect-ratio: 1 / 1;
+aspect-ratio: 3 / 4;
 object-fit: cover;
 object-position: center 35%;
 display: block;
@@ -2772,11 +2772,11 @@ grid-template-columns: 1fr;
 }
 
 .featured-chief img {
-height: 350px;
+aspect-ratio: 3 / 4;
 }
 
 .governing-body-card img {
-height: 250px;
+aspect-ratio: 3 / 4;
 }
 }
 
