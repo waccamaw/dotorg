@@ -169,7 +169,78 @@ document.addEventListener('DOMContentLoaded', function() {
 		</div>
 		<a href="/updates/" class="view-all-link">View all updates →</a>
 	</div>
+</div>
 
+<!-- Newsletter Signup -->
+<div class="newsletter-signup">
+	<div class="newsletter-content">
+		<div class="newsletter-text">
+			<h3>Stay Updated</h3>
+			<p>Get Waccamaw news, event announcements, and cultural updates delivered to your inbox.</p>
+		</div>
+		<form class="newsletter-form" id="newsletterForm">
+			<input 
+				type="email" 
+				name="email" 
+				placeholder="Your email address" 
+				required
+				aria-label="Email address for newsletter"
+			>
+			<button type="submit">Subscribe</button>
+		</form>
+	</div>
+	<div id="newsletter-message" style="display: none; margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem; text-align: center;"></div>
+</div>
+
+<script>
+document.getElementById('newsletterForm').addEventListener('submit', async function(e) {
+	e.preventDefault();
+	
+	const email = this.email.value;
+	const submitButton = this.querySelector('button[type="submit"]');
+	const messageDiv = document.getElementById('newsletter-message');
+	
+	// Disable button and show loading state
+	submitButton.disabled = true;
+	submitButton.textContent = 'Subscribing...';
+	
+	try {
+		const response = await fetch('https://contact.waccamaw.org/api/contact', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				name: '', // Not required for newsletter signup
+				email: email,
+				category: 'general',
+				message: 'Newsletter subscription request',
+				newsletter: true
+			})
+		});
+		
+		if (response.ok) {
+			messageDiv.textContent = 'Thank you for subscribing! Please check your email to confirm your subscription.';
+			messageDiv.style.display = 'block';
+			messageDiv.style.backgroundColor = 'var(--success-bg, #d4edda)';
+			messageDiv.style.color = 'var(--success-text, #155724)';
+			this.reset();
+		} else {
+			throw new Error('Subscription failed');
+		}
+	} catch (error) {
+		messageDiv.textContent = 'Sorry, there was an error. Please try again.';
+		messageDiv.style.display = 'block';
+		messageDiv.style.backgroundColor = 'var(--error-bg, #f8d7da)';
+		messageDiv.style.color = 'var(--error-text, #721c24)';
+	} finally {
+		submitButton.disabled = false;
+		submitButton.textContent = 'Subscribe';
+	}
+});
+</script>
+
+<div class="homepage-sections">
 	<!-- Most Recent Meeting -->
 	<div class="recent-meeting-section">
 		{{ $meetings := where $allPosts ".Params.categories" "intersect" (slice "meetings") }}

@@ -829,6 +829,100 @@ main {
 	text-align: center;
 }
 
+/* Newsletter Signup Section */
+/* Newsletter Signup */
+.newsletter-signup {
+	max-width: var(--max-width);
+	margin: 3rem auto 3rem;
+	padding: 2.5rem 1.5rem;
+	background: linear-gradient(135deg, rgba(139, 69, 19, 0.03) 0%, rgba(139, 69, 19, 0.01) 100%);
+	border: 1px solid rgba(139, 69, 19, 0.15);
+	border-radius: 12px;
+	text-align: center;
+}
+
+.newsletter-content h3 {
+	color: var(--text-color);
+	font-size: 1.5rem;
+	margin-bottom: 0.5rem;
+	font-weight: 600;
+}
+
+.newsletter-content p {
+	color: var(--text-dim);
+	font-size: 1rem;
+	line-height: 1.6;
+	margin-bottom: 1.5rem;
+	max-width: 600px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.newsletter-form {
+	display: flex;
+	gap: 0.75rem;
+	max-width: 500px;
+	margin: 0 auto;
+}
+
+.newsletter-form input[type="email"] {
+	flex: 1;
+	padding: 0.875rem 1.25rem;
+	border: 2px solid rgba(139, 69, 19, 0.2);
+	border-radius: 8px;
+	background: var(--bg-color);
+	color: var(--text-color);
+	font-size: 1rem;
+	transition: all 0.2s ease;
+}
+
+.newsletter-form input[type="email"]::placeholder {
+	color: var(--text-dim);
+	opacity: 0.7;
+}
+
+.newsletter-form input[type="email"]:focus {
+	outline: none;
+	border-color: var(--primary-color);
+	box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.1);
+}
+
+.newsletter-form button {
+	padding: 0.875rem 2rem;
+	background: var(--primary-color);
+	color: white;
+	border: none;
+	border-radius: 8px;
+	font-size: 1rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	white-space: nowrap;
+}
+
+.newsletter-form button:hover {
+	background: #7a4513;
+	transform: translateY(-1px);
+	box-shadow: 0 4px 8px rgba(139, 69, 19, 0.2);
+}
+
+.newsletter-form button:active {
+	transform: translateY(0);
+}
+
+.newsletter-form button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+	transform: none;
+}
+
+.newsletter-privacy {
+	color: var(--text-dim);
+	font-size: 0.875rem;
+	margin-top: 0.75rem;
+}
+
+
 .footer-bottom {
 	max-width: var(--max-width);
 	margin: 0 auto;
@@ -921,6 +1015,30 @@ main {
 
 	.footer-container {
 		grid-template-columns: 1fr;
+	}
+
+	.newsletter-signup {
+		margin: 2rem auto;
+		padding: 2rem 1.25rem;
+	}
+
+	.newsletter-content h3 {
+		font-size: 1.25rem;
+	}
+
+	.newsletter-content p {
+		font-size: 0.95rem;
+	}
+
+	.newsletter-form {
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.newsletter-form input[type="email"],
+	.newsletter-form button {
+		width: 100%;
+		padding: 1rem 1.25rem;
 	}
 	
 	.meetings-stats {
@@ -3409,7 +3527,7 @@ width: 100%;
 .meeting-item-home .meeting-calendar {
 	float: left;
 	width: 80px;
-	background: var(--primary-color);
+	background: #7a4513;
 	border-radius: 8px;
 	overflow: hidden;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -3425,7 +3543,7 @@ width: 100%;
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
 	padding: 0.75rem 0.5rem 0.5rem;
-	background: var(--primary-color);
+	background: #7a4513;
 }
 
 .meeting-item-home .calendar-label {
