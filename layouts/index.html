@@ -180,8 +180,18 @@ document.addEventListener('DOMContentLoaded', function() {
 		</div>
 		<form class="newsletter-form" id="newsletterForm">
 			<input 
+				type="text" 
+				name="name" 
+				id="newsletter-name"
+				placeholder="Your full name" 
+				required
+				aria-label="Full name for newsletter"
+				style="display: none;"
+			>
+			<input 
 				type="email" 
 				name="email" 
+				id="newsletter-email"
 				placeholder="Your email address" 
 				required
 				aria-label="Email address for newsletter"
@@ -193,10 +203,26 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 <script>
-document.getElementById('newsletterForm').addEventListener('submit', async function(e) {
+const newsletterForm = document.getElementById('newsletterForm');
+const emailInput = document.getElementById('newsletter-email');
+const nameInput = document.getElementById('newsletter-name');
+
+// Show name field when email is focused
+emailInput.addEventListener('focus', function() {
+	if (nameInput.style.display === 'none') {
+		nameInput.style.display = 'block';
+		// Smooth scroll into view if needed
+		setTimeout(() => {
+			nameInput.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+		}, 100);
+	}
+});
+
+newsletterForm.addEventListener('submit', async function(e) {
 	e.preventDefault();
 	
-	const email = this.email.value;
+	const name = nameInput.value || 'Newsletter Subscriber';
+	const email = emailInput.value;
 	const submitButton = this.querySelector('button[type="submit"]');
 	const messageDiv = document.getElementById('newsletter-message');
 	
@@ -211,7 +237,7 @@ document.getElementById('newsletterForm').addEventListener('submit', async funct
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				name: '', // Not required for newsletter signup
+				name: name,
 				email: email,
 				category: 'general',
 				message: 'Newsletter subscription request',
