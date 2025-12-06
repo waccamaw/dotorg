@@ -3269,17 +3269,53 @@ width: 100%;
 .update-image img {
 	width: 100%;
 	height: 100%;
-	object-fit: contain;
+	object-fit: cover;
 	transition: transform 0.3s ease;
 	background: white;
+}
+
+.update-image.floated {
+	float: left;
+	width: 250px;
+	max-height: 250px;
+	margin: 0 1.5rem 1rem 0;
+}
+
+.update-image.floated-right {
+	float: right;
+	width: 250px;
+	max-height: 250px;
+	margin: 0 0 1rem 1.5rem;
+}
+
+.update-image.floated-right img {
+	object-fit: contain;
+}
+
+.update-image.floated-right::after {
+	display: none;
+}
+
+.update-image.floated img {
+	object-fit: contain;
+}
+
+.update-image.floated::after {
+	display: none;
 }
 
 .update-item:hover .update-image img {
 	transform: scale(1.02);
 }
 
+.update-item:hover .update-image.floated img,
+.update-item:hover .update-image.floated-right img {
+	transform: none;
+}
+
 .update-content {
 	padding: 1.5rem;
+	overflow: auto;
 }
 
 .update-title {

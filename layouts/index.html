@@ -9,8 +9,10 @@
 		{{ range first 1 $featured }}
 			<article class="hero-slide">
 				{{ if .Params.photos }}
+					{{ $originalImage := index .Params.photos 0 }}
+					{{ $heroImage := printf "https://micro.blog/photos/1800x/%s" $originalImage }}
 					<div class="hero-background">
-						<img src="{{ index .Params.photos 0 }}" alt="{{ .Title }}" loading="eager">
+						<img src="{{ $heroImage }}" alt="{{ .Title }}" loading="eager">
 						<div class="hero-overlay"></div>
 					</div>
 				{{ end }}
@@ -45,33 +47,33 @@
 <!-- Last 3 Blog Posts -->
 <div class="recent-updates">
 	<div class="updates-list">
-		{{ range first 3 $allPosts }}
-			<article class="update-item h-entry">
-				{{ if .Params.photos }}
-					{{ $originalImage := index .Params.photos 0 }}
-					{{ $resizedImage := printf "https://micro.blog/photos/900x/%s" $originalImage }}
-					<div class="update-image" onclick="openLightbox('{{ $originalImage }}')">
-						<img src="{{ $resizedImage }}" alt="{{ .Title }}" loading="lazy">
-					</div>
-				{{ end }}
-				<div class="update-content">
-					<h3 class="p-name update-title">
-						<a href="{{ .Permalink }}">{{ .Title }}</a>
-					</h3>
-					<div class="update-meta">
-						<time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
-							{{ .Date.Format "January 2, 2006" }}
-						</time>
-						{{ if .Params.categories }}
-							<span class="update-categories">
-								{{ range .Params.categories }}
-									<span class="category-badge">{{ . }}</span>
-								{{ end }}
-							</span>
-						{{ end }}
-					</div>
-					<p class="update-excerpt">{{ .Summary | truncate 200 }}</p>
-					<a href="{{ .Permalink }}" class="u-url update-link">Read more →</a>
+	{{ range $index, $post := first 3 $allPosts }}
+		<article class="update-item h-entry">
+			{{ if $post.Params.photos }}
+				{{ $originalImage := index $post.Params.photos 0 }}
+				{{ $resizedImage := printf "https://micro.blog/photos/900x/%s" $originalImage }}
+				<div class="update-image auto-layout-image" data-index="{{ $index }}" onclick="openLightbox('{{ $originalImage }}')">
+					<img src="{{ $resizedImage }}" alt="{{ $post.Title }}" loading="lazy" data-src="{{ $originalImage }}">
+				</div>
+			{{ end }}
+			<div class="update-content">
+				<h3 class="p-name update-title">
+					<a href="{{ $post.Permalink }}">{{ $post.Title }}</a>
+				</h3>
+				<div class="update-meta">
+					<time class="dt-published" datetime="{{ $post.Date.Format "2006-01-02T15:04:05-0700" }}">
+						{{ $post.Date.Format "January 2, 2006" }}
+					</time>
+					{{ if $post.Params.categories }}
+						<span class="update-categories">
+							{{ range $post.Params.categories }}
+								<span class="category-badge">{{ . }}</span>
+							{{ end }}
+						</span>
+					{{ end }}
+				</div>
+				<p class="update-excerpt">{{ $post.Summary | truncate 200 }}</p>
+				<a href="{{ $post.Permalink }}" class="u-url update-link">Read more →</a>
 				</div>
 			</article>
 		{{ end }}
@@ -101,6 +103,34 @@ document.addEventListener('keydown', function(e) {
 	if (e.key === 'Escape') {
 		closeLightbox();
 	}
+});
+
+// Auto-layout images based on aspect ratio
+function autoLayoutImage(img) {
+	if (img.naturalWidth && img.naturalHeight) {
+		const aspectRatio = img.naturalWidth / img.naturalHeight;
+		const container = img.closest('.auto-layout-image');
+		
+		if (!container) return;
+		
+		// If image is square or portrait (aspect ratio <= 1.2), float it right
+		if (aspectRatio <= 1.2) {
+			container.classList.add('floated-right');
+		}
+	}
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+	const images = document.querySelectorAll('.auto-layout-image img');
+	images.forEach(img => {
+		if (img.complete && img.naturalHeight !== 0) {
+			autoLayoutImage(img);
+		} else {
+			img.addEventListener('load', function() {
+				autoLayoutImage(img);
+			});
+		}
+	});
 });
 </script>
 
