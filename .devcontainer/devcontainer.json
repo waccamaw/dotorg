@@ -39,5 +39,14 @@
 			"label": "Contact Service API (Cloudflare Workers)",
 			"onAutoForward": "notify"
 		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"github.vscode-github-actions",
+				"GitHub.copilot",
+				"GitHub.copilot-chat"
+			]
+		}
 	}
 }
