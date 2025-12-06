@@ -1,129 +1,145 @@
 {{ define "main" }}
-<article class="h-entry">
-  <header>
-    <h1 class="p-name">{{ .Title }}</h1>
-  </header>
-  
-  <div class="e-content">
-    {{ .Content }}
-    
-    <div id="contact-form-container" style="margin-top: 2rem;">
-      <div id="loading-message" style="text-align: center; padding: 2rem;">
-        <p>Loading contact form...</p>
+<div class="contact-container">
+  <div class="contact-content">
+    <div class="contact-header">
+      <h1 class="contact-title">{{ .Title }}</h1>
+      <div class="contact-intro">
+        {{ .Content }}
       </div>
-      
-      <div id="error-message" style="display: none; background: #fee; border: 1px solid #fcc; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; color: #c33;">
+    </div>
+    
+    <div id="loading-message" class="loading-message">
+      <div class="loading-spinner"></div>
+      <p>Loading contact form...</p>
+    </div>
+    
+    <div id="error-message" class="error-notice" style="display: none;">
+      <div class="notice-icon">⚠️</div>
+      <div class="notice-content">
         <strong>Error:</strong> <span id="error-text"></span>
       </div>
-      
-      <form id="contact-form" style="display: none; max-width: 600px;">
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label for="name" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">
-            Full Name <span style="color: #c33;">*</span>
-          </label>
-          <input 
-            type="text" 
-            id="name" 
-            name="name" 
-            required 
-            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
-          >
-        </div>
-        
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label for="email" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">
-            Email Address <span style="color: #c33;">*</span>
-          </label>
-          <input 
-            type="email" 
-            id="email" 
-            name="email" 
-            required 
-            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
-          >
-        </div>
-        
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label for="phone" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">
-            Phone Number
-          </label>
-          <input 
-            type="tel" 
-            id="phone" 
-            name="phone" 
-            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
-            placeholder="(843) 555-1234"
-          >
-        </div>
-        
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label for="category" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">
-            Category <span style="color: #c33;">*</span>
-          </label>
-          <select 
-            id="category" 
-            name="category" 
-            required 
-            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; background: white;"
-          >
-            <option value="">Select a category...</option>
-          </select>
-          <small id="category-description" style="display: block; margin-top: 0.25rem; color: #666;"></small>
-        </div>
-        
-        <div id="custom-fields-container"></div>
-        
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label for="message" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">
-            Message <span style="color: #c33;">*</span>
-          </label>
-          <textarea 
-            id="message" 
-            name="message" 
-            required 
-            rows="6"
-            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; resize: vertical;"
-            placeholder="How can we help you?"
-          ></textarea>
-        </div>
-        
-        <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label style="display: flex; align-items: center; cursor: pointer;">
-            <input 
-              type="checkbox" 
-              id="newsletter" 
-              name="newsletter" 
-              value="true"
-              style="margin-right: 0.5rem; width: 18px; height: 18px; cursor: pointer;"
-            >
-            <span>Subscribe to our newsletter for updates and events</span>
-          </label>
-        </div>
-        
-        <div class="form-group">
-          <button 
-            type="submit" 
-            id="submit-btn"
-            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; transition: opacity 0.2s;"
-            onmouseover="this.style.opacity='0.9'" 
-            onmouseout="this.style.opacity='1'"
-          >
-            Send Message
-          </button>
-        </div>
-        
-        <div id="form-message" style="display: none; margin-top: 1rem; padding: 1rem; border-radius: 8px;"></div>
-      </form>
     </div>
     
-    <div style="margin-top: 3rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
-      <h3 style="margin-top: 0;">Other Ways to Reach Us</h3>
-      <p><strong>Email:</strong> <a href="mailto:doug@waccamaw.org">doug@waccamaw.org</a></p>
-      <p><strong>Website:</strong> <a href="https://waccamaw.org">waccamaw.org</a></p>
-      <p style="margin-bottom: 0;"><strong>Address:</strong> Waccamaw Indian People, Dog Bluff Community, Aynor, SC</p>
+    <form id="contact-form" class="contact-form" style="display: none;">
+      <div class="form-group">
+        <label for="name" class="form-label">
+          Full Name <span class="required">*</span>
+        </label>
+        <input 
+          type="text" 
+          id="name" 
+          name="name" 
+          required 
+          class="form-input"
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="email" class="form-label">
+          Email Address <span class="required">*</span>
+        </label>
+        <input 
+          type="email" 
+          id="email" 
+          name="email" 
+          required 
+          class="form-input"
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="phone" class="form-label">
+          Phone Number
+        </label>
+        <input 
+          type="tel" 
+          id="phone" 
+          name="phone" 
+          class="form-input"
+          placeholder="(843) 555-1234"
+        >
+      </div>
+      
+      <div class="form-group">
+        <label for="category" class="form-label">
+          Category <span class="required">*</span>
+        </label>
+        <select 
+          id="category" 
+          name="category" 
+          required 
+          class="form-select"
+        >
+          <option value="">Select a category...</option>
+        </select>
+        <small id="category-description" class="form-help"></small>
+      </div>
+      
+      <div id="custom-fields-container"></div>
+      
+      <div class="form-group">
+        <label for="message" class="form-label">
+          Message <span class="required">*</span>
+        </label>
+        <textarea 
+          id="message" 
+          name="message" 
+          required 
+          rows="6"
+          class="form-textarea"
+          placeholder="How can we help you?"
+        ></textarea>
+      </div>
+      
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input 
+            type="checkbox" 
+            id="newsletter" 
+            name="newsletter" 
+            value="true"
+            class="form-checkbox"
+          >
+          <span>Subscribe to our newsletter for updates and events</span>
+        </label>
+      </div>
+      
+      <div class="form-group">
+        <button 
+          type="submit" 
+          id="submit-btn"
+          class="submit-button"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m22 2-7 20-4-9-9-4Z"></path>
+            <path d="M22 2 11 13"></path>
+          </svg>
+          Send Message
+        </button>
+      </div>
+      
+      <div id="form-message" class="form-message" style="display: none;"></div>
+    </form>
+    
+    <div class="contact-info-box">
+      <h3>Other Ways to Reach Us</h3>
+      <div class="contact-methods">
+        <div class="contact-method">
+          <strong>📧 Email:</strong>
+          <a href="mailto:doug@waccamaw.org">doug@waccamaw.org</a>
+        </div>
+        <div class="contact-method">
+          <strong>🌐 Website:</strong>
+          <a href="https://waccamaw.org">waccamaw.org</a>
+        </div>
+        <div class="contact-method">
+          <strong>📍 Address:</strong>
+          <span>Waccamaw Indian People, Dog Bluff Community, Aynor, SC</span>
+        </div>
+      </div>
     </div>
   </div>
-</article>
+</div>
 
 <script>
 (function() {
@@ -212,19 +228,17 @@
     fields.forEach(field => {
       const fieldGroup = document.createElement('div');
       fieldGroup.className = 'form-group';
-      fieldGroup.style.marginBottom = '1.5rem';
       
       const label = document.createElement('label');
       label.setAttribute('for', `custom-${field.name}`);
-      label.style.display = 'block';
-      label.style.fontWeight = 'bold';
-      label.style.marginBottom = '0.5rem';
-      label.innerHTML = `${field.label}${field.required ? ' <span style="color: #c33;">*</span>' : ''}`;
+      label.className = 'form-label';
+      label.innerHTML = `${field.label}${field.required ? ' <span class="required">*</span>' : ''}`;
       
       let input;
       
       if (field.type === 'select' && field.options) {
         input = document.createElement('select');
+        input.className = 'form-select';
         const defaultOption = document.createElement('option');
         defaultOption.value = '';
         defaultOption.textContent = 'Select...';
@@ -236,14 +250,13 @@
           option.textContent = opt;
           input.appendChild(option);
         });
-        
-        input.style.background = 'white';
       } else if (field.type === 'textarea') {
         input = document.createElement('textarea');
+        input.className = 'form-textarea';
         input.rows = field.rows || 4;
-        input.style.resize = 'vertical';
       } else {
         input = document.createElement('input');
+        input.className = 'form-input';
         input.type = field.type || 'text';
         
         if (field.placeholder) {
@@ -254,11 +267,6 @@
       input.id = `custom-${field.name}`;
       input.name = `custom-${field.name}`;
       input.required = field.required || false;
-      input.style.width = '100%';
-      input.style.padding = '0.75rem';
-      input.style.border = '1px solid #ddd';
-      input.style.borderRadius = '4px';
-      input.style.fontSize = '1rem';
       
       fieldGroup.appendChild(label);
       fieldGroup.appendChild(input);
@@ -278,9 +286,7 @@
   function showFormMessage(message, isSuccess) {
     formMessage.textContent = message;
     formMessage.style.display = 'block';
-    formMessage.style.background = isSuccess ? '#d4edda' : '#f8d7da';
-    formMessage.style.border = isSuccess ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
-    formMessage.style.color = isSuccess ? '#155724' : '#721c24';
+    formMessage.className = 'form-message ' + (isSuccess ? 'success' : 'error');
     
     // Scroll to message
     formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -375,25 +381,319 @@
 </script>
 
 <style>
-/* Form focus styles */
-#contact-form input:focus,
-#contact-form select:focus,
-#contact-form textarea:focus {
-  outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+/* Contact Form Styles - Matches 404 page design */
+.contact-container {
+  max-width: var(--max-width, 900px);
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+  min-height: 60vh;
 }
 
-/* Disabled button state */
-#submit-btn:disabled {
+.contact-content {
+  background: var(--bg-white, #ffffff);
+  border-radius: 12px;
+  padding: 3rem 2.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.contact-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid var(--bg-secondary, #fff5eb);
+}
+
+.contact-title {
+  color: var(--primary-color, #0033cc);
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.contact-intro {
+  color: var(--text-light, #6b6b6b);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.contact-intro p {
+  margin-bottom: 0.75rem;
+}
+
+.loading-message {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--text-light, #6b6b6b);
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 1rem;
+  border: 4px solid var(--bg-secondary, #fff5eb);
+  border-top-color: var(--primary-color, #0033cc);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-notice {
+  background: linear-gradient(135deg, #fee 0%, #fdd 100%);
+  border-left: 5px solid #c33;
+  border-radius: 8px;
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  display: flex;
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.notice-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.notice-content {
+  flex: 1;
+  color: var(--text-color, #2a2a2a);
+  line-height: 1.6;
+}
+
+.contact-form {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.form-group {
+  margin-bottom: 1.75rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-color, #2a2a2a);
+  font-size: 1rem;
+}
+
+.required {
+  color: #c33;
+  font-weight: bold;
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  border: 2px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: all 0.2s;
+  background: var(--bg-white, #ffffff);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color, #0033cc);
+  box-shadow: 0 0 0 3px rgba(0, 51, 204, 0.1);
+}
+
+.form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%232a2a2a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  padding-right: 3rem;
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 140px;
+  line-height: 1.6;
+}
+
+.form-help {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--text-light, #6b6b6b);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.checkbox-group {
+  margin: 2rem 0;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: start;
+  cursor: pointer;
+  gap: 0.75rem;
+  color: var(--text-color, #2a2a2a);
+  line-height: 1.6;
+}
+
+.form-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin-top: 2px;
+  flex-shrink: 0;
+  accent-color: var(--primary-color, #0033cc);
+}
+
+.submit-button {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: var(--primary-color, #0033cc);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  font-family: inherit;
+}
+
+.submit-button:hover:not(:disabled) {
+  background: var(--primary-hover, #0028a3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 51, 204, 0.3);
+}
+
+.submit-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
-/* Responsive adjustments */
-@media (max-width: 600px) {
-  #contact-form {
-    max-width: 100% !important;
+.submit-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.form-message {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  border-left: 4px solid;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.form-message.success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border-left-color: #28a745;
+  color: #155724;
+}
+
+.form-message.error {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  border-left-color: #dc3545;
+  color: #721c24;
+}
+
+.contact-info-box {
+  margin-top: 3rem;
+  padding: 2rem;
+  background: var(--bg-color, #faf8f3);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color, #0033cc);
+}
+
+.contact-info-box h3 {
+  margin: 0 0 1.25rem 0;
+  color: var(--text-color, #2a2a2a);
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.contact-methods {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contact-method {
+  color: var(--text-color, #2a2a2a);
+  line-height: 1.6;
+}
+
+.contact-method strong {
+  display: inline-block;
+  min-width: 120px;
+}
+
+.contact-method a {
+  color: var(--link-color, #0033cc);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.contact-method a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .contact-content {
+    padding: 2rem 1.5rem;
+  }
+
+  .contact-title {
+    font-size: 2rem;
+  }
+
+  .contact-intro {
+    font-size: 1rem;
+  }
+
+  .form-label {
+    font-size: 0.95rem;
+  }
+
+  .submit-button {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-container {
+    padding: 1rem;
+  }
+
+  .contact-content {
+    padding: 1.5rem 1rem;
+  }
+
+  .contact-title {
+    font-size: 1.75rem;
+  }
+
+  .error-notice,
+  .contact-info-box {
+    padding: 1.25rem;
+  }
+
+  .contact-method strong {
+    display: block;
+    margin-bottom: 0.25rem;
   }
 }
 </style>
