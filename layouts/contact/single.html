@@ -1,0 +1,400 @@
+{{ define "main" }}
+<article class="h-entry">
+  <header>
+    <h1 class="p-name">{{ .Title }}</h1>
+  </header>
+  
+  <div class="e-content">
+    {{ .Content }}
+    
+    <div id="contact-form-container" style="margin-top: 2rem;">
+      <div id="loading-message" style="text-align: center; padding: 2rem;">
+        <p>Loading contact form...</p>
+      </div>
+      
+      <div id="error-message" style="display: none; background: #fee; border: 1px solid #fcc; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; color: #c33;">
+        <strong>Error:</strong> <span id="error-text"></span>
+      </div>
+      
+      <form id="contact-form" style="display: none; max-width: 600px;">
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="name" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">
+            Full Name <span style="color: #c33;">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            required 
+            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
+          >
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="email" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">
+            Email Address <span style="color: #c33;">*</span>
+          </label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            required 
+            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
+          >
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="phone" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">
+            Phone Number
+          </label>
+          <input 
+            type="tel" 
+            id="phone" 
+            name="phone" 
+            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;"
+            placeholder="(843) 555-1234"
+          >
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="category" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">
+            Category <span style="color: #c33;">*</span>
+          </label>
+          <select 
+            id="category" 
+            name="category" 
+            required 
+            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; background: white;"
+          >
+            <option value="">Select a category...</option>
+          </select>
+          <small id="category-description" style="display: block; margin-top: 0.25rem; color: #666;"></small>
+        </div>
+        
+        <div id="custom-fields-container"></div>
+        
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label for="message" style="display: block; font-weight: bold; margin-bottom: 0.5rem;">
+            Message <span style="color: #c33;">*</span>
+          </label>
+          <textarea 
+            id="message" 
+            name="message" 
+            required 
+            rows="6"
+            style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; resize: vertical;"
+            placeholder="How can we help you?"
+          ></textarea>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label style="display: flex; align-items: center; cursor: pointer;">
+            <input 
+              type="checkbox" 
+              id="newsletter" 
+              name="newsletter" 
+              value="true"
+              style="margin-right: 0.5rem; width: 18px; height: 18px; cursor: pointer;"
+            >
+            <span>Subscribe to our newsletter for updates and events</span>
+          </label>
+        </div>
+        
+        <div class="form-group">
+          <button 
+            type="submit" 
+            id="submit-btn"
+            style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; width: 100%; transition: opacity 0.2s;"
+            onmouseover="this.style.opacity='0.9'" 
+            onmouseout="this.style.opacity='1'"
+          >
+            Send Message
+          </button>
+        </div>
+        
+        <div id="form-message" style="display: none; margin-top: 1rem; padding: 1rem; border-radius: 8px;"></div>
+      </form>
+    </div>
+    
+    <div style="margin-top: 3rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #667eea;">
+      <h3 style="margin-top: 0;">Other Ways to Reach Us</h3>
+      <p><strong>Email:</strong> <a href="mailto:doug@waccamaw.org">doug@waccamaw.org</a></p>
+      <p><strong>Website:</strong> <a href="https://waccamaw.org">waccamaw.org</a></p>
+      <p style="margin-bottom: 0;"><strong>Address:</strong> Waccamaw Indian People, Dog Bluff Community, Aynor, SC</p>
+    </div>
+  </div>
+</article>
+
+<script>
+(function() {
+  // Configuration
+  const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:8788' 
+    : 'https://contact.waccamaw.org';
+  
+  let formConfig = null;
+  
+  // DOM Elements
+  const loadingMessage = document.getElementById('loading-message');
+  const errorMessage = document.getElementById('error-message');
+  const errorText = document.getElementById('error-text');
+  const contactForm = document.getElementById('contact-form');
+  const categorySelect = document.getElementById('category');
+  const categoryDescription = document.getElementById('category-description');
+  const customFieldsContainer = document.getElementById('custom-fields-container');
+  const submitBtn = document.getElementById('submit-btn');
+  const formMessage = document.getElementById('form-message');
+  
+  // Load form configuration
+  async function loadFormConfig() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/config`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load form configuration: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to load configuration');
+      }
+      
+      formConfig = data.config;
+      renderForm();
+      
+    } catch (error) {
+      console.error('Error loading form config:', error);
+      showError(`Unable to load contact form. Please try again later or email us directly at doug@waccamaw.org`);
+    }
+  }
+  
+  // Render form with categories
+  function renderForm() {
+    loadingMessage.style.display = 'none';
+    contactForm.style.display = 'block';
+    
+    // Populate categories
+    formConfig.categories.forEach(category => {
+      const option = document.createElement('option');
+      option.value = category.name;
+      option.textContent = category.label;
+      option.dataset.description = category.description || '';
+      option.dataset.customFields = JSON.stringify(category.customFields || []);
+      categorySelect.appendChild(option);
+    });
+    
+    // Category change handler
+    categorySelect.addEventListener('change', handleCategoryChange);
+  }
+  
+  // Handle category selection
+  function handleCategoryChange(e) {
+    const selectedOption = e.target.options[e.target.selectedIndex];
+    
+    if (selectedOption.value) {
+      // Show description
+      categoryDescription.textContent = selectedOption.dataset.description || '';
+      
+      // Render custom fields
+      const customFields = JSON.parse(selectedOption.dataset.customFields || '[]');
+      renderCustomFields(customFields);
+    } else {
+      categoryDescription.textContent = '';
+      customFieldsContainer.innerHTML = '';
+    }
+  }
+  
+  // Render custom fields for selected category
+  function renderCustomFields(fields) {
+    customFieldsContainer.innerHTML = '';
+    
+    fields.forEach(field => {
+      const fieldGroup = document.createElement('div');
+      fieldGroup.className = 'form-group';
+      fieldGroup.style.marginBottom = '1.5rem';
+      
+      const label = document.createElement('label');
+      label.setAttribute('for', `custom-${field.name}`);
+      label.style.display = 'block';
+      label.style.fontWeight = 'bold';
+      label.style.marginBottom = '0.5rem';
+      label.innerHTML = `${field.label}${field.required ? ' <span style="color: #c33;">*</span>' : ''}`;
+      
+      let input;
+      
+      if (field.type === 'select' && field.options) {
+        input = document.createElement('select');
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select...';
+        input.appendChild(defaultOption);
+        
+        field.options.forEach(opt => {
+          const option = document.createElement('option');
+          option.value = opt;
+          option.textContent = opt;
+          input.appendChild(option);
+        });
+        
+        input.style.background = 'white';
+      } else if (field.type === 'textarea') {
+        input = document.createElement('textarea');
+        input.rows = field.rows || 4;
+        input.style.resize = 'vertical';
+      } else {
+        input = document.createElement('input');
+        input.type = field.type || 'text';
+        
+        if (field.placeholder) {
+          input.placeholder = field.placeholder;
+        }
+      }
+      
+      input.id = `custom-${field.name}`;
+      input.name = `custom-${field.name}`;
+      input.required = field.required || false;
+      input.style.width = '100%';
+      input.style.padding = '0.75rem';
+      input.style.border = '1px solid #ddd';
+      input.style.borderRadius = '4px';
+      input.style.fontSize = '1rem';
+      
+      fieldGroup.appendChild(label);
+      fieldGroup.appendChild(input);
+      customFieldsContainer.appendChild(fieldGroup);
+    });
+  }
+  
+  // Show error message
+  function showError(message) {
+    loadingMessage.style.display = 'none';
+    contactForm.style.display = 'none';
+    errorText.textContent = message;
+    errorMessage.style.display = 'block';
+  }
+  
+  // Show form message (success/error)
+  function showFormMessage(message, isSuccess) {
+    formMessage.textContent = message;
+    formMessage.style.display = 'block';
+    formMessage.style.background = isSuccess ? '#d4edda' : '#f8d7da';
+    formMessage.style.border = isSuccess ? '1px solid #c3e6cb' : '1px solid #f5c6cb';
+    formMessage.style.color = isSuccess ? '#155724' : '#721c24';
+    
+    // Scroll to message
+    formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  
+  // Handle form submission
+  async function handleSubmit(e) {
+    e.preventDefault();
+    
+    // Disable submit button
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+    formMessage.style.display = 'none';
+    
+    // Gather form data
+    const formData = {
+      name: document.getElementById('name').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      category: document.getElementById('category').value,
+      message: document.getElementById('message').value.trim(),
+      newsletter: document.getElementById('newsletter').checked,
+      customFields: {}
+    };
+    
+    // Gather custom fields
+    const customFieldInputs = customFieldsContainer.querySelectorAll('input, select, textarea');
+    customFieldInputs.forEach(input => {
+      const fieldName = input.name.replace('custom-', '');
+      formData.customFields[fieldName] = input.value;
+    });
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/contact`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        showFormMessage(
+          result.message || 'Thank you for your message! We will respond as soon as possible.',
+          true
+        );
+        
+        // Reset form
+        contactForm.reset();
+        customFieldsContainer.innerHTML = '';
+        categoryDescription.textContent = '';
+        
+        // Show warnings if any
+        if (result.warnings && result.warnings.length > 0) {
+          console.warn('Form submission warnings:', result.warnings);
+        }
+        
+      } else {
+        showFormMessage(
+          result.error || 'Failed to send message. Please try again or email us directly at doug@waccamaw.org',
+          false
+        );
+        
+        // Show validation errors if any
+        if (result.errors && result.errors.length > 0) {
+          const errorList = result.errors.join(', ');
+          showFormMessage(`Validation errors: ${errorList}`, false);
+        }
+      }
+      
+    } catch (error) {
+      console.error('Form submission error:', error);
+      showFormMessage(
+        'Unable to send message due to a network error. Please try again later or email us directly at doug@waccamaw.org',
+        false
+      );
+    } finally {
+      // Re-enable submit button
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Message';
+    }
+  }
+  
+  // Attach form submit handler
+  contactForm.addEventListener('submit', handleSubmit);
+  
+  // Initialize
+  loadFormConfig();
+})();
+</script>
+
+<style>
+/* Form focus styles */
+#contact-form input:focus,
+#contact-form select:focus,
+#contact-form textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Disabled button state */
+#submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  #contact-form {
+    max-width: 100% !important;
+  }
+}
+</style>
+{{ end }}
