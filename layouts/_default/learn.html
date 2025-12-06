@@ -19,6 +19,9 @@
       <h2>GOVERNING BODY</h2>
       
       {{ $data := index .Site.Data "governing-body" }}
+      {{ if not $data }}
+        {{ $data = partial "learn/governing-body-data.html" . }}
+      {{ end }}
       
       <!-- Chief -->
       {{ with $data.chief }}
