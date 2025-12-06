@@ -1,0 +1,210 @@
+# Apps Management - Justfile
+# Run commands across all microservices in apps/
+
+# Default recipe to display help
+default:
+    @just --list
+
+# List all service directories
+_services:
+    #!/usr/bin/env bash
+    for dir in */; do
+        if [ -f "${dir}justfile" ]; then
+            echo "${dir%/}"
+        fi
+    done
+
+# Install dependencies for all services
+deps:
+    #!/usr/bin/env bash
+    echo "📦 Installing dependencies for all services..."
+    for dir in */; do
+        if [ -f "${dir}justfile" ]; then
+            service="${dir%/}"
+            echo ""
+            echo "🔧 Setting up $service..."
+            cd "$dir"
+            if just deps 2>/dev/null || just install 2>/dev/null; then
+                echo "✅ $service dependencies installed"
+            else
+                echo "⚠️  No deps/install command for $service"
+            fi
+            cd ..
+        fi
+    done
+    echo ""
+    echo "✅ All services ready!"
+
+# Start all services in background
+dev-bg:
+    #!/usr/bin/env bash
+    echo "🚀 Starting all services in background..."
+    for dir in */; do
+        if [ -f "${dir}justfile" ]; then
+            service="${dir%/}"
+            echo ""
+            echo "🚀 Starting $service..."
+            cd "$dir"
+            if just dev-bg 2>/dev/null; then
+                echo "✅ $service started"
+            else
+                echo "⚠️  No dev-bg command for $service"
+            fi
+            cd ..
+        fi
+    done
+    echo ""
+    echo "✅ All services running!"
+    echo ""
+    echo "📋 Service URLs:"
+    echo "   • member-services: http://localhost:8787"
+    echo "   • contact-service: http://localhost:8788"
+    echo ""
+    echo "🛑 Stop all: just dev-stop"
+    echo "📊 Status: just status"
+
+# Stop all background services
+dev-stop:
+    #!/usr/bin/env bash
+    echo "🛑 Stopping all services..."
+    for dir in */; do
+        if [ -f "${dir}justfile" ]; then
+            service="${dir%/}"
+            cd "$dir"
+            if just dev-stop 2>/dev/null; then
+                echo "✅ $service stopped"
+            fi
+            cd ..
+        fi
+    done
+    echo ""
+    echo "✅ All services stopped"
+
+# Show status of all services
+status:
+    #!/usr/bin/env bash
+    echo "📊 Service Status:"
+    echo ""
+    
+    # Check member-services (port 8787)
+    if curl -s -m 2 http://localhost:8787/ > /dev/null 2>&1; then
+        echo "✅ member-services (http://localhost:8787) - Running"
+    else
+        echo "❌ member-services (http://localhost:8787) - Not running"
+    fi
+    
+    # Check contact-service (port 8788)
+    if curl -s -m 2 http://localhost:8788/ > /dev/null 2>&1; then
+        echo "✅ contact-service (http://localhost:8788) - Running"
+    else
+        echo "❌ contact-service (http://localhost:8788) - Not running"
+    fi
+
+# Run a command in all services
+run COMMAND:
+    #!/usr/bin/env bash
+    echo "🔄 Running '{{COMMAND}}' in all services..."
+    for dir in */; do
+        if [ -f "${dir}justfile" ]; then
+            service="${dir%/}"
+            echo ""
+            echo "📍 $service:"
+            cd "$dir"
+            just {{COMMAND}} || echo "⚠️  Command not available in $service"
+            cd ..
+        fi
+    done
+
+# Clean all services
+clean:
+    #!/usr/bin/env bash
+    echo "🧹 Cleaning all services..."
+    for dir in */; do
+        if [ -f "${dir}justfile" ]; then
+            service="${dir%/}"
+            cd "$dir"
+            if just clean 2>/dev/null; then
+                echo "✅ $service cleaned"
+            fi
+            cd ..
+        fi
+    done
+    echo "✅ All services cleaned"
+
+# Show logs for all services
+logs:
+    #!/usr/bin/env bash
+    echo "📋 Recent logs from all services:"
+    for dir in */; do
+        if [ -f "${dir}.wrangler/dev.log" ]; then
+            service="${dir%/}"
+            echo ""
+            echo "═══════════════════════════════════════"
+            echo "📍 $service"
+            echo "═══════════════════════════════════════"
+            tail -n 20 "${dir}.wrangler/dev.log"
+        fi
+    done
+
+# Follow logs for a specific service
+logs-follow SERVICE:
+    tail -f {{SERVICE}}/.wrangler/dev.log
+
+# Test health endpoints for all services
+test-health:
+    #!/usr/bin/env bash
+    echo "🧪 Testing health endpoints..."
+    echo ""
+    
+    # Test member-services
+    echo "📍 member-services:"
+    curl -s http://localhost:8787/ | jq . || echo "❌ Failed"
+    echo ""
+    
+    # Test contact-service
+    echo "📍 contact-service:"
+    curl -s http://localhost:8788/ | jq . || echo "❌ Failed"
+    echo ""
+
+# Deploy all services to production
+deploy-all:
+    #!/usr/bin/env bash
+    echo "🚀 Deploying all services to production..."
+    read -p "Are you sure? This will deploy ALL services to production. (y/N) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        for dir in */; do
+            if [ -f "${dir}justfile" ]; then
+                service="${dir%/}"
+                echo ""
+                echo "🚀 Deploying $service..."
+                cd "$dir"
+                just deploy || echo "⚠️  Deploy failed for $service"
+                cd ..
+            fi
+        done
+        echo ""
+        echo "✅ All services deployed!"
+    else
+        echo "❌ Deployment cancelled"
+    fi
+
+# Show info for all services
+info:
+    #!/usr/bin/env bash
+    echo "📋 Apps Directory Services"
+    echo "=========================="
+    echo ""
+    for dir in */; do
+        if [ -f "${dir}justfile" ]; then
+            service="${dir%/}"
+            echo "📦 $service"
+            if [ -f "${dir}package.json" ]; then
+                version=$(node -p "require('./${dir}package.json').version" 2>/dev/null)
+                desc=$(node -p "require('./${dir}package.json').description" 2>/dev/null)
+                echo "   Version: $version"
+                echo "   Description: $desc"
+            fi
+            echo ""
+        fi
+    done

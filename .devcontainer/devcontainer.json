@@ -23,7 +23,21 @@
 
 
 	},
-	"postCreateCommand": "just install && cd apps/member-services && just deps",
-	"postAttachCommand": "just serve & (cd apps/member-services && just dev-bg) && wait",
-	"forwardPorts": [1313, 8787]
+	"postCreateCommand": "just install && bash apps/post-create.sh",
+	"postAttachCommand": "just serve & bash apps/post-attach.sh && wait",
+	"forwardPorts": [1313, 8787, 8788],
+	"portsAttributes": {
+		"1313": {
+			"label": "Hugo Dev Server (waccamaw.org)",
+			"onAutoForward": "notify"
+		},
+		"8787": {
+			"label": "Member Services API (Cloudflare Workers)",
+			"onAutoForward": "notify"
+		},
+		"8788": {
+			"label": "Contact Service API (Cloudflare Workers)",
+			"onAutoForward": "notify"
+		}
+	}
 }
