@@ -120,12 +120,6 @@ img {
 	text-decoration: none;
 	display: inline-block;
 	padding: 0.25rem 0;
-	border-bottom: 2px solid transparent;
-	transition: border-color 0.3s ease;
-}
-
-.site-logo:hover .site-wordmark {
-	border-bottom-color: #0033cc;
 }
 
 .site-title a {
@@ -1314,7 +1308,7 @@ main {
 .meeting-calendar {
 	float: left;
 	width: 80px;
-	background: var(--primary-color);
+	background: var(--logo-primary);
 	border-radius: 8px;
 	overflow: hidden;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -1330,7 +1324,7 @@ main {
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
 	padding: 0.75rem 0.5rem 0.5rem;
-	background: var(--primary-color);
+	background: var(--logo-primary);
 }
 
 .calendar-label {
@@ -1440,6 +1434,37 @@ main {
 	color: var(--text-color);
 	line-height: 1.6;
 	margin: 0;
+}
+
+/* Responsive - Meeting Items */
+@media (max-width: 768px) {
+	.meeting-item .meeting-calendar {
+		float: none;
+		margin: 0 auto 1rem;
+	}
+
+	.meeting-item .meeting-info {
+		overflow: visible;
+	}
+}
+
+@media (max-width: 480px) {
+	.meeting-item .meeting-calendar {
+		float: none;
+		margin: 0 auto 1rem;
+	}
+
+	.meeting-item .meeting-info {
+		overflow: visible;
+	}
+
+	.meeting-item {
+		padding: 1.25rem;
+	}
+
+	.meeting-title {
+		font-size: 1.1rem;
+	}
 }
 
 /* ====================================
@@ -3347,7 +3372,7 @@ width: 100%;
 	background: white;
 	border: 1px solid var(--border-color);
 	border-radius: 8px;
-	overflow: hidden;
+	overflow: visible;
 	transition: all 0.2s ease;
 }
 
@@ -3359,9 +3384,8 @@ width: 100%;
 .update-image {
 	width: 100%;
 	height: auto;
-	max-height: 400px;
 	overflow: hidden;
-	background: var(--bg-secondary);
+	background: transparent;
 	cursor: pointer;
 	position: relative;
 }
@@ -3391,36 +3415,45 @@ width: 100%;
 
 .update-image img {
 	width: 100%;
-	height: 100%;
+	height: auto;
 	object-fit: cover;
 	transition: transform 0.3s ease;
 	background: white;
 }
 
-.update-image.floated {
-	float: left;
-	width: 250px;
-	max-height: 250px;
-	margin: 0 1.5rem 1rem 0;
-}
-
+/* Graphics/square images float right on desktop */
 .update-image.floated-right {
 	float: right;
-	width: 250px;
-	max-height: 250px;
+	width: 200px;
+	max-width: 30%;
 	margin: 0 0 1rem 1.5rem;
+	background: var(--bg-secondary);
+	border-radius: 8px;
 }
 
 .update-image.floated-right img {
 	object-fit: contain;
+	border-radius: 8px;
+	display: block;
 }
 
 .update-image.floated-right::after {
 	display: none;
 }
 
+/* Legacy floated class support */
+.update-image.floated {
+	float: right;
+	width: 300px;
+	max-width: 40%;
+	margin: 0 0 1rem 1.5rem;
+	background: var(--bg-secondary);
+	border-radius: 8px;
+}
+
 .update-image.floated img {
 	object-fit: contain;
+	display: block;
 }
 
 .update-image.floated::after {
@@ -3438,7 +3471,7 @@ width: 100%;
 
 .update-content {
 	padding: 1.5rem;
-	overflow: auto;
+	overflow: hidden;
 }
 
 .update-title {
@@ -3532,7 +3565,7 @@ width: 100%;
 .meeting-item-home .meeting-calendar {
 	float: left;
 	width: 80px;
-	background: #7a4513;
+	background: var(--logo-primary);
 	border-radius: 8px;
 	overflow: hidden;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -3548,7 +3581,7 @@ width: 100%;
 	text-transform: uppercase;
 	letter-spacing: 0.5px;
 	padding: 0.75rem 0.5rem 0.5rem;
-	background: #7a4513;
+	background: var(--logo-primary);
 }
 
 .meeting-item-home .calendar-label {
@@ -3828,6 +3861,15 @@ width: 100%;
 	.meeting-title {
 		font-size: 1.3rem;
 	}
+
+	.meeting-item-home .meeting-calendar {
+		float: none;
+		margin: 0 auto 1rem;
+	}
+
+	.meeting-item-home .meeting-info {
+		overflow: visible;
+	}
 }
 
 @media (max-width: 480px) {
@@ -3848,6 +3890,15 @@ width: 100%;
 		font-size: 1.2rem;
 	}
 
+	.meeting-item-home .meeting-calendar {
+		float: none;
+		margin: 0 auto 1rem;
+	}
+
+	.meeting-item-home .meeting-info {
+		overflow: visible;
+	}
+
 	.post-card-image {
 		height: 180px;
 	}
@@ -3859,11 +3910,28 @@ width: 100%;
 
 @media (max-width: 768px) {
 	.update-image {
-		max-height: 300px;
+		max-height: 400px;
+	}
+
+	.update-image.floated,
+	.update-image.floated-right {
+		float: none;
+		width: 80%;
+		max-width: 400px;
+		max-height: 400px;
+		margin: 0 auto 1.5rem auto;
+		display: block;
+	}
+
+	.update-image.floated img,
+	.update-image.floated-right img {
+		width: 100%;
+		height: auto;
 	}
 
 	.update-content {
 		padding: 1.25rem;
+		text-align: left;
 	}
 }
 
@@ -3875,6 +3943,14 @@ width: 100%;
 
 	.update-image {
 		max-height: 250px;
+	}
+
+	.update-image.floated,
+	.update-image.floated-right {
+		float: none;
+		width: 100%;
+		max-height: 250px;
+		margin: 0 0 1rem 0;
 	}
 
 	.update-content {
