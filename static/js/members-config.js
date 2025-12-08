@@ -26,7 +26,12 @@ const CONFIG = {
         UPDATE_MEMBER: '/api/update-member',
         MEMBER_STATUS: '/api/member-status',
         MEMBER_PHOTO: '/api/member-photo/:itemId',
-        UPLOAD_PHOTO: '/api/upload-photo'
+        UPLOAD_PHOTO: '/api/upload-photo',
+        
+        // Meetings API
+        MEETINGS: '/api/meetings',
+        MEETING_DETAIL: '/api/meetings/:type/:year/:month/:day',
+        UPCOMING_MEETINGS: '/api/meetings/upcoming'
     },
     
     // Feature Flags

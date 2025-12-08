@@ -1,48 +1,27 @@
 {{ define "main" }}
 
-<article class="h-entry meeting-single">
-	<header class="post-header">
-		<h1 class="p-name post-title">{{ .Title }}</h1>
-		
-		<div class="post-meta">
-			<time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
-				{{ .Date.Format "January 2, 2006" }}
-			</time>
-			{{ with .Params.author }}
-				{{ if reflect.IsMap . }}
-					{{ if .full_name }}
-						by <span class="p-author h-card">{{ .full_name }}</span>
-					{{ end }}
-				{{ else }}
-					by <span class="p-author h-card">{{ . }}</span>
-				{{ end }}
-			{{ end }}
+<div class="meeting-single-page">
+	<!-- Dynamic content loaded via API -->
+	<div id="meetingDetail">
+		<div class="loading-state">
+			<div class="spinner"></div>
+			<p>Loading meeting details...</p>
 		</div>
-	</header>
-
-	<div class="e-content post-content">
-		{{ .Content }}
 	</div>
 
-	<footer class="post-footer">
-		{{ with .Params.categories }}
-			<div class="post-categories">
-				{{ if reflect.IsSlice . }}
-					{{ range . }}
-						<a href="{{ "/categories/" | relURL }}{{ . | urlize }}" class="category-badge">{{ . }}</a>
-					{{ end }}
-				{{ else }}
-					{{/* Handle comma-separated string */}}
-					{{ $cats := split (string .) ", " }}
-					{{ range $cats }}
-						<a href="{{ "/categories/" | relURL }}{{ . | urlize }}" class="category-badge">{{ . }}</a>
-					{{ end }}
-				{{ end }}
-			</div>
-		{{ end }}
-		
-		<a href="{{ "/meetings/" | relURL }}" class="back-link">← Back to All Meetings</a>
-	</footer>
-</article>
+	<!-- Static Hugo content (if any) -->
+	{{ if .Content }}
+	<div class="meeting-static-content">
+		<div class="e-content post-content">
+			{{ .Content }}
+		</div>
+	</div>
+	{{ end }}
+</div>
+
+<!-- Include API client and meeting detail app -->
+<script src="/js/members-config.js?v={{ now.Unix }}"></script>
+<script src="/js/meetings-api.js?v={{ now.Unix }}"></script>
+<script src="/js/meeting-detail.js?v={{ now.Unix }}"></script>
 
 {{ end }}
