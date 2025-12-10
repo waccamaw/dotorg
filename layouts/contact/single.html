@@ -1,5 +1,6 @@
 {{ define "main" }}
 <!-- Google reCAPTCHA v3 -->
+<!-- Site key is public and safe to expose in frontend code -->
 <script src="https://www.google.com/recaptcha/api.js?render=6LfVNqEqAAAAANiQOLXBCVxv4TZjzqY5d0d8dN8i"></script>
 
 <div class="contact-container">
@@ -204,6 +205,9 @@
     ? 'http://localhost:8788' 
     : 'https://contact.waccamaw.org';
   
+  // reCAPTCHA site key (public key, safe to expose in frontend)
+  const RECAPTCHA_SITE_KEY = '6LfVNqEqAAAAANiQOLXBCVxv4TZjzqY5d0d8dN8i';
+  
   let formConfig = null;
   
   // DOM Elements
@@ -216,6 +220,9 @@
   const customFieldsContainer = document.getElementById('custom-fields-container');
   const submitBtn = document.getElementById('submit-btn');
   const formMessage = document.getElementById('form-message');
+  
+  // Store original button HTML for restoration
+  let originalButtonHTML = null;
   
   // Load form configuration
   async function loadFormConfig() {
@@ -245,6 +252,11 @@
   function renderForm() {
     loadingMessage.style.display = 'none';
     contactForm.style.display = 'block';
+    
+    // Store original button HTML after form is visible
+    if (!originalButtonHTML && submitBtn) {
+      originalButtonHTML = submitBtn.innerHTML;
+    }
     
     // Populate categories
     formConfig.categories.forEach(category => {
@@ -359,7 +371,7 @@
     
     try {
       // Get reCAPTCHA token
-      const recaptchaToken = await grecaptcha.execute('6LfVNqEqAAAAANiQOLXBCVxv4TZjzqY5d0d8dN8i', {action: 'submit'});
+      const recaptchaToken = await grecaptcha.execute(RECAPTCHA_SITE_KEY, {action: 'submit'});
       
       // Update button text
       submitBtn.textContent = 'Sending...';
@@ -438,9 +450,14 @@
         );
       }
     } finally {
-      // Re-enable submit button
+      // Re-enable submit button and restore original HTML
       submitBtn.disabled = false;
-      submitBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg> Send Message';
+      if (originalButtonHTML) {
+        submitBtn.innerHTML = originalButtonHTML;
+      } else {
+        // Fallback if original HTML wasn't captured
+        submitBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg> Send Message';
+      }
     }
   }
   
