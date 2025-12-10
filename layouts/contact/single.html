@@ -1,4 +1,7 @@
 {{ define "main" }}
+<!-- Google reCAPTCHA v3 -->
+<script src="https://www.google.com/recaptcha/api.js?render=6LfVNqEqAAAAANiQOLXBCVxv4TZjzqY5d0d8dN8i"></script>
+
 <div class="contact-container">
   <div class="contact-content">
     <div class="contact-header">
@@ -102,6 +105,13 @@
           >
           <span>Subscribe to our newsletter for updates and events</span>
         </label>
+      </div>
+      
+      <div class="recaptcha-notice">
+        <p>This site is protected by reCAPTCHA and the Google 
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a> and 
+          <a href="https://policies.google.com/terms" target="_blank" rel="noopener noreferrer">Terms of Service</a> apply.
+        </p>
       </div>
       
       <div class="form-group">
@@ -344,28 +354,35 @@
     
     // Disable submit button
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending...';
+    submitBtn.textContent = 'Verifying...';
     formMessage.style.display = 'none';
     
-    // Gather form data
-    const formData = {
-      name: document.getElementById('name').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      category: document.getElementById('category').value,
-      message: document.getElementById('message').value.trim(),
-      newsletter: document.getElementById('newsletter').checked,
-      customFields: {}
-    };
-    
-    // Gather custom fields
-    const customFieldInputs = customFieldsContainer.querySelectorAll('input, select, textarea');
-    customFieldInputs.forEach(input => {
-      const fieldName = input.name.replace('custom-', '');
-      formData.customFields[fieldName] = input.value;
-    });
-    
     try {
+      // Get reCAPTCHA token
+      const recaptchaToken = await grecaptcha.execute('6LfVNqEqAAAAANiQOLXBCVxv4TZjzqY5d0d8dN8i', {action: 'submit'});
+      
+      // Update button text
+      submitBtn.textContent = 'Sending...';
+      
+      // Gather form data
+      const formData = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        category: document.getElementById('category').value,
+        message: document.getElementById('message').value.trim(),
+        newsletter: document.getElementById('newsletter').checked,
+        recaptchaToken: recaptchaToken,
+        customFields: {}
+      };
+      
+      // Gather custom fields
+      const customFieldInputs = customFieldsContainer.querySelectorAll('input, select, textarea');
+      customFieldInputs.forEach(input => {
+        const fieldName = input.name.replace('custom-', '');
+        formData.customFields[fieldName] = input.value;
+      });
+      
       const response = await fetch(`${API_BASE_URL}/api/contact`, {
         method: 'POST',
         headers: {
@@ -407,14 +424,23 @@
       
     } catch (error) {
       console.error('Form submission error:', error);
-      showFormMessage(
-        'Unable to send message due to a network error. Please try again later or email us directly at doug@waccamaw.org',
-        false
-      );
+      
+      // Check if it's a reCAPTCHA error
+      if (error.message && error.message.includes('grecaptcha')) {
+        showFormMessage(
+          'Unable to verify you are human. Please refresh the page and try again.',
+          false
+        );
+      } else {
+        showFormMessage(
+          'Unable to send message due to a network error. Please try again later or email us directly at doug@waccamaw.org',
+          false
+        );
+      }
     } finally {
       // Re-enable submit button
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Send Message';
+      submitBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg> Send Message';
     }
   }
   
@@ -599,6 +625,31 @@
   accent-color: var(--primary-color, #0033cc);
 }
 
+.recaptcha-notice {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: var(--bg-secondary, #fff5eb);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--text-light, #6b6b6b);
+  line-height: 1.5;
+  text-align: center;
+}
+
+.recaptcha-notice p {
+  margin: 0;
+}
+
+.recaptcha-notice a {
+  color: var(--primary-color, #0033cc);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.recaptcha-notice a:hover {
+  text-decoration: underline;
+}
+
 .submit-button {
   width: 100%;
   padding: 1rem 2rem;
@@ -741,6 +792,16 @@
     display: block;
     margin-bottom: 0.25rem;
   }
+  
+  .recaptcha-notice {
+    font-size: 0.8rem;
+    padding: 0.75rem;
+  }
+}
+
+/* Hide reCAPTCHA badge since we show notice explicitly */
+.grecaptcha-badge {
+  visibility: hidden;
 }
 </style>
 {{ end }}
