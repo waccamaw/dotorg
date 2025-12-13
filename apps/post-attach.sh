@@ -10,7 +10,7 @@ set -e
 echo "👋 Welcome back to the Waccamaw Dev Container!"
 echo ""
 
-cd /workspaces/waccamawdotorg/apps
+cd ./apps
 
 # Check if any services are already running
 if curl -s -m 1 http://localhost:8787/ > /dev/null 2>&1 || \

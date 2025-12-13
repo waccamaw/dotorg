@@ -5,25 +5,9 @@ set dotenv-load
 default:
     @just --list
 
-# Install and configure git from .env variables
-git-setup:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    
-    if [ -z "${GIT_USER_NAME:-}" ] || [ -z "${GIT_USER_EMAIL:-}" ]; then
-        echo "Error: GIT_USER_NAME and GIT_USER_EMAIL must be set in .env file"
-        exit 1
-    fi
-    
-    echo "Configuring git..."
-    git config --global user.name "${GIT_USER_NAME}"
-    git config --global user.email "${GIT_USER_EMAIL}"
-    
-    echo "Git configuration complete:"
-    echo "  Name: $(git config --global user.name)"
-    echo "  Email: $(git config --global user.email)"
 
-install: git-setup
+install: git-config
+    sudo apt-get update && sudo apt-get install -y python3-requests python3-dotenv
     @echo "Installation complete."
 
 # Build the site (useful when server is already running with --watch)
@@ -31,7 +15,7 @@ build:
     hugo
 
 serve: 
-    hugo server --watch --bind="0.0.0.0" --port="1313" --baseURL="http://localhost:1313/"
+    hugo server --disableFastRender --noHTTPCache --watch --bind="0.0.0.0" --port="1313" --baseURL="http://localhost:1313/"
 
 # Validate meeting markdown files for Micro.blog compatibility
 validate-meetings:
@@ -104,3 +88,54 @@ export-content-deprecated: validate-meetings
     echo "2. Go to https://micro.blog/account/import"
     echo "3. Upload the zip file"
     echo "4. Preview and confirm the import"
+
+# Micro.blog Development Tasks
+
+# Authenticate to Micro.blog via email
+auth:
+    python3 .github/deploy/microblog_auth.py
+
+# Deploy theme changes to Micro.blog
+deploy:
+    python3 .github/deploy/microblog_deploy.py --all
+
+# Backup content from Micro.blog
+backup:
+    python3 .github/deploy/microblog_backup.py --all
+
+# Backup and download only (no extraction)
+backup-download:
+    python3 .github/deploy/microblog_backup.py --export-only
+
+# Extract content from existing backup ZIP
+backup-extract ZIP_FILE:
+    python3 .github/deploy/microblog_backup.py --extract-only {{ZIP_FILE}}
+
+# Validate session cookie
+validate:
+    python3 .github/deploy/microblog_deploy.py --validate-only
+
+# Configure git identity from .env file
+git-config:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ -f .env ]; then
+        source .env
+        if [ -n "${GIT_USER_NAME:-}" ] && [ -n "${GIT_USER_EMAIL:-}" ]; then
+            git config user.name "$GIT_USER_NAME"
+            git config user.email "$GIT_USER_EMAIL"
+            echo "✅ Git identity configured:"
+            echo "   Name:  $(git config user.name)"
+            echo "   Email: $(git config user.email)"
+        else
+            echo "❌ GIT_USER_NAME and GIT_USER_EMAIL must be set in .env file"
+            exit 1
+        fi
+    else
+        echo "❌ .env file not found"
+        exit 1
+    fi
+
+# Show available commands
+help:
+    just --list
