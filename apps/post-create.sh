@@ -12,7 +12,7 @@ echo ""
 echo "📦 Installing dependencies for all services..."
 echo ""
 
-cd /workspaces/waccamawdotorg/apps
+cd ./apps
 
 # Run deps for all services
 just deps

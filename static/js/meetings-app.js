@@ -10,10 +10,12 @@ class MeetingsApp {
     constructor() {
         this.api = new MeetingsAPIClient();
         this.meetings = [];
+        this.originalMeetings = []; // Store ALL meetings for dev table
         this.filteredMeetings = [];
         this.currentYear = null;
         this.currentType = null;
         this.isLoading = false;
+        this.isAuthenticated = false;
         
         this.init();
     }
@@ -38,11 +40,31 @@ class MeetingsApp {
             console.log('[Meetings] API Response:', response);
             
             if (response.success) {
-                this.meetings = response.meetings || [];
+                let allMeetings = response.meetings || [];
+                this.isAuthenticated = response.authenticated;
+                
+                // Store original unfiltered meetings for dev table
+                this.originalMeetings = [...allMeetings];
+
+                // Always filter by visibility (production behavior)
+                // Only show public meetings if not authenticated
+                if (!response.authenticated) {
+                    allMeetings = allMeetings.filter(meeting => meeting.visibility === 'public');
+                    console.log(`[Meetings] Filtered to ${allMeetings.length} public meetings (not authenticated)`);
+                } else {
+                    console.log(`[Meetings] Authenticated: showing all ${allMeetings.length} meetings`);
+                }
+
+                this.meetings = allMeetings;
                 this.filteredMeetings = this.meetings;
                 console.log('[Meetings] Loaded', this.meetings.length, 'meetings');
                 this.renderStats(response.statistics);
                 this.renderAuthStatus(response.authenticated);
+                
+                // Render dev table if in development mode
+                if (CONFIG.ENV === 'development') {
+                    this.renderDevTable();
+                }
             } else {
                 console.error('[Meetings] API returned error:', response);
                 this.renderError('Failed to load meetings');
@@ -77,8 +99,10 @@ class MeetingsApp {
         const statusEl = document.getElementById('authStatus');
         if (!statusEl) return;
 
+        let html = '';
+
         if (isAuthenticated) {
-            statusEl.innerHTML = `
+            html += `
                 <span class="auth-badge authenticated">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -88,7 +112,7 @@ class MeetingsApp {
                 </span>
             `;
         } else {
-            statusEl.innerHTML = `
+            html += `
                 <span class="auth-badge unauthenticated">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"/>
@@ -99,6 +123,135 @@ class MeetingsApp {
                 </span>
             `;
         }
+
+        statusEl.innerHTML = html;
+    }
+
+    /**
+     * Render dev table (development mode only)
+     * Shows ALL meetings from API in a compact table format
+     */
+    renderDevTable() {
+        // Check if table container already exists
+        let container = document.getElementById('devTableContainer');
+        if (!container) {
+            // Create container after the auth status
+            const authStatus = document.getElementById('authStatus');
+            if (!authStatus) return;
+            
+            container = document.createElement('div');
+            container.id = 'devTableContainer';
+            container.style.cssText = 'margin: 20px 0; padding: 16px; background: #f8f9fa; border: 2px solid #dee2e6; border-radius: 8px;';
+            authStatus.parentNode.insertBefore(container, authStatus.nextSibling);
+        }
+
+        const publicCount = this.originalMeetings.filter(m => m.visibility === 'public').length;
+        const membersCount = this.originalMeetings.length - publicCount;
+
+        container.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h3 style="margin: 0; font-size: 16px; color: #495057;">
+                    🔧 Dev Mode - All Meetings (${this.originalMeetings.length})
+                </h3>
+                <button id="toggleDevTable" style="
+                    background: #6c757d;
+                    color: white;
+                    border: none;
+                    padding: 6px 12px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 14px;
+                ">Hide</button>
+            </div>
+            <div style="font-size: 13px; color: #6c757d; margin-bottom: 12px;">
+                <strong>Main view shows:</strong> ${this.meetings.length} meetings (${this.isAuthenticated ? 'all - authenticated' : 'public only - not authenticated'})
+                <br>
+                <strong>Total in API:</strong> ${publicCount} public + ${membersCount} members-only = ${this.originalMeetings.length} total
+            </div>
+            <div id="devTableContent" style="overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 13px; background: white;">
+                    <thead>
+                        <tr style="background: #e9ecef; border-bottom: 2px solid #dee2e6;">
+                            <th style="padding: 8px; text-align: left; font-weight: 600;">Date</th>
+                            <th style="padding: 8px; text-align: left; font-weight: 600;">Title</th>
+                            <th style="padding: 8px; text-align: left; font-weight: 600;">Type</th>
+                            <th style="padding: 8px; text-align: center; font-weight: 600;">Visibility</th>
+                            <th style="padding: 8px; text-align: center; font-weight: 600;">Resources</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${this.originalMeetings.map(meeting => `
+                            <tr style="border-bottom: 1px solid #dee2e6;">
+                                <td style="padding: 8px; white-space: nowrap;">${this.formatDate(meeting.date)}</td>
+                                <td style="padding: 8px;">
+                                    <a href="${meeting.share_url}" style="color: #0033cc; text-decoration: none;">
+                                        ${meeting.title}
+                                    </a>
+                                </td>
+                                <td style="padding: 8px;">
+                                    <span style="
+                                        display: inline-block;
+                                        padding: 2px 8px;
+                                        background: ${this.getTypeBadgeColor(meeting.type)};
+                                        color: white;
+                                        border-radius: 4px;
+                                        font-size: 11px;
+                                        text-transform: uppercase;
+                                    ">${meeting.type}</span>
+                                </td>
+                                <td style="padding: 8px; text-align: center;">
+                                    ${meeting.visibility === 'public' 
+                                        ? '<span style="color: #28a745; font-weight: 600;">✓ Public</span>' 
+                                        : '<span style="color: #ffc107; font-weight: 600;">🔒 Members</span>'}
+                                </td>
+                                <td style="padding: 8px; text-align: center; font-size: 11px;">
+                                    ${meeting.hasRecording ? '📹' : ''}
+                                    ${meeting.hasTranscript ? '📝' : ''}
+                                    ${meeting.hasNotes ? '📋' : ''}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        // Toggle visibility
+        const toggleBtn = document.getElementById('toggleDevTable');
+        const content = document.getElementById('devTableContent');
+        if (toggleBtn && content) {
+            toggleBtn.onclick = () => {
+                const isHidden = content.style.display === 'none';
+                content.style.display = isHidden ? 'block' : 'none';
+                toggleBtn.textContent = isHidden ? 'Hide' : 'Show';
+            };
+        }
+    }
+
+    /**
+     * Format date for dev table
+     */
+    formatDate(dateStr) {
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+        });
+    }
+
+    /**
+     * Get badge color for meeting type
+     */
+    getTypeBadgeColor(type) {
+        const colors = {
+            'open': '#28a745',
+            'executive': '#dc3545',
+            'general': '#007bff',
+            'powwow': '#6f42c1',
+            'special': '#fd7e14'
+        };
+        return colors[type] || '#6c757d';
     }
 
     /**

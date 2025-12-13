@@ -117,52 +117,7 @@ class MeetingDetailApp {
                 </div>
             </div>
 
-            <div class="meeting-resources">
-                <h2>Available Resources</h2>
-                <div class="resources-grid">
-                    ${this.meeting.hasRecording ? `
-                        <a href="${this.meeting.share_url}" target="_blank" class="resource-card recording">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polygon points="10 8 16 12 10 16 10 8"></polygon>
-                            </svg>
-                            <span>Watch Recording</span>
-                        </a>
-                    ` : ''}
-                    
-                    ${this.meeting.hasTranscript ? `
-                        <div class="resource-card transcript">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
-                                <polyline points="10 9 9 9 8 9"></polyline>
-                            </svg>
-                            <span>Transcript Available</span>
-                        </div>
-                    ` : ''}
-                    
-                    ${this.meeting.hasNotes ? `
-                        <div class="resource-card notes">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                            </svg>
-                            <span>Meeting Notes</span>
-                        </div>
-                    ` : ''}
-                    
-                    ${this.meeting.hasChat ? `
-                        <div class="resource-card chat">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                            </svg>
-                            <span>Chat Log</span>
-                        </div>
-                    ` : ''}
-                </div>
-            </div>
+            ${this.renderContentTabs()}
 
             ${this.meeting.visibility === 'members-only' && !this.api.isAuthenticated() ? `
                 <div class="auth-notice">
@@ -175,6 +130,191 @@ class MeetingDetailApp {
                 </div>
             ` : ''}
         `;
+
+        // Setup tab switching after rendering
+        setTimeout(() => this.setupTabs(), 0);
+    }
+
+    renderContentTabs() {
+        const tabs = [];
+        
+        // Recording tab (always first if available)
+        if (this.meeting.hasRecording) {
+            tabs.push({
+                id: 'recording',
+                label: '📹 Recording',
+                content: `
+                    <div class="tab-content-recording">
+                        <div class="recording-embed">
+                            <a href="${this.meeting.share_url}" target="_blank" class="btn-primary btn-large" style="display: inline-flex; align-items: center; gap: 8px; padding: 16px 24px; background: var(--primary-color); color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polygon points="10 8 16 12 10 16 10 8"></polygon>
+                                </svg>
+                                Watch Recording on Zoom
+                            </a>
+                            <p style="margin-top: 16px; color: var(--text-light); font-size: 14px;">Duration: ${this.meeting.duration} minutes</p>
+                        </div>
+                    </div>
+                `
+            });
+        }
+
+        // Transcript tab
+        if (this.meeting.hasTranscript) {
+            tabs.push({
+                id: 'transcript',
+                label: '📝 Transcript',
+                content: `
+                    <div class="tab-content-transcript">
+                        ${this.meeting.transcript ? `
+                            <div class="transcript-content" style="background: white; padding: 24px; border-radius: 8px; border: 1px solid var(--border-color); max-height: 600px; overflow-y: auto;">
+                                <pre style="white-space: pre-wrap; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.8; margin: 0; font-size: 14px;">${this.escapeHtml(this.meeting.transcript)}</pre>
+                            </div>
+                        ` : '<p class="empty-state" style="text-align: center; color: var(--text-light); padding: 48px;">Transcript is being processed and will be available soon.</p>'}
+                    </div>
+                `
+            });
+        }
+
+        // Notes tab
+        if (this.meeting.hasNotes) {
+            tabs.push({
+                id: 'notes',
+                label: '📋 Notes',
+                content: `
+                    <div class="tab-content-notes">
+                        ${this.meeting.notes ? `
+                            <div class="notes-content" style="background: white; padding: 24px; border-radius: 8px; border: 1px solid var(--border-color);">
+                                ${this.renderMarkdown(this.meeting.notes)}
+                            </div>
+                        ` : '<p class="empty-state" style="text-align: center; color: var(--text-light); padding: 48px;">Meeting notes are being compiled and will be available soon.</p>'}
+                    </div>
+                `
+            });
+        }
+
+        // Chat tab
+        if (this.meeting.hasChat) {
+            tabs.push({
+                id: 'chat',
+                label: '💬 Chat',
+                content: `
+                    <div class="tab-content-chat">
+                        ${this.meeting.chat ? `
+                            <div class="chat-content" style="background: white; padding: 24px; border-radius: 8px; border: 1px solid var(--border-color);">
+                                <pre style="white-space: pre-wrap; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.8; font-size: 14px; margin: 0;">${this.escapeHtml(this.meeting.chat)}</pre>
+                            </div>
+                        ` : '<p class="empty-state" style="text-align: center; color: var(--text-light); padding: 48px;">Chat log is being processed and will be available soon.</p>'}
+                    </div>
+                `
+            });
+        }
+
+        if (tabs.length === 0) {
+            return '<p class="empty-state" style="text-align: center; color: var(--text-light); padding: 48px;">No additional resources available for this meeting.</p>';
+        }
+
+        return `
+            <div class="meeting-content-tabs" style="margin-top: 2rem;">
+                <div class="tab-nav" style="display: flex; gap: 8px; border-bottom: 2px solid var(--border-color); margin-bottom: 24px; overflow-x: auto;">
+                    ${tabs.map((tab, index) => `
+                        <button class="tab-btn ${index === 0 ? 'active' : ''}" data-tab="${tab.id}" style="
+                            padding: 12px 20px;
+                            background: ${index === 0 ? 'var(--primary-color)' : 'transparent'};
+                            color: ${index === 0 ? 'white' : 'var(--text-color)'};
+                            border: none;
+                            border-bottom: 3px solid ${index === 0 ? 'var(--primary-color)' : 'transparent'};
+                            cursor: pointer;
+                            font-weight: 600;
+                            font-size: 15px;
+                            transition: all 0.2s;
+                            white-space: nowrap;
+                            border-radius: 8px 8px 0 0;
+                        ">
+                            ${tab.label}
+                        </button>
+                    `).join('')}
+                </div>
+                <div class="tab-panels">
+                    ${tabs.map((tab, index) => `
+                        <div class="tab-panel ${index === 0 ? 'active' : ''}" data-panel="${tab.id}" style="display: ${index === 0 ? 'block' : 'none'};">
+                            ${tab.content}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    setupTabs() {
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.dataset.tab;
+
+                // Remove active class from all buttons and panels
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.style.background = 'transparent';
+                    btn.style.color = 'var(--text-color)';
+                    btn.style.borderBottom = '3px solid transparent';
+                });
+                tabPanels.forEach(panel => {
+                    panel.classList.remove('active');
+                    panel.style.display = 'none';
+                });
+
+                // Add active class to clicked button and corresponding panel
+                button.classList.add('active');
+                button.style.background = 'var(--primary-color)';
+                button.style.color = 'white';
+                button.style.borderBottom = '3px solid var(--primary-color)';
+                
+                const panel = document.querySelector(`.tab-panel[data-panel="${tabId}"]`);
+                if (panel) {
+                    panel.classList.add('active');
+                    panel.style.display = 'block';
+                }
+            });
+        });
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    renderMarkdown(markdown) {
+        // Simple markdown rendering
+        let html = markdown;
+        
+        // Headers
+        html = html.replace(/^### (.+)$/gm, '<h3 style="margin-top: 24px; margin-bottom: 12px; color: var(--text-color);">$1</h3>');
+        html = html.replace(/^## (.+)$/gm, '<h2 style="margin-top: 32px; margin-bottom: 16px; color: var(--text-color); border-bottom: 2px solid var(--border-color); padding-bottom: 8px;">$1</h2>');
+        html = html.replace(/^# (.+)$/gm, '<h1 style="margin-top: 0; margin-bottom: 20px; color: var(--text-color);">$1</h1>');
+        
+        // Checkboxes
+        html = html.replace(/- \[ \] (.+)$/gm, '<div style="margin: 8px 0;"><input type="checkbox" disabled style="margin-right: 8px;"> <span>$1</span></div>');
+        html = html.replace(/- \[x\] (.+)$/gm, '<div style="margin: 8px 0;"><input type="checkbox" checked disabled style="margin-right: 8px;"> <span>$1</span></div>');
+        
+        // Regular list items (that aren't checkboxes)
+        html = html.replace(/^- (?!\[)(.+)$/gm, '<li style="margin: 4px 0;">$1</li>');
+        
+        // Wrap lists
+        html = html.replace(/(<li.*?>.*?<\/li>\n?)+/g, '<ul style="margin: 12px 0; padding-left: 24px;">$&</ul>');
+        
+        // Bold
+        html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        
+        // Line breaks
+        html = html.replace(/\n\n/g, '<br><br>');
+        html = html.replace(/\n/g, '<br>');
+        
+        return html;
     }
 
     renderError(message) {
