@@ -1,4 +1,8 @@
 {{ define "main" }}
+<!-- Cloudflare Turnstile Script -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<!-- Force cache refresh: {{ now.Unix }} -->
+
 <div class="contact-container">
   <div class="contact-content">
     <div class="contact-header">
@@ -21,6 +25,18 @@
     </div>
     
     <form id="contact-form" class="contact-form" style="display: none;">
+      <!-- Honeypot field (hidden from users, visible to bots) -->
+      <div class="honeypot-field" aria-hidden="true">
+        <label for="website">Website (leave blank)</label>
+        <input 
+          type="text" 
+          id="website" 
+          name="website" 
+          tabindex="-1" 
+          autocomplete="off"
+        >
+      </div>
+      
       <div class="form-group">
         <label for="name" class="form-label">
           Full Name <span class="required">*</span>
@@ -103,6 +119,9 @@
           <span>Subscribe to our newsletter for updates and events</span>
         </label>
       </div>
+      
+      <!-- Cloudflare Turnstile (invisible bot protection) -->
+      <div id="cf-turnstile" class="cf-turnstile"></div>
       
       <div class="form-group">
         <button 
@@ -189,12 +208,23 @@
 
 <script>
 (function() {
+  console.log('[SCRIPT START] Contact form script is executing');
+  
   // Configuration
   const API_BASE_URL = window.location.hostname === 'localhost' 
     ? 'http://localhost:8788' 
     : 'https://contact.waccamaw.org';
   
+  let TURNSTILE_SITE_KEY = null;  // Will be loaded from API
+  
+  // Cloudflare provides a dummy key that always passes for local testing
+  const TURNSTILE_DUMMY_KEY = '1x00000000000000000000AA';  // Always passes
+  
+  console.log('[CONFIG] API_BASE_URL:', API_BASE_URL);
+  
   let formConfig = null;
+  let turnstileToken = null;
+  let turnstileWidgetId = null;
   
   // DOM Elements
   const loadingMessage = document.getElementById('loading-message');
@@ -207,22 +237,46 @@
   const submitBtn = document.getElementById('submit-btn');
   const formMessage = document.getElementById('form-message');
   
+  console.log('[DOM] Elements found:', {
+    loadingMessage: !!loadingMessage,
+    errorMessage: !!errorMessage,
+    contactForm: !!contactForm,
+    categorySelect: !!categorySelect
+  });
+  
   // Load form configuration
   async function loadFormConfig() {
+    console.log('[DEBUG] Loading config from:', API_BASE_URL);
+    console.log('[DEBUG] Current hostname:', window.location.hostname);
+    
     try {
       const response = await fetch(`${API_BASE_URL}/api/config`);
+      
+      console.log('[DEBUG] Response status:', response.status);
+      console.log('[DEBUG] Response ok:', response.ok);
       
       if (!response.ok) {
         throw new Error(`Failed to load form configuration: ${response.status}`);
       }
       
       const data = await response.json();
+      console.log('[DEBUG] Config data received:', data);
       
       if (!data.success) {
         throw new Error(data.error || 'Failed to load configuration');
       }
       
       formConfig = data.config;
+      TURNSTILE_SITE_KEY = data.turnstileSiteKey;
+      
+      // Use dummy key for localhost to avoid HTTPS/HTTP issues
+      if (window.location.hostname === 'localhost') {
+        TURNSTILE_SITE_KEY = TURNSTILE_DUMMY_KEY;
+        console.log('[CONFIG] Using Turnstile dummy key for localhost');
+      } else {
+        console.log('[CONFIG] TURNSTILE_SITE_KEY loaded:', TURNSTILE_SITE_KEY);
+      }
+      
       renderForm();
       
     } catch (error) {
@@ -248,6 +302,63 @@
     
     // Category change handler
     categorySelect.addEventListener('change', handleCategoryChange);
+    
+    // Render Turnstile widget
+    renderTurnstile();
+  }
+  
+  // Render Cloudflare Turnstile widget
+  function renderTurnstile() {
+    // Check if site key is available
+    if (!TURNSTILE_SITE_KEY) {
+      console.warn('[Turnstile] Site key not available yet, skipping render');
+      return;
+    }
+    
+    // Check if Turnstile script is loaded
+    if (typeof turnstile === 'undefined') {
+      console.warn('[Turnstile] Script not loaded yet, retrying...');
+      setTimeout(renderTurnstile, 500);
+      return;
+    }
+    
+    try {
+      console.log('[Turnstile] Rendering widget with site key:', TURNSTILE_SITE_KEY);
+      console.log('[Turnstile] Site key type:', typeof TURNSTILE_SITE_KEY);
+      
+      // Get the container element
+      const container = document.getElementById('cf-turnstile');
+      if (!container) {
+        console.error('[Turnstile] Container element not found');
+        return;
+      }
+      
+      // Ensure site key is a string
+      const siteKey = String(TURNSTILE_SITE_KEY);
+      
+      turnstileWidgetId = turnstile.render(container, {
+        sitekey: siteKey,
+        callback: function(token) {
+          turnstileToken = token;
+          console.log('[Turnstile] Token received:', token.substring(0, 20) + '...');
+        },
+        'error-callback': function(error) {
+          console.error('[Turnstile] Error:', error);
+          turnstileToken = null;
+        },
+        'expired-callback': function() {
+          console.warn('[Turnstile] Token expired');
+          turnstileToken = null;
+        },
+        theme: 'light',
+        size: 'compact',
+        appearance: 'interaction-only'
+      });
+      
+      console.log('[Turnstile] Widget rendered successfully, ID:', turnstileWidgetId);
+    } catch (error) {
+      console.error('[Turnstile] Failed to render widget:', error);
+    }
   }
   
   // Handle category selection
@@ -344,8 +455,28 @@
     
     // Disable submit button
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending...';
+    submitBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg> Verifying...';
     formMessage.style.display = 'none';
+    
+    // Execute Turnstile challenge if not already completed
+    if (!turnstileToken && typeof turnstile !== 'undefined' && turnstileWidgetId !== null) {
+      console.log('[Turnstile] Executing challenge...');
+      try {
+        turnstile.execute(turnstileWidgetId);
+        // Wait for token callback
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      } catch (error) {
+        console.error('[Turnstile] Execution error:', error);
+      }
+    }
+    
+    // Check if we have a token
+    if (!turnstileToken) {
+      console.warn('[Turnstile] No token available, proceeding anyway (degraded mode)');
+    }
+    
+    // Update button text
+    submitBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg> Sending...';
     
     // Gather form data
     const formData = {
@@ -355,7 +486,8 @@
       category: document.getElementById('category').value,
       message: document.getElementById('message').value.trim(),
       newsletter: document.getElementById('newsletter').checked,
-      customFields: {}
+      customFields: {},
+      turnstileToken: turnstileToken || null  // Include Turnstile token
     };
     
     // Gather custom fields
@@ -387,6 +519,12 @@
         customFieldsContainer.innerHTML = '';
         categoryDescription.textContent = '';
         
+        // Reset Turnstile
+        if (typeof turnstile !== 'undefined' && turnstileWidgetId !== null) {
+          turnstile.reset(turnstileWidgetId);
+          turnstileToken = null;
+        }
+        
         // Show warnings if any
         if (result.warnings && result.warnings.length > 0) {
           console.warn('Form submission warnings:', result.warnings);
@@ -405,29 +543,55 @@
         }
       }
       
-    } catch (error) {
-      console.error('Form submission error:', error);
-      showFormMessage(
-        'Unable to send message due to a network error. Please try again later or email us directly at doug@waccamaw.org',
-        false
-      );
     } finally {
       // Re-enable submit button
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Send Message';
+      submitBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg> Send Message';
     }
   }
   
-  // Attach form submit handler
-  contactForm.addEventListener('submit', handleSubmit);
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
   
-  // Initialize
-  loadFormConfig();
+  function init() {
+    console.log('[INIT] Starting initialization');
+    console.log('[INIT] contactForm element:', contactForm);
+    
+    // Attach form submit handler
+    contactForm.addEventListener('submit', handleSubmit);
+    console.log('[INIT] Submit handler attached');
+    
+    // Load form config
+    console.log('[INIT] Calling loadFormConfig()');
+    loadFormConfig();
+  }
 })();
 </script>
 
 <style>
 /* Contact Form Styles - Matches 404 page design */
+
+/* Honeypot field - hidden from humans, visible to bots */
+.honeypot-field {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Cloudflare Turnstile widget */
+#cf-turnstile {
+  margin: 1.5rem 0;
+  min-height: 65px;
+}
+
 .contact-container {
   max-width: var(--max-width, 900px);
   margin: 0 auto;
