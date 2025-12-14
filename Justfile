@@ -7,7 +7,7 @@ default:
 
 
 install: git-config
-    sudo apt-get update && sudo apt-get install -y python3-requests python3-dotenv
+    pip3 install --user requests python-dotenv
     @echo "Installation complete."
 
 # Build the site (useful when server is already running with --watch)
