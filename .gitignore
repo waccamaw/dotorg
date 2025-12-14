@@ -16,3 +16,7 @@ apps/**
 content-export*
 content.zip
 *.zip
+
+content/
+data/
+.session-cookie
