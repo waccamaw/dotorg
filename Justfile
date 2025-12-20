@@ -10,6 +10,21 @@ install: git-config
     pip3 install --user requests python-dotenv
     @echo "Installation complete."
 
+# Sync meetings to Cloudflare KV (development)
+sync-meetings-dev:
+    cd apps/meetings-service && just sync-kv-dev
+
+# Sync meetings to Cloudflare KV (production)
+sync-meetings-prod:
+    cd apps/meetings-service && just sync-kv-prod
+
+# Generate and view meetings index
+view-meetings-index:
+    cd apps/meetings-service && just generate-index
+    @echo ""
+    @echo "📋 Full index:"
+    @jq '.' apps/meetings-service/meetings-index.json
+
 # Build the site (useful when server is already running with --watch)
 build:
     hugo

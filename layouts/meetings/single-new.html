@@ -1,0 +1,27 @@
+{{ define "main" }}
+
+<div class="meeting-single-page">
+	<!-- Dynamic content loaded via API -->
+	<div id="meetingDetail">
+		<div class="loading-state">
+			<div class="spinner"></div>
+			<p>Loading meeting details...</p>
+		</div>
+	</div>
+
+	<!-- Static Hugo content (if any) -->
+	{{ if .Content }}
+	<div class="meeting-static-content">
+		<div class="e-content post-content">
+			{{ .Content }}
+		</div>
+	</div>
+	{{ end }}
+</div>
+
+<!-- Include API client and meeting detail app -->
+<script src="/js/members-config.js?v={{ now.Unix }}"></script>
+<script src="/js/meetings-api.js?v={{ now.Unix }}"></script>
+<script src="/js/meeting-detail.js?v={{ now.Unix }}"></script>
+
+{{ end }}

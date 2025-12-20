@@ -6,6 +6,11 @@ const CONFIG = {
         ? 'http://localhost:8787'
         : 'https://members.waccamaw.org',
     
+    // Meetings API Base URL - Standalone meetings service
+    MEETINGS_API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:8789'  // Meetings service port
+        : 'https://meetings-api.waccamaw.org',
+    
     // Environment
     ENV: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'development'
@@ -26,7 +31,12 @@ const CONFIG = {
         UPDATE_MEMBER: '/api/update-member',
         MEMBER_STATUS: '/api/member-status',
         MEMBER_PHOTO: '/api/member-photo/:itemId',
-        UPLOAD_PHOTO: '/api/upload-photo'
+        UPLOAD_PHOTO: '/api/upload-photo',
+        
+        // Meetings API Endpoints (uses MEETINGS_API_BASE_URL)
+        MEETINGS: '/api/meetings',
+        MEETING_DETAIL: '/api/meetings/:type/:year/:month/:day',
+        UPCOMING_MEETINGS: '/api/meetings/upcoming'
     },
     
     // Feature Flags
