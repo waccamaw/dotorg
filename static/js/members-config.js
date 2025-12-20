@@ -9,7 +9,7 @@ const CONFIG = {
     // Meetings API Base URL - Standalone meetings service
     MEETINGS_API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'http://localhost:8789'  // Meetings service port
-        : 'https://meetings-api.waccamaw.org',
+        : 'https://meetings.waccamaw.org',
     
     // Environment
     ENV: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
