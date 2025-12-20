@@ -87,11 +87,11 @@ status:
     echo "📊 Service Status:"
     echo ""
     
-    # Check member-services (port 8787)
+    # Check members-service (port 8787)
     if curl -s -m 2 http://localhost:8787/ > /dev/null 2>&1; then
-        echo "✅ member-services (http://localhost:8787) - Running"
+        echo "✅ members-service (http://localhost:8787) - Running"
     else
-        echo "❌ member-services (http://localhost:8787) - Not running"
+        echo "❌ members-service (http://localhost:8787) - Not running"
     fi
     
     # Check contact-service (port 8788)
@@ -164,8 +164,8 @@ test-health:
     echo "🧪 Testing health endpoints..."
     echo ""
     
-    # Test member-services
-    echo "📍 member-services:"
+    # Test members-service
+    echo "📍 members-service:"
     curl -s http://localhost:8787/ | jq . || echo "❌ Failed"
     echo ""
     

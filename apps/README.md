@@ -4,7 +4,7 @@ This directory contains all microservices for the Waccamaw website.
 
 ## Services
 
-- **member-services** (port 8787) - Member portal API for roll book updates
+- **members-service** (port 8787) - Member portal API for roll book updates
 - **contact-service** (port 8788) - Contact form API with email routing
 
 ## Quick Commands
@@ -63,7 +63,7 @@ The dev container automatically:
 When adding services, use the next available port:
 
 - 1313 - Hugo dev server (main site)
-- 8787 - member-services
+- 8787 - members-service
 - 8788 - contact-service
 - 8789 - (available)
 - 8790 - (available)
@@ -110,7 +110,7 @@ Each service is:
 
 Each service has its own documentation:
 
-- `apps/member-services/README.md`
+- `apps/members-service/README.md`
 - `apps/contact-service/README.md`
 
 ---
