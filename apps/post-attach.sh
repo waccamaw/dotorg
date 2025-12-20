@@ -14,7 +14,8 @@ cd ./apps
 
 # Check if any services are already running
 if curl -s -m 1 http://localhost:8787/ > /dev/null 2>&1 || \
-   curl -s -m 1 http://localhost:8788/ > /dev/null 2>&1; then
+   curl -s -m 1 http://localhost:8788/ > /dev/null 2>&1 || \
+   curl -s -m 1 http://localhost:8789/ > /dev/null 2>&1; then
     echo "⚠️  Some services are already running"
     echo ""
     just status

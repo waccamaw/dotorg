@@ -26,7 +26,7 @@
 	},
 	"postCreateCommand": "just install && bash apps/post-create.sh",
 	"postAttachCommand": "just serve & bash apps/post-attach.sh && wait",
-	"forwardPorts": [1313, 8787, 8788],
+	"forwardPorts": [1313, 8787, 8788, 8789],
 	"portsAttributes": {
 		"1313": {
 			"label": "Hugo Dev Server (waccamaw.org)",
@@ -38,6 +38,10 @@
 		},
 		"8788": {
 			"label": "Contact Service API (Cloudflare Workers)",
+			"onAutoForward": "notify"
+		},
+		"8789": {
+			"label": "Meetings Service API (Cloudflare Workers)",
 			"onAutoForward": "notify"
 		}
 	},

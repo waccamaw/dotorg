@@ -59,6 +59,7 @@ dev-bg:
     echo "📋 Service URLs:"
     echo "   • member-services: http://localhost:8787"
     echo "   • contact-service: http://localhost:8788"
+    echo "   • meetings-service: http://localhost:8789"
     echo ""
     echo "🛑 Stop all: just dev-stop"
     echo "📊 Status: just status"
@@ -98,6 +99,13 @@ status:
         echo "✅ contact-service (http://localhost:8788) - Running"
     else
         echo "❌ contact-service (http://localhost:8788) - Not running"
+    fi
+    
+    # Check meetings-service (port 8789)
+    if curl -s -m 2 http://localhost:8789/ > /dev/null 2>&1; then
+        echo "✅ meetings-service (http://localhost:8789) - Running"
+    else
+        echo "❌ meetings-service (http://localhost:8789) - Not running"
     fi
 
 # Run a command in all services
@@ -164,6 +172,11 @@ test-health:
     # Test contact-service
     echo "📍 contact-service:"
     curl -s http://localhost:8788/ | jq . || echo "❌ Failed"
+    echo ""
+    
+    # Test meetings-service
+    echo "📍 meetings-service:"
+    curl -s http://localhost:8789/ | jq . || echo "❌ Failed"
     echo ""
 
 # Deploy all services to production
