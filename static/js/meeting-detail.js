@@ -30,9 +30,15 @@ class MeetingDetailApp {
     async loadMeeting() {
         try {
             const response = await this.api.getMeetingById(this.meetingId);
+            console.log('[Meeting Detail] API Response:', response);
             
             if (response.success && response.meeting) {
                 this.meeting = response.meeting;
+                console.log('[Meeting Detail] Meeting object:', this.meeting);
+                console.log('[Meeting Detail] Has content?', this.meeting.content ? 'YES' : 'NO');
+                console.log('[Meeting Detail] Content keys:', this.meeting.content ? Object.keys(this.meeting.content) : 'none');
+                console.log('[Meeting Detail] hasTranscript flag:', this.meeting.hasTranscript);
+                console.log('[Meeting Detail] hasRecording flag:', this.meeting.hasRecording);
                 this.renderMeeting();
             } else {
                 this.renderError('Meeting not found');

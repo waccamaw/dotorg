@@ -306,6 +306,101 @@ class MeetingsApp {
             btn.addEventListener('click', () => this.filterByYear(year));
             timelineEl.appendChild(btn);
         });
+        
+        // Also render category filter
+        this.renderCategoryFilter();
+    }
+
+    /**
+     * Render category filter buttons
+     */
+    renderCategoryFilter() {
+        const container = document.getElementById('categoryButtons');
+        if (!container) return;
+
+        // Get unique types from meetings
+        const types = new Set();
+        this.meetings.forEach(meeting => {
+            if (meeting.type) types.add(meeting.type);
+        });
+
+        // Define type metadata
+        const typeInfo = {
+            'open': { label: 'Open Meetings', icon: '🏛️', color: '#28a745' },
+            'executive': { label: 'Executive Sessions', icon: '🔒', color: '#dc3545' },
+            'general': { label: 'General Meetings', icon: '👥', color: '#007bff' },
+            'powwow': { label: 'Pow Wow', icon: '🪶', color: '#6f42c1' },
+            'special': { label: 'Special Events', icon: '⭐', color: '#fd7e14' },
+            'committee': { label: 'Committee', icon: '📋', color: '#20c997' }
+        };
+
+        // Sort types for consistent order
+        const sortedTypes = Array.from(types).sort();
+        
+        container.innerHTML = sortedTypes.map(type => {
+            const info = typeInfo[type] || { label: type, icon: '📄', color: '#6c757d' };
+            const count = this.meetings.filter(m => m.type === type).length;
+            
+            return `
+                <button 
+                    class="category-btn" 
+                    data-type="${type}"
+                    style="
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        padding: 0.75rem 1.25rem;
+                        background: white;
+                        border: 2px solid ${info.color};
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-size: 0.95rem;
+                        font-weight: 500;
+                        color: var(--text-color);
+                        transition: all 0.2s ease;
+                    "
+                    onmouseover="this.style.background='${info.color}'; this.style.color='white';"
+                    onmouseout="if(!this.classList.contains('active')) { this.style.background='white'; this.style.color='var(--text-color)'; }"
+                >
+                    <span style="font-size: 1.2rem;">${info.icon}</span>
+                    <span>${info.label}</span>
+                    <span style="
+                        display: inline-block;
+                        padding: 0.15rem 0.5rem;
+                        background: rgba(0,0,0,0.1);
+                        border-radius: 12px;
+                        font-size: 0.85rem;
+                        font-weight: 600;
+                    ">${count}</span>
+                </button>
+            `;
+        }).join('');
+
+        // Add click handlers
+        container.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.dataset.type;
+                this.filterByType(type);
+                
+                // Update button states
+                container.querySelectorAll('.category-btn').forEach(b => {
+                    const info = typeInfo[b.dataset.type] || { color: '#6c757d' };
+                    if (b === btn) {
+                        b.classList.add('active');
+                        b.style.background = info.color;
+                        b.style.color = 'white';
+                    } else {
+                        b.classList.remove('active');
+                        b.style.background = 'white';
+                        b.style.color = 'var(--text-color)';
+                    }
+                });
+                
+                // Show reset button
+                const resetBtn = document.getElementById('resetFilter');
+                if (resetBtn) resetBtn.style.display = 'inline-block';
+            });
+        });
     }
 
     /**
@@ -369,6 +464,12 @@ class MeetingsApp {
 
         // Reset UI
         document.querySelectorAll('.year-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.style.background = 'white';
+            btn.style.color = 'var(--text-color)';
+        });
+        
         const typeFilter = document.getElementById('typeFilter');
         if (typeFilter) typeFilter.value = '';
         
@@ -376,7 +477,7 @@ class MeetingsApp {
         if (resetButton) resetButton.style.display = 'none';
 
         const selectedYearText = document.getElementById('selectedYearText');
-        if (selectedYearText) selectedYearText.textContent = 'Showing all years';
+        if (selectedYearText) selectedYearText.textContent = '';
 
         this.renderMeetings();
         
@@ -493,7 +594,7 @@ class MeetingsApp {
         const typeBadge = this.api.getTypeBadgeClass(type);
 
         // Build meeting URL using ID
-        const meetingUrl = `/meetings-detail/?id=${meeting.id}`;
+        const meetingUrl = `/meetings-detail/?id=${encodeURIComponent(meeting.id)}`;
 
         return `
             <a href="${meetingUrl}" class="meeting-item" data-year="${pathComponents.year}" data-type="${type}">
