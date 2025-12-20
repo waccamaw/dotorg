@@ -3,6 +3,13 @@
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <!-- Force cache refresh: {{ now.Unix }} -->
 
+<style>
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
 <div class="contact-container">
   <div class="contact-content">
     <div class="contact-header">
@@ -93,7 +100,16 @@
       
       <div id="custom-fields-container"></div>
       
-      <div class="form-group">
+      <!-- External form container (shown when category has external_form) -->
+      <div id="external-form-container" style="display: none;">
+        <div id="external-form-loading" style="text-align: center; padding: 40px; color: #666;">
+          <div style="display: inline-block; width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #0033cc; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+          <p style="margin-top: 16px; font-size: 14px;">Loading form...</p>
+        </div>
+        <iframe id="external-form-iframe" style="display: none; width: 100%; border: none; border-radius: 8px;" allowpaymentrequest allowtransparency="true" frameborder="0"></iframe>
+      </div>
+      
+      <div class="form-group" id="message-group">
         <label for="message" class="form-label">
           Message <span class="required">*</span>
         </label>
@@ -107,7 +123,7 @@
         ></textarea>
       </div>
       
-      <div class="form-group checkbox-group">
+      <div class="form-group checkbox-group" id="newsletter-group">
         <label class="checkbox-label">
           <input 
             type="checkbox" 
@@ -123,7 +139,7 @@
       <!-- Cloudflare Turnstile (invisible bot protection) -->
       <div id="cf-turnstile" class="cf-turnstile"></div>
       
-      <div class="form-group">
+      <div class="form-group" id="submit-group">
         <button 
           type="submit" 
           id="submit-btn"
@@ -297,6 +313,7 @@
       option.textContent = category.label;
       option.dataset.description = category.description || '';
       option.dataset.customFields = JSON.stringify(category.customFields || []);
+      option.dataset.externalForm = JSON.stringify(category.externalForm);
       categorySelect.appendChild(option);
     });
     
@@ -369,12 +386,23 @@
       // Show description
       categoryDescription.textContent = selectedOption.dataset.description || '';
       
-      // Render custom fields
-      const customFields = JSON.parse(selectedOption.dataset.customFields || '[]');
-      renderCustomFields(customFields);
+      // Check for external form
+      const externalFormData = selectedOption.dataset.externalForm;
+      if (externalFormData && externalFormData !== 'null') {
+        const externalForm = JSON.parse(externalFormData);
+        renderExternalForm(externalForm);
+      } else {
+        // Hide external form, show standard fields
+        hideExternalForm();
+        
+        // Render custom fields
+        const customFields = JSON.parse(selectedOption.dataset.customFields || '[]');
+        renderCustomFields(customFields);
+      }
     } else {
       categoryDescription.textContent = '';
       customFieldsContainer.innerHTML = '';
+      hideExternalForm();
     }
   }
   
@@ -429,6 +457,58 @@
       fieldGroup.appendChild(input);
       customFieldsContainer.appendChild(fieldGroup);
     });
+  }
+  
+  // Render external form (iframe)
+  function renderExternalForm(externalForm) {
+    // Hide standard form fields (name, email, phone, message, newsletter, submit)
+    document.getElementById('name').closest('.form-group').style.display = 'none';
+    document.getElementById('email').closest('.form-group').style.display = 'none';
+    document.getElementById('phone').closest('.form-group').style.display = 'none';
+    document.getElementById('message-group').style.display = 'none';
+    document.getElementById('newsletter-group').style.display = 'none';
+    document.getElementById('submit-group').style.display = 'none';
+    document.getElementById('cf-turnstile').style.display = 'none';
+    customFieldsContainer.innerHTML = '';
+    
+    // Show external form container
+    const container = document.getElementById('external-form-container');
+    const loading = document.getElementById('external-form-loading');
+    const iframe = document.getElementById('external-form-iframe');
+    
+    container.style.display = 'block';
+    loading.style.display = 'block';
+    iframe.style.display = 'none';
+    
+    // Configure iframe
+    iframe.src = externalForm.url;
+    iframe.style.height = externalForm.height + 'px';
+    iframe.style.minHeight = externalForm.height + 'px';
+    iframe.setAttribute('title', 'External form');
+    
+    // Show iframe after brief delay to simulate loading
+    setTimeout(() => {
+      loading.style.display = 'none';
+      iframe.style.display = 'block';
+    }, 500);
+  }
+  
+  // Hide external form and show standard fields
+  function hideExternalForm() {
+    const container = document.getElementById('external-form-container');
+    const iframe = document.getElementById('external-form-iframe');
+    
+    container.style.display = 'none';
+    iframe.src = '';
+    
+    // Show all standard form fields (name, email, phone, message, newsletter, submit)
+    document.getElementById('name').closest('.form-group').style.display = 'block';
+    document.getElementById('email').closest('.form-group').style.display = 'block';
+    document.getElementById('phone').closest('.form-group').style.display = 'block';
+    document.getElementById('message-group').style.display = 'block';
+    document.getElementById('newsletter-group').style.display = 'block';
+    document.getElementById('submit-group').style.display = 'block';
+    document.getElementById('cf-turnstile').style.display = 'block';
   }
   
   // Show error message
