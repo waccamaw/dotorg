@@ -45,7 +45,8 @@ class APIClient {
 
         const config = {
             ...options,
-            headers
+            headers,
+            credentials: 'include'  // Send cookies with requests
         };
 
         try {

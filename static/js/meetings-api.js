@@ -42,7 +42,8 @@ class MeetingsAPIClient {
 
         const config = {
             ...options,
-            headers
+            headers,
+            credentials: 'include'  // Send cookies with cross-origin requests
         };
 
         try {
