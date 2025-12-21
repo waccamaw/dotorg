@@ -34,7 +34,9 @@ class MeetingDetailApp {
             
             if (response.success && response.meeting) {
                 this.meeting = response.meeting;
+                this.isExecutiveLeadership = response.isExecutiveLeadership || false;
                 console.log('[Meeting Detail] Meeting object:', this.meeting);
+                console.log('[Meeting Detail] Is Executive Leadership:', this.isExecutiveLeadership);
                 console.log('[Meeting Detail] Has content?', this.meeting.content ? 'YES' : 'NO');
                 console.log('[Meeting Detail] Content keys:', this.meeting.content ? Object.keys(this.meeting.content) : 'none');
                 console.log('[Meeting Detail] hasTranscript flag:', this.meeting.hasTranscript);
@@ -115,6 +117,7 @@ class MeetingDetailApp {
                         </svg>
                         ${duration}
                     </div>
+                    ${this.isExecutiveLeadership ? `
                     <div class="meta-item" style="margin-left: auto;">
                         <a href="${this.getGitHubEditUrl()}" 
                            target="_blank" 
@@ -129,6 +132,7 @@ class MeetingDetailApp {
                             Edit on GitHub
                         </a>
                     </div>
+                    ` : ''}
                 </div>
             </div>
 
