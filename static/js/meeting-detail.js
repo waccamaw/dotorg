@@ -443,9 +443,9 @@ class MeetingDetailApp {
         const day = String(date.getDate()).padStart(2, '0');
 
         // Construct GitHub edit URL
-        // Pattern: https://github.com/waccamaw/dotorg/edit/main/content/meetings/open/YYYY/MM/DD/notes.md
+        // Pattern: https://github.com/waccamaw/meetings-service/edit/main/content/meetings/open/YYYY/MM/DD/notes.md
         const visibility = this.meeting.visibility === 'members-only' ? 'members-only' : 'open';
-        const githubUrl = `https://github.com/waccamaw/dotorg/edit/main/content/meetings/${visibility}/${year}/${month}/${day}/notes.md`;
+        const githubUrl = `https://github.com/waccamaw/meetings-service/edit/main/content/meetings/${visibility}/${year}/${month}/${day}/notes.md`;
         
         return githubUrl;
     }
