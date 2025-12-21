@@ -31,16 +31,14 @@ else
     # Give services a moment to start
     sleep 2
     
-    # Sync meetings to dev KV
+    # Sync content to local KV
     echo ""
-    echo "🔄 Syncing meetings content to dev KV..."
-    cd meetings-service
-    if just sync-dev > /dev/null 2>&1; then
-        echo "✅ Meetings content synchronized to dev KV"
+    echo "🔄 Syncing content to local KV..."
+    if just sync-local > /dev/null 2>&1; then
+        echo "✅ Content synchronized to local KV"
     else
         echo "⚠️  KV sync skipped (wrangler not available or KV not configured)"
     fi
-    cd ..
 fi
 
 echo ""

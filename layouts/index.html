@@ -269,34 +269,57 @@ newsletterForm.addEventListener('submit', async function(e) {
 <div class="homepage-sections">
 	<!-- Most Recent Meeting -->
 	<div class="recent-meeting-section">
-		{{ $meetings := where $allPosts ".Params.categories" "intersect" (slice "meetings") }}
-		{{ with index $meetings 0 }}
-			<a href="{{ .Permalink }}" class="meeting-item-home">
-				<div class="meeting-calendar">
-					<div class="calendar-month">{{ .Date.Format "Jan" }}</div>
-					{{ if in .Title "Open Meeting" }}
-						<div class="calendar-label">Open<br>Meeting</div>
-					{{ else if in .Title "Executive" }}
-						<div class="calendar-label">Executive</div>
-					{{ else }}
-						<div class="calendar-label">Meeting</div>
-					{{ end }}
-				</div>
-				<div class="meeting-info">
-					<h3 class="meeting-title">{{ .Title }}</h3>
-					<div class="meeting-meta">
-						<time datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
-							{{ .Date.Format "January 2, 2006" }}
-						</time>
-					</div>
-					{{ if .Summary }}
-						<p class="meeting-summary">{{ .Summary | truncate 300 }}</p>
-					{{ end }}
-				</div>
-			</a>
-		{{ end }}
-		<a href="/categories/meetings/" class="view-all-link">View all meetings →</a>
+		<div id="recentMeetingContainer">
+			<!-- Will be populated by JavaScript -->
+		</div>
+		<a href="/meetings/" class="view-all-link">View all meetings →</a>
 	</div>
 </div>
+
+<script src="/js/members-config.js"></script>
+<script src="/js/meetings-api.js"></script>
+<script>
+// Fetch and display most recent public meeting
+document.addEventListener('DOMContentLoaded', async () => {
+	const container = document.getElementById('recentMeetingContainer');
+	
+	try {
+		const api = new MeetingsAPI();
+		const meetings = await api.fetchMeetings();
+		
+		const recentMeeting = meetings[0];
+		
+		if (recentMeeting) {
+			const dateObj = new Date(recentMeeting.date);
+			const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+			const typeDisplay = api.getTypeDisplayName(recentMeeting.type);
+			const typeBadge = api.getTypeBadgeClass(recentMeeting.type);
+			const meetingUrl = `/meetings-detail/?id=${encodeURIComponent(recentMeeting.id)}`;
+			
+			container.innerHTML = `
+				<a href="${meetingUrl}" class="meeting-item-home">
+					<div class="meeting-content">
+						<h3 class="meeting-title">${recentMeeting.title}</h3>
+						<div class="meeting-meta">
+							<span class="meeting-date">${api.formatDate(recentMeeting.date)}</span>
+						</div>
+						<div class="meeting-features">
+							<span class="calendar-badge ${typeBadge}">${month} ${typeDisplay}</span>
+							${recentMeeting.hasRecording ? '<span class="feature-badge">▶ Recording</span>' : ''}
+							${recentMeeting.hasTranscript ? '<span class="feature-badge">⎙ Transcript</span>' : ''}
+							${recentMeeting.hasNotes ? '<span class="feature-badge">◉ Notes</span>' : ''}
+						</div>
+					</div>
+				</a>
+			`;
+		} else {
+			container.innerHTML = '<p style="padding: 2rem; text-align: center; color: var(--text-light);">No recent meetings available.</p>';
+		}
+	} catch (error) {
+		console.log('[Homepage] Meeting API unavailable:', error.message);
+		container.innerHTML = '<p style="padding: 2rem; text-align: center;"><a href="/meetings/" style="color: var(--link-color); text-decoration: none; font-weight: 500;">View tribal meetings →</a></p>';
+	}
+});
+</script>
 
 {{ end }}

@@ -35,6 +35,37 @@ deps:
     echo ""
     echo "✅ All services ready!"
 
+# Sync content to local KV for all services (runs during devcontainer startup)
+sync-local:
+    #!/usr/bin/env bash
+    echo "🔄 Syncing content to local KV for all services..."
+    echo ""
+    
+    # Sync meetings-service
+    if [ -d "meetings-service" ]; then
+        echo "📍 meetings-service:"
+        cd meetings-service
+        if just sync-local 2>/dev/null; then
+            echo "✅ Meetings content synced to local KV"
+        else
+            echo "⚠️  Sync failed for meetings-service"
+        fi
+        cd ..
+        echo ""
+    fi
+    
+    # Add other services here as they implement local KV sync
+    # if [ -d "contact-service" ]; then
+    #     echo "📍 contact-service:"
+    #     cd contact-service
+    #     just sync-local 2>/dev/null
+    #     cd ..
+    #     echo ""
+    # fi
+    
+    echo "✅ Local KV sync complete!"
+
+
 # Start all services in background
 dev-bg:
     #!/usr/bin/env bash
