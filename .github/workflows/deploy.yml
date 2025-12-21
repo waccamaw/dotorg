@@ -87,7 +87,7 @@ jobs:
           MICROBLOG_THEME_ID: ${{ inputs.theme_id || vars.MICROBLOG_THEME_ID }}
         run: |
           echo "🚀 Deploying to Micro.blog..."
-          python3 .github/deploy/microblog_deploy.py --all
+          python3 .github/deploy/microblog_deploy.py --all --timeout 120
       
       - name: Create deployment summary
         if: always()

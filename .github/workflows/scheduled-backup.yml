@@ -76,7 +76,7 @@ jobs:
           GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: |
           echo "📦 Triggering backup export from Micro.blog..."
-          python3 .github/deploy/microblog_backup.py --export-only
+          python3 .github/deploy/microblog_backup.py --export-only --max-retries 50 --retry-interval 24
       
       - name: Generate backup metadata
         id: backup-metadata
