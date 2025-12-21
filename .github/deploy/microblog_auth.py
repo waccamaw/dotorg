@@ -201,12 +201,20 @@ class MicroblogAuthenticator:
         
         session = requests.Session()
         headers = {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15'
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Referer': 'https://micro.blog/signin'
         }
         
         try:
             # Follow the magic link - it will redirect and set the session cookie
             response = session.get(magic_link, headers=headers, allow_redirects=True, timeout=30)
+            
+            # Debug: Print all cookies received
+            print(f"   📊 Received {len(session.cookies)} cookies:")
+            for cookie in session.cookies:
+                print(f"      - {cookie.name}: {cookie.value[:20]}...")
             
             if response.status_code == 200:
                 # Extract rack.session cookie
@@ -215,7 +223,11 @@ class MicroblogAuthenticator:
                         print(f"✅ Session cookie captured")
                         return cookie.value
                 
+                # Debug: Print response details
                 print("⚠️  No rack.session cookie found in response")
+                print(f"   Status: {response.status_code}")
+                print(f"   Final URL: {response.url}")
+                print(f"   Headers: {dict(response.headers)}")
                 return None
             else:
                 print(f"❌ Failed to follow magic link: {response.status_code}")
@@ -223,6 +235,8 @@ class MicroblogAuthenticator:
                 
         except Exception as e:
             print(f"❌ Error following magic link: {e}")
+            import traceback
+            traceback.print_exc()
             return None
     
     def switch_active_blog(self, session_cookie):
