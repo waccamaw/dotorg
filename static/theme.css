@@ -1281,6 +1281,18 @@ main {
 .year-meetings {
 	display: grid;
 	gap: 1rem;
+	max-height: 10000px;
+	opacity: 1;
+	margin-top: 1rem;
+	overflow: hidden;
+	transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
+}
+
+.year-meetings.collapsed {
+	max-height: 0;
+	opacity: 0;
+	margin-top: 0;
+	overflow: hidden;
 }
 
 .meeting-item {
