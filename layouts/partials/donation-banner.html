@@ -1,0 +1,75 @@
+{{/* Donation Banner Configuration - Edit settings below */}}
+{{ $enabled := true }}
+{{ $avatar := "/doug.png" }}
+{{ $zeffyLink := "https://www.zeffy.com/embed/donation-form/make-a-difference-in-the-lives-of-indigenous-people-in-sc?modal=true" }}
+{{ $cookieName := "wip_donation_acknowledged" }}
+{{ $cookieDays := 90 }}
+
+{{ if $enabled }}
+<div id="donation-banner" class="donation-banner" style="display: none;">
+  <div class="donation-banner-container">
+    <button class="donation-banner-close" onclick="dismissDonationBanner()" aria-label="Close banner">×</button>
+    
+    <div class="donation-banner-content">
+      <img src="{{ $avatar }}" alt="Chief Doug Hatcher" class="donation-banner-avatar">
+      
+      <div class="donation-banner-text">
+        <p><strong>Please help preserve our heritage.</strong> My name is Doug Hatcher, a founding member of the Waccamaw Indian People, and I've maintained waccamaw.org since 2008. For over 300 years, our people have called the Dog Bluff community home.</p>
+        
+        <p>We're South Carolina's first state-recognized tribe, with a proud civil rights tradition we intend to carry forward. Your donation helps fund cultural programs, tribal meetings, youth education, and community support services. I've seen firsthand how much more we could accomplish with the right investment in our community and our people.</p>
+        
+        <p><strong>If everyone reading this donated just $5, we could do incredible things—expand our cultural programs, improve our facilities, and create opportunities for the next generation. Will you help us build that future?</strong></p>
+      </div>
+    </div>
+    
+    <div class="donation-banner-actions">
+      <a href="#" 
+         class="donation-banner-button" 
+         zeffy-form-link="{{ $zeffyLink }}"
+         onclick="acknowledgeDonation()">
+        Donate Now
+      </a>
+      <button class="donation-banner-dismiss" onclick="dismissDonationBanner()">
+        Maybe Later
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const COOKIE_NAME = '{{ $cookieName }}';
+  const COOKIE_DAYS = {{ $cookieDays }};
+  
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
+  
+  function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${value}; expires=${expires}; path=/; SameSite=Lax`;
+  }
+  
+  function acknowledgeDonation() {
+    setCookie(COOKIE_NAME, 'donated', COOKIE_DAYS);
+    // Zeffy modal will open automatically via zeffy-form-link
+  }
+  
+  function dismissDonationBanner() {
+    setCookie(COOKIE_NAME, 'dismissed', COOKIE_DAYS);
+    document.getElementById('donation-banner').style.display = 'none';
+  }
+  
+  // Show banner if no cookie set
+  if (!getCookie(COOKIE_NAME)) {
+    document.getElementById('donation-banner').style.display = 'block';
+  }
+  
+  // Make functions global
+  window.acknowledgeDonation = acknowledgeDonation;
+  window.dismissDonationBanner = dismissDonationBanner;
+})();
+</script>
+{{ end }}

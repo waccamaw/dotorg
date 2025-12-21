@@ -4238,3 +4238,143 @@ width: 100%;
 
 
 
+
+/* Donation Banner - Wikipedia Style */
+.donation-banner {
+  background: linear-gradient(135deg, #fff5eb 0%, #faf8f3 100%);
+  border-bottom: 3px solid var(--primary-color);
+  padding: 2rem 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.donation-banner-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  position: relative;
+}
+
+.donation-banner-close {
+  position: absolute;
+  top: -0.5rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--text-light);
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.donation-banner-close:hover {
+  color: var(--text-color);
+}
+
+.donation-banner-content {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.donation-banner-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color);
+  flex-shrink: 0;
+}
+
+.donation-banner-text {
+  flex: 1;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.donation-banner-text p {
+  margin-bottom: 0.75rem;
+}
+
+.donation-banner-text strong {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.donation-banner-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.donation-banner-button {
+  background: var(--primary-color);
+  color: white;
+  padding: 0.75rem 2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: background 0.2s;
+  display: inline-block;
+  border: none;
+  cursor: pointer;
+}
+
+.donation-banner-button:hover {
+  background: var(--primary-hover);
+  color: white;
+}
+
+.donation-banner-dismiss {
+  background: transparent;
+  border: 2px solid var(--border-color);
+  color: var(--text-light);
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.donation-banner-dismiss:hover {
+  border-color: var(--text-color);
+  color: var(--text-color);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .donation-banner {
+    padding: 1.5rem 0;
+  }
+  
+  .donation-banner-content {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .donation-banner-avatar {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .donation-banner-text {
+    font-size: 0.95rem;
+  }
+  
+  .donation-banner-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .donation-banner-button,
+  .donation-banner-dismiss {
+    width: 100%;
+    text-align: center;
+  }
+}
