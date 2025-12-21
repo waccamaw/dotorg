@@ -79,7 +79,7 @@ class MeetingDetailApp {
 
         container.innerHTML = `
             <div class="meeting-breadcrumb" style="margin-bottom: 1.5rem;">
-                <a href="/meetings-archive/" style="color: var(--primary-color); text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
+                <a href="/meetings/" style="color: var(--primary-color); text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; font-weight: 500;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="15 18 9 12 15 6"></polyline>
                     </svg>
