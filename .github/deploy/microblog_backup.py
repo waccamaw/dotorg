@@ -126,7 +126,7 @@ class MicroblogBackup:
             print(f"❌ Error connecting to Gmail: {e}")
             return None
     
-    def poll_email_for_export(self, export_time, max_retries=25, retry_interval=12):
+    def poll_email_for_export(self, export_time, max_retries=25, retry_interval=30):
         """Poll Gmail for export ready notification and extract download link"""
         print(f"📧 Polling Gmail for export notification (up to {max_retries} retries, {retry_interval}s apart)...")
         print(f"   Total timeout: {max_retries * retry_interval // 60} minutes")

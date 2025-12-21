@@ -28,14 +28,17 @@ else
     # Start all services in background
     just dev-bg
     
-    # Sync meetings to KV after services start
+    # Give services a moment to start
+    sleep 2
+    
+    # Sync meetings to dev KV
     echo ""
-    echo "🔄 Syncing meetings index to KV..."
+    echo "🔄 Syncing meetings content to dev KV..."
     cd meetings-service
-    if just sync-kv-dev 2>/dev/null; then
-        echo "✅ Meetings KV synchronized"
+    if just sync-dev > /dev/null 2>&1; then
+        echo "✅ Meetings content synchronized to dev KV"
     else
-        echo "⚠️  KV sync skipped (not configured or wrangler not available)"
+        echo "⚠️  KV sync skipped (wrangler not available or KV not configured)"
     fi
     cd ..
 fi

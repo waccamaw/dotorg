@@ -586,7 +586,7 @@ class MeetingsApp {
                             style="cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: space-between; padding: 1rem; margin-bottom: 0; background: var(--bg-secondary, #fff5eb); border-radius: 8px; transition: all 0.2s ease;"
                             onmouseover="this.style.background='#f0e6dc';"
                             onmouseout="this.style.background='var(--bg-secondary, #fff5eb)';">
-                            <span>${year} Meetings <span style="color: var(--text-light, #6c757d); font-weight: normal; font-size: 0.9em;">(${yearMeetings.length} API)</span></span>
+                            <span>${year} Meetings (${yearMeetings.length})</span>
                             <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
