@@ -92,7 +92,7 @@ class MeetingDetailApp {
                 
                 <h1 class="meeting-title" style="font-size: 1.5rem; margin-bottom: 0.75rem; line-height: 1.3; color: var(--text-color); font-weight: 600;">${this.meeting.title}</h1>
                 
-                <div class="meeting-meta" style="display: flex; flex-wrap: wrap; gap: 20px; color: var(--text-light); font-size: 14px;">
+                <div class="meeting-meta" style="display: flex; flex-wrap: wrap; gap: 20px; color: var(--text-light); font-size: 14px; align-items: center;">
                     <div class="meta-item" style="display: flex; align-items: center; gap: 8px;">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
                             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -114,6 +114,20 @@ class MeetingDetailApp {
                             <path d="M12 2v20M2 12h20"></path>
                         </svg>
                         ${duration}
+                    </div>
+                    <div class="meta-item" style="margin-left: auto;">
+                        <a href="${this.getGitHubEditUrl()}" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-color); text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.2s;"
+                           onmouseover="this.style.background='var(--bg-secondary)'; this.style.borderColor='var(--primary-color)';"
+                           onmouseout="this.style.background='var(--bg-white)'; this.style.borderColor='var(--border-color)';">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                            Edit on GitHub
+                        </a>
                     </div>
                 </div>
             </div>
@@ -415,6 +429,25 @@ class MeetingDetailApp {
                 <a href="/meetings/" class="btn-primary">← Back to All Meetings</a>
             </div>
         `;
+    }
+
+    getGitHubEditUrl() {
+        if (!this.meeting || !this.meeting.date) {
+            return '#';
+        }
+
+        // Parse the date
+        const date = new Date(this.meeting.date);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        // Construct GitHub edit URL
+        // Pattern: https://github.com/waccamaw/dotorg/edit/main/content/meetings/open/YYYY/MM/DD/notes.md
+        const visibility = this.meeting.visibility === 'members-only' ? 'members-only' : 'open';
+        const githubUrl = `https://github.com/waccamaw/dotorg/edit/main/content/meetings/${visibility}/${year}/${month}/${day}/notes.md`;
+        
+        return githubUrl;
     }
 }
 
