@@ -313,14 +313,145 @@ newsletterForm.addEventListener('submit', async function(e) {
 			padding: 0.35rem 0.5rem;
 		}
 	}
+	
+	/* Meetings section styling */
+	.meetings-section {
+		background: white;
+		border-radius: 12px;
+		border: 2px solid var(--border-color);
+		padding: 2rem;
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	}
+	
+	.meetings-section-header {
+		margin-bottom: 2rem;
+	}
+	
+	.meetings-section-header h2 {
+		font-size: 1.75rem;
+		color: var(--text-color);
+		margin-bottom: 0.5rem;
+	}
+	
+	.meetings-section-header p {
+		color: var(--text-light);
+		font-size: 1rem;
+	}
+	
+	.meetings-subsection {
+		margin-bottom: 2.5rem;
+	}
+	
+	.meetings-subsection h3 {
+		font-size: 1.25rem;
+		color: var(--text-color);
+		margin-bottom: 1rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 2px solid var(--border-color);
+	}
+	
+	.recent-meetings-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+	
+	.meeting-list-item {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
+		padding: 1rem;
+		background: white;
+		border-radius: 8px;
+		border: 1px solid var(--border-color);
+		transition: all 0.2s;
+		text-decoration: none;
+		color: inherit;
+	}
+	
+	.meeting-list-item:hover {
+		border-color: var(--primary-color);
+		background: #fafbff;
+		box-shadow: 0 2px 8px rgba(0, 51, 204, 0.1);
+		transform: translateX(4px);
+	}
+	
+	.meeting-list-item .meeting-date-badge {
+		flex-shrink: 0;
+		width: 60px;
+		text-align: center;
+		padding: 0.5rem;
+		background: var(--bg-secondary);
+		border-radius: 6px;
+	}
+	
+	.meeting-list-item .meeting-date-badge .month {
+		display: block;
+		font-size: 0.75rem;
+		font-weight: 600;
+		text-transform: uppercase;
+		color: var(--text-light);
+	}
+	
+	.meeting-list-item .meeting-date-badge .day {
+		display: block;
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: var(--text-color);
+		line-height: 1;
+	}
+	
+	.meeting-list-item .meeting-info {
+		flex-grow: 1;
+		min-width: 0;
+	}
+	
+	.meeting-list-item .meeting-title {
+		font-size: 1rem;
+		font-weight: 600;
+		margin-bottom: 0.25rem;
+		color: var(--text-color);
+	}
+	
+	.meeting-list-item .meeting-type {
+		font-size: 0.875rem;
+		color: var(--text-light);
+	}
+	
+	.upcoming-empty {
+		padding: 2rem;
+		text-align: center;
+		background: var(--bg-secondary);
+		border-radius: 8px;
+		color: var(--text-light);
+		font-style: italic;
+	}
 </style>
 
 <div class="homepage-sections">
-	<!-- Most Recent Meeting -->
-	<div class="recent-meeting-section">
-		<div id="recentMeetingContainer">
-			<!-- Will be populated by JavaScript -->
+	<!-- Meetings Section -->
+	<div class="meetings-section">
+		<div class="meetings-section-header">
+			<h2>Tribal Meetings</h2>
+			<p>Stay informed about tribal meetings, decisions, and community gatherings.</p>
 		</div>
+		
+		<!-- Upcoming Meetings -->
+		<div class="meetings-subsection">
+			<h3>Upcoming Meetings</h3>
+			<div id="upcomingMeetingsContainer">
+				<!-- Will be populated by JavaScript -->
+			</div>
+		</div>
+		
+		<!-- Recent Meetings -->
+		<div class="meetings-subsection">
+			<h3>Recent Meetings</h3>
+			<div id="recentMeetingsContainer" class="recent-meetings-list">
+				<!-- Will be populated by JavaScript -->
+			</div>
+		</div>
+		
 		<a href="/meetings/" class="view-all-link">View all meetings →</a>
 	</div>
 </div>
@@ -328,45 +459,76 @@ newsletterForm.addEventListener('submit', async function(e) {
 <script src="/js/members-config.js"></script>
 <script src="/js/meetings-api.js"></script>
 <script>
-// Fetch and display most recent public meeting
+// Fetch and display meetings
 document.addEventListener('DOMContentLoaded', async () => {
-	const container = document.getElementById('recentMeetingContainer');
+	const upcomingContainer = document.getElementById('upcomingMeetingsContainer');
+	const recentContainer = document.getElementById('recentMeetingsContainer');
 	
 	try {
 		const api = new MeetingsAPIClient();
-		const meetings = await api.getMeetings();
+		const response = await api.getMeetings();
+		const allMeetings = response.meetings;
 		
-		const recentMeeting = meetings.meetings[0];
+		// Separate upcoming and past meetings
+		const now = new Date();
+		const upcomingMeetings = allMeetings.filter(m => new Date(m.date) > now);
+		const pastMeetings = allMeetings.filter(m => new Date(m.date) <= now);
 		
-		if (recentMeeting) {
-			const dateObj = new Date(recentMeeting.date);
-			const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
-			const typeDisplay = api.getTypeDisplayName(recentMeeting.type);
-			const typeBadge = api.getTypeBadgeClass(recentMeeting.type);
-			const meetingUrl = `/meetings-detail/?id=${encodeURIComponent(recentMeeting.id)}`;
-			
-			container.innerHTML = `
-				<a href="${meetingUrl}" class="meeting-item-home">
-					<div class="meeting-content">
-						<h3 class="meeting-title">${recentMeeting.title}</h3>
-						<div class="meeting-meta">
-							<span class="meeting-date">${api.formatDate(recentMeeting.date)}</span>
+		// Display upcoming meetings
+		if (upcomingMeetings.length > 0) {
+			upcomingContainer.innerHTML = upcomingMeetings.slice(0, 3).map(meeting => {
+				const dateObj = new Date(meeting.date);
+				const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+				const day = dateObj.getDate();
+				const typeDisplay = api.getTypeDisplayName(meeting.type);
+				const meetingUrl = `/meetings-detail/?id=${encodeURIComponent(meeting.id)}`;
+				
+				return `
+					<a href="${meetingUrl}" class="meeting-list-item">
+						<div class="meeting-date-badge">
+							<span class="month">${month}</span>
+							<span class="day">${day}</span>
 						</div>
-						<div class="meeting-features">
-							<span class="calendar-badge ${typeBadge}">${month} ${typeDisplay}</span>
-							${recentMeeting.hasRecording ? '<span class="feature-badge">▶ Recording</span>' : ''}
-							${recentMeeting.hasTranscript ? '<span class="feature-badge">⎙ Transcript</span>' : ''}
-							${recentMeeting.hasNotes ? '<span class="feature-badge">◉ Notes</span>' : ''}
+						<div class="meeting-info">
+							<div class="meeting-title">${meeting.title}</div>
+							<div class="meeting-type">${typeDisplay}</div>
 						</div>
-					</div>
-				</a>
-			`;
+					</a>
+				`;
+			}).join('');
 		} else {
-			container.innerHTML = '<p style="padding: 2rem; text-align: center; color: var(--text-light);">No recent meetings available.</p>';
+			upcomingContainer.innerHTML = '<div class="upcoming-empty">No upcoming meetings scheduled</div>';
+		}
+		
+		// Display recent meetings (last 4)
+		if (pastMeetings.length > 0) {
+			recentContainer.innerHTML = pastMeetings.slice(0, 4).map(meeting => {
+				const dateObj = new Date(meeting.date);
+				const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+				const day = dateObj.getDate();
+				const typeDisplay = api.getTypeDisplayName(meeting.type);
+				const meetingUrl = `/meetings-detail/?id=${encodeURIComponent(meeting.id)}`;
+				
+				return `
+					<a href="${meetingUrl}" class="meeting-list-item">
+						<div class="meeting-date-badge">
+							<span class="month">${month}</span>
+							<span class="day">${day}</span>
+						</div>
+						<div class="meeting-info">
+							<div class="meeting-title">${meeting.title}</div>
+							<div class="meeting-type">${typeDisplay}</div>
+						</div>
+					</a>
+				`;
+			}).join('');
+		} else {
+			recentContainer.innerHTML = '<p style="padding: 2rem; text-align: center; color: var(--text-light);">No recent meetings available.</p>';
 		}
 	} catch (error) {
 		console.log('[Homepage] Meeting API unavailable:', error.message);
-		container.innerHTML = '<p style="padding: 2rem; text-align: center;"><a href="/meetings/" style="color: var(--link-color); text-decoration: none; font-weight: 500;">View tribal meetings →</a></p>';
+		upcomingContainer.innerHTML = '<div class="upcoming-empty">Unable to load upcoming meetings</div>';
+		recentContainer.innerHTML = '<p style="padding: 2rem; text-align: center;"><a href="/meetings/" style="color: var(--link-color); text-decoration: none; font-weight: 500;">View tribal meetings →</a></p>';
 	}
 });
 </script>
