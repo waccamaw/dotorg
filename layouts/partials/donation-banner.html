@@ -23,12 +23,13 @@
     </div>
     
     <div class="donation-banner-actions">
-      <a href="#" 
+      <button
          class="donation-banner-button" 
+         id="banner-donate-button"
          zeffy-form-link="{{ $zeffyLink }}"
-         onclick="acknowledgeDonation()">
+         style="border: none; cursor: pointer;">
         Donate Now
-      </a>
+      </button>
       <button class="donation-banner-dismiss" onclick="dismissDonationBanner()">
         Maybe Later
       </button>
@@ -65,6 +66,14 @@
   // Show banner if no cookie set
   if (!getCookie(COOKIE_NAME)) {
     document.getElementById('donation-banner').style.display = 'block';
+  }
+  
+  // Add click handler to donation button to set cookie
+  const donateButton = document.getElementById('banner-donate-button');
+  if (donateButton) {
+    donateButton.addEventListener('click', function() {
+      setCookie(COOKIE_NAME, 'donated', COOKIE_DAYS);
+    });
   }
   
   // Make functions global
