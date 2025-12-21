@@ -29,7 +29,12 @@ view-meetings-index:
 build:
     hugo
 
+# Clean stale public folder and start Hugo dev server
 serve: 
+    @echo "🧹 Cleaning stale public folder..."
+    @rm -rf public/
+    @echo "✅ Public folder cleaned"
+    @echo "🚀 Starting Hugo server..."
     hugo server --disableFastRender --noHTTPCache --watch --bind="0.0.0.0" --port="1313" --baseURL="http://localhost:1313/"
 
 # Validate meeting markdown files for Micro.blog compatibility

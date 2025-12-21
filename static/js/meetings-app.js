@@ -568,8 +568,7 @@ class MeetingsApp {
 
         // Sort years descending
         const years = Object.keys(byYear).sort().reverse();
-        // Only expand the most recent year with meetings (not current calendar year)
-        const currentYear = years[0]; // Most recent year with meetings
+        const currentYear = new Date().getFullYear().toString();
 
         // Find the legacy meetings container
         const legacyContainer = document.getElementById('legacyMeetingsList');
@@ -678,7 +677,7 @@ class MeetingsApp {
     renderMeetingCard(meeting) {
         const { pathComponents, title, date, type, visibility, hasTranscript, hasRecording, hasNotes } = meeting;
         const dateObj = new Date(date);
-        const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        const month = dateObj.toLocaleString('en-US', { month: 'short' });
         const typeDisplay = this.api.getTypeDisplayName(type);
         const typeBadge = this.api.getTypeBadgeClass(type);
 
@@ -687,17 +686,23 @@ class MeetingsApp {
 
         return `
             <a href="${meetingUrl}" class="meeting-item" data-year="${pathComponents.year}" data-type="${type}">
-                ${visibility === 'members-only' ? '<span class="lock-icon" title="Members only">🔒</span>' : ''}
-                <div class="meeting-content">
-                    <h3 class="meeting-title">${title}</h3>
+                <div class="meeting-calendar">
+                    <div class="calendar-month">${month}</div>
+                    <div class="calendar-label">${typeDisplay}</div>
+                </div>
+                <div class="meeting-info">
+                    <h3 class="meeting-title">
+                        ${title}
+                        ${visibility === 'members-only' ? '<span class="lock-icon" title="Members only">🔒</span>' : ''}
+                    </h3>
                     <div class="meeting-meta">
+                        <span class="meeting-badge ${typeBadge}">${typeDisplay}</span>
                         <span class="meeting-date">${this.api.formatDate(date)}</span>
                     </div>
                     <div class="meeting-features">
-                        <span class="calendar-badge ${typeBadge}">${month} ${typeDisplay}</span>
-                        ${hasRecording ? '<span class="feature-badge">▶ Recording</span>' : ''}
-                        ${hasTranscript ? '<span class="feature-badge">⎙ Transcript</span>' : ''}
-                        ${hasNotes ? '<span class="feature-badge">◉ Notes</span>' : ''}
+                        ${hasRecording ? '<span class="feature-badge">📹 Recording</span>' : ''}
+                        ${hasTranscript ? '<span class="feature-badge">📝 Transcript</span>' : ''}
+                        ${hasNotes ? '<span class="feature-badge">📋 Notes</span>' : ''}
                     </div>
                 </div>
             </a>

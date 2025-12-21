@@ -1200,14 +1200,6 @@ main {
 	border-radius: 3px;
 	font-family: 'Courier New', monospace;
 	font-size: 0.9em;
-}	.meeting-item {
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-	
-	.meeting-date {
-		width: auto !important;
-	}
 }
 
 /* Meetings Page */
@@ -1281,22 +1273,12 @@ main {
 .year-meetings {
 	display: grid;
 	gap: 1rem;
-	max-height: 10000px;
-	opacity: 1;
-	margin-top: 1rem;
-	overflow: hidden;
-	transition: max-height 0.3s ease, opacity 0.3s ease, margin 0.3s ease;
-}
-
-.year-meetings.collapsed {
-	max-height: 0;
-	opacity: 0;
-	margin-top: 0;
-	overflow: hidden;
 }
 
 .meeting-item {
-	display: block;
+	position: relative;
+	display: flex;
+	gap: 1rem;
 	padding: 1.5rem;
 	background: white;
 	border-radius: 12px;
@@ -1305,7 +1287,6 @@ main {
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 	text-decoration: none;
 	color: inherit;
-	overflow: hidden;
 }
 
 .meeting-item:hover {
@@ -1318,15 +1299,14 @@ main {
 
 /* Calendar Widget Style */
 .meeting-calendar {
-	float: left;
+	flex-shrink: 0;
 	width: 80px;
+	height: fit-content;
 	background: var(--logo-primary);
 	border-radius: 8px;
 	overflow: hidden;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	text-align: center;
-	margin-right: 1.5rem;
-	margin-bottom: 1rem;
 }
 
 .calendar-month {
@@ -1363,7 +1343,8 @@ main {
 }
 
 .meeting-info {
-	overflow: hidden;
+	flex: 1;
+	min-width: 0;
 }
 
 /* Meeting content list formatting */
@@ -1450,13 +1431,13 @@ main {
 
 /* Responsive - Meeting Items */
 @media (max-width: 768px) {
-	.meeting-item .meeting-calendar {
-		float: none;
-		margin: 0 auto 1rem;
+	.meeting-item {
+		flex-direction: column;
+		align-items: center;
 	}
 
-	.meeting-item .meeting-info {
-		overflow: visible;
+	.meeting-item .meeting-calendar {
+		margin: 0 auto 1rem;
 	}
 }
 
@@ -1484,6 +1465,14 @@ main {
 
 .legacy-archive .year-heading.accordion-header.expanded .accordion-icon {
 	transform: rotate(180deg);
+}
+
+/* Accordion collapse behavior - general (not just legacy-archive) */
+.year-meetings.collapsed {
+	max-height: 0;
+	opacity: 0;
+	margin-top: 0;
+	overflow: hidden;
 }
 
 .legacy-archive .year-meetings {
