@@ -118,10 +118,23 @@ class MeetingDetailApp {
                         ${duration}
                     </div>
                     ${this.isExecutiveLeadership ? `
-                    <div class="meta-item" style="margin-left: auto;">
+                    <div class="meta-item" style="margin-left: auto; display: flex; gap: 8px;">
+                        <a href="${this.getGitHubViewUrl()}" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           title="View meeting directory in GitHub"
+                           style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-color); text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.2s;"
+                           onmouseover="this.style.background='var(--bg-secondary)'; this.style.borderColor='var(--primary-color)';"
+                           onmouseout="this.style.background='var(--bg-white)'; this.style.borderColor='var(--border-color)';">
+                            <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="flex-shrink: 0;">
+                                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                            </svg>
+                            View
+                        </a>
                         <a href="${this.getGitHubEditUrl()}" 
                            target="_blank" 
                            rel="noopener noreferrer"
+                           title="Edit meeting notes in GitHub"
                            style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 4px; color: var(--text-color); text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.2s;"
                            onmouseover="this.style.background='var(--bg-secondary)'; this.style.borderColor='var(--primary-color)';"
                            onmouseout="this.style.background='var(--bg-white)'; this.style.borderColor='var(--border-color)';">
@@ -129,7 +142,7 @@ class MeetingDetailApp {
                                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                             </svg>
-                            Edit on GitHub
+                            Edit Notes
                         </a>
                     </div>
                     ` : ''}
@@ -435,23 +448,22 @@ class MeetingDetailApp {
         `;
     }
 
-    getGitHubEditUrl() {
-        if (!this.meeting || !this.meeting.date) {
+    getGitHubViewUrl() {
+        if (!this.meeting || !this.meeting.githubPath) {
             return '#';
         }
 
-        // Parse the date
-        const date = new Date(this.meeting.date);
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+        // View the meeting directory in GitHub
+        return `https://github.com/waccamaw/meetings-service/tree/main/${this.meeting.githubPath}`;
+    }
 
-        // Construct GitHub edit URL
-        // Pattern: https://github.com/waccamaw/meetings-service/edit/main/content/meetings/open/YYYY/MM/DD/notes.md
-        const visibility = this.meeting.visibility === 'members-only' ? 'members-only' : 'open';
-        const githubUrl = `https://github.com/waccamaw/meetings-service/edit/main/content/meetings/${visibility}/${year}/${month}/${day}/notes.md`;
-        
-        return githubUrl;
+    getGitHubEditUrl() {
+        if (!this.meeting || !this.meeting.githubPath) {
+            return '#';
+        }
+
+        // Direct link to edit notes.md
+        return `https://github.com/waccamaw/meetings-service/edit/main/${this.meeting.githubPath}/notes.md`;
     }
 }
 
