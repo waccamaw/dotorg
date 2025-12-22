@@ -380,21 +380,43 @@ class MeetingDetailApp {
 
     renderMarkdown(markdown) {
         // Enhanced markdown rendering with better styling
-        let html = this.escapeHtml(markdown);
+        
+        console.log('[renderMarkdown] Original markdown (first 500 chars):', markdown.substring(0, 500));
         
         // Normalize line endings first
-        html = html.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+        let html = markdown.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
         
         // Remove frontmatter if present (match --- ... --- at start)
         html = html.replace(/^---\n[\s\S]*?\n---\n/, '');
         
-        // Remove HTML comments
+        // Remove HTML comments BEFORE escaping
+        const beforeCommentRemoval = html;
         html = html.replace(/<!--[\s\S]*?-->/g, '');
+        if (beforeCommentRemoval !== html) {
+            console.log('[renderMarkdown] HTML comments were removed');
+        } else {
+            console.log('[renderMarkdown] No HTML comments found to remove');
+        }
+        
+        console.log('[renderMarkdown] After comment removal (first 500 chars):', html.substring(0, 500));
+        
+        // NOW escape HTML to prevent XSS
+        html = this.escapeHtml(html);
         
         // Headers with improved styling
         html = html.replace(/^### (.+)$/gm, '<h3 style="margin-top: 28px; margin-bottom: 14px; color: var(--text-color); font-weight: 600; font-size: 18px; border-bottom: 1px solid var(--border-color); padding-bottom: 6px;">$1</h3>');
         html = html.replace(/^## (.+)$/gm, '<h2 style="margin-top: 36px; margin-bottom: 16px; color: var(--primary-color); font-weight: 700; font-size: 22px; border-bottom: 2px solid var(--primary-color); padding-bottom: 8px;">$1</h2>');
         html = html.replace(/^# (.+)$/gm, '<h1 style="margin-top: 0; margin-bottom: 24px; color: var(--text-color); font-weight: 700; font-size: 28px;">$1</h1>');
+        
+        // Links - handle both inline [text](url) and multiline [text]\n(url)
+        // The regex needs to allow for optional whitespace/newlines between ] and (
+        console.log('[renderMarkdown] Looking for links (inline and multiline)');
+        
+        // Match [text]\n(url) pattern (with optional whitespace)
+        html = html.replace(/\[([^\]]+)\]\s*\(([^)]+)\)/g, (match, text, url) => {
+            console.log('[renderMarkdown] Processing link:', { match, text, url });
+            return `<a href="${url.trim()}" style="color: var(--primary-color); text-decoration: none; border-bottom: 1px solid var(--primary-color); transition: opacity 0.2s;" onmouseover="this.style.opacity='0.7'" onmouseout="this.style.opacity='1'">${text.trim()}</a>`;
+        });
         
         // Bold text
         html = html.replace(/\*\*(.+?)\*\*/g, '<strong style="font-weight: 600; color: var(--text-color);">$1</strong>');
