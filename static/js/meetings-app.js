@@ -415,8 +415,11 @@ class MeetingsApp {
             btn.classList.toggle('active', btn.dataset.year === year);
         });
 
-        const resetButton = document.getElementById('resetFilter');
-        if (resetButton) resetButton.style.display = 'inline-block';
+        const homeButton = document.getElementById('homeButton');
+        if (homeButton) homeButton.style.display = 'inline-block';
+
+        const showAllButton = document.getElementById('showAllButton');
+        if (showAllButton) showAllButton.style.display = 'none';
 
         const selectedYearText = document.getElementById('selectedYearText');
         if (selectedYearText) {
@@ -430,6 +433,12 @@ class MeetingsApp {
     filterByType(type) {
         this.currentType = type || null;
         this.applyFilters();
+        
+        const homeButton = document.getElementById('homeButton');
+        if (homeButton) homeButton.style.display = 'inline-block';
+
+        const showAllButton = document.getElementById('showAllButton');
+        if (showAllButton) showAllButton.style.display = 'none';
     }
 
     /**
@@ -455,11 +464,12 @@ class MeetingsApp {
     }
 
     /**
-     * Reset all filters
+     * Go back to home view (last 2 years)
      */
-    resetFilters() {
+    goHome() {
         this.currentYear = null;
         this.currentType = null;
+        this.showAll = false;
         this.filteredMeetings = this.meetings;
 
         // Reset UI
@@ -473,12 +483,52 @@ class MeetingsApp {
         const typeFilter = document.getElementById('typeFilter');
         if (typeFilter) typeFilter.value = '';
         
-        const resetButton = document.getElementById('resetFilter');
-        if (resetButton) resetButton.style.display = 'none';
+        const homeButton = document.getElementById('homeButton');
+        if (homeButton) homeButton.style.display = 'none';
+
+        const showAllButton = document.getElementById('showAllButton');
+        if (showAllButton) showAllButton.style.display = 'inline-block';
 
         const selectedYearText = document.getElementById('selectedYearText');
         if (selectedYearText) selectedYearText.textContent = '';
 
+        // Re-render to show last 2 years
+        this.renderMeetings();
+        
+        const displayedCount = document.getElementById('displayedCount');
+        if (displayedCount) displayedCount.textContent = this.filteredMeetings.length;
+    }
+
+    /**
+     * Show all years
+     */
+    showAllYears() {
+        this.showAll = true;
+        this.currentYear = null;
+        this.currentType = null;
+        this.filteredMeetings = this.meetings;
+
+        // Reset filter UI
+        document.querySelectorAll('.year-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.style.background = 'white';
+            btn.style.color = 'var(--text-color)';
+        });
+        
+        const typeFilter = document.getElementById('typeFilter');
+        if (typeFilter) typeFilter.value = '';
+
+        const homeButton = document.getElementById('homeButton');
+        if (homeButton) homeButton.style.display = 'inline-block';
+
+        const showAllButton = document.getElementById('showAllButton');
+        if (showAllButton) showAllButton.style.display = 'none';
+
+        const selectedYearText = document.getElementById('selectedYearText');
+        if (selectedYearText) selectedYearText.textContent = '';
+
+        // Re-render to show all years
         this.renderMeetings();
         
         const displayedCount = document.getElementById('displayedCount');
@@ -569,28 +619,31 @@ class MeetingsApp {
         // Sort years descending
         const years = Object.keys(byYear).sort().reverse();
         const currentYear = new Date().getFullYear().toString();
+        // Expand the last 2 years by default
+        const lastTwoYears = years.slice(0, 2);
+        // Only show last 2 years unless showAll is true or filters are active
+        const yearsToShow = (this.showAll || this.currentYear || this.currentType) ? years : lastTwoYears;
 
         // Find the legacy meetings container
         const legacyContainer = document.getElementById('legacyMeetingsList');
         
         if (!legacyContainer) {
             // Fallback: render standalone if no legacy container exists
-            listEl.innerHTML = years.map((year) => {
+            listEl.innerHTML = yearsToShow.map((year) => {
                 const yearMeetings = byYear[year];
-                const isExpanded = year === currentYear;
+                const isExpanded = lastTwoYears.includes(year);
                 
                 return `
                     <div class="meetings-year" data-year="${year}">
-                        <h2 class="year-heading accordion-header ${isExpanded ? 'expanded' : ''}" 
+                        <div class="year-heading accordion-header ${isExpanded ? 'expanded' : ''}" 
                             onclick="this.classList.toggle('expanded'); this.nextElementSibling.classList.toggle('collapsed');"
-                            style="cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: space-between; padding: 1rem; margin-bottom: 0; background: var(--bg-secondary, #fff5eb); border-radius: 8px; transition: all 0.2s ease;"
-                            onmouseover="this.style.background='#f0e6dc';"
-                            onmouseout="this.style.background='var(--bg-secondary, #fff5eb)';">
-                            <span>${year} Meetings <span style="font-size: 0.75em; opacity: 0.5; font-weight: normal;">(${yearMeetings.length})</span></span>
-                            <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polyline points="6 9 12 15 18 9"></polyline>
+                            style="cursor: pointer; user-select: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); transition: all 0.15s ease;">
+                            <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition: transform 0.2s ease;">
+                                <polyline points="9 18 15 12 9 6"></polyline>
                             </svg>
-                        </h2>
+                            <span style="font-size: 1.1rem; font-weight: 600; color: var(--text-color);">${year}</span>
+                            <span style="font-size: 0.85rem; color: var(--text-light); font-weight: 400;">${yearMeetings.length} meeting${yearMeetings.length !== 1 ? 's' : ''}</span>
+                        </div>
                         <div class="year-meetings ${isExpanded ? '' : 'collapsed'}">
                             ${yearMeetings.map(meeting => this.renderMeetingCard(meeting)).join('')}
                         </div>
@@ -601,7 +654,7 @@ class MeetingsApp {
         }
 
         // Inject API meetings into existing Hugo accordions or create new ones
-        years.forEach(year => {
+        yearsToShow.forEach(year => {
             const yearMeetings = byYear[year];
             
             // Look for existing Hugo accordion for this year
@@ -617,21 +670,20 @@ class MeetingsApp {
                 }
             } else {
                 // Create new accordion for this year (Hugo doesn't have it)
-                const isExpanded = year === currentYear;
+                const isExpanded = lastTwoYears.includes(year);
                 const newAccordion = document.createElement('div');
                 newAccordion.className = 'meetings-year';
                 newAccordion.setAttribute('data-year', year);
                 newAccordion.innerHTML = `
-                    <h2 class="year-heading accordion-header ${isExpanded ? 'expanded' : ''}" 
+                    <div class="year-heading accordion-header ${isExpanded ? 'expanded' : ''}" 
                         onclick="this.classList.toggle('expanded'); this.nextElementSibling.classList.toggle('collapsed');"
-                        style="cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: space-between; padding: 1rem; margin-bottom: 0; background: var(--bg-secondary, #fff5eb); border-radius: 8px; transition: all 0.2s ease;"
-                        onmouseover="this.style.background='#f0e6dc';"
-                        onmouseout="this.style.background='var(--bg-secondary, #fff5eb)';">
-                        <span>${year} Meetings <span style="font-size: 0.75em; opacity: 0.5; font-weight: normal;">(${yearMeetings.length})</span></span>
-                        <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polyline points="6 9 12 15 18 9"></polyline>
+                        style="cursor: pointer; user-select: none; display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 0; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); transition: all 0.15s ease;">
+                        <svg class="accordion-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="transition: transform 0.2s ease;">
+                            <polyline points="9 18 15 12 9 6"></polyline>
                         </svg>
-                    </h2>
+                        <span style="font-size: 1.1rem; font-weight: 600; color: var(--text-color);">${year}</span>
+                        <span style="font-size: 0.85rem; color: var(--text-light); font-weight: 400;">${yearMeetings.length} meeting${yearMeetings.length !== 1 ? 's' : ''}</span>
+                    </div>
                     <div class="year-meetings ${isExpanded ? '' : 'collapsed'}">
                         ${yearMeetings.map(meeting => this.renderMeetingCard(meeting)).join('')}
                     </div>
@@ -717,7 +769,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('[Meetings] meetingsList element:', element);
     if (element) {
         console.log('[Meetings] Creating MeetingsApp instance...');
-        new MeetingsApp();
+        window.meetingsApp = new MeetingsApp();
     } else {
         console.warn('[Meetings] meetingsList element not found!');
     }

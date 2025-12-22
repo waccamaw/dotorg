@@ -1259,7 +1259,7 @@ main {
 }
 
 .meetings-year {
-	margin-bottom: 3rem;
+	margin-bottom: 2rem;
 }
 
 .meetings-year .year-heading {
@@ -1465,6 +1465,10 @@ main {
 
 .legacy-archive .year-heading.accordion-header .accordion-icon {
 	transition: transform 0.2s ease;
+}
+
+.accordion-header.expanded .accordion-icon {
+	transform: rotate(90deg);
 }
 
 .legacy-archive .year-heading.accordion-header.expanded .accordion-icon {
