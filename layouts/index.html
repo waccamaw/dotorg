@@ -418,6 +418,12 @@ newsletterForm.addEventListener('submit', async function(e) {
 		color: var(--text-light);
 	}
 	
+	.recent-meetings-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+		gap: 1rem;
+	}
+	
 	.upcoming-empty {
 		padding: 2rem;
 		text-align: center;
@@ -478,19 +484,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 		if (upcomingMeetings.length > 0) {
 			upcomingContainer.innerHTML = upcomingMeetings.slice(0, 3).map(meeting => {
 				const dateObj = new Date(meeting.date);
-				const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+				const monthShort = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+				const monthLong = dateObj.toLocaleString('en-US', { month: 'long' });
+				const year = dateObj.getFullYear();
 				const day = dateObj.getDate();
 				const typeDisplay = api.getTypeDisplayName(meeting.type);
+				const meetingTitle = `${monthLong} ${year} ${typeDisplay}`;
 				const meetingUrl = `/meetings-detail/?id=${encodeURIComponent(meeting.id)}`;
 				
 				return `
 					<a href="${meetingUrl}" class="meeting-list-item">
 						<div class="meeting-date-badge">
-							<span class="month">${month}</span>
+							<span class="month">${monthShort}</span>
 							<span class="day">${day}</span>
 						</div>
 						<div class="meeting-info">
-							<div class="meeting-title">${meeting.title}</div>
+							<div class="meeting-title">${meetingTitle}</div>
 							<div class="meeting-type">${typeDisplay}</div>
 						</div>
 					</a>
@@ -500,23 +509,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 			upcomingContainer.innerHTML = '<div class="upcoming-empty">No upcoming meetings scheduled</div>';
 		}
 		
-		// Display recent meetings (last 4)
+		// Display recent meetings (6 total - 2 rows of 3)
 		if (pastMeetings.length > 0) {
-			recentContainer.innerHTML = pastMeetings.slice(0, 4).map(meeting => {
+			recentContainer.innerHTML = pastMeetings.slice(0, 6).map(meeting => {
 				const dateObj = new Date(meeting.date);
-				const month = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+				const monthShort = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+				const monthLong = dateObj.toLocaleString('en-US', { month: 'long' });
+				const year = dateObj.getFullYear();
 				const day = dateObj.getDate();
 				const typeDisplay = api.getTypeDisplayName(meeting.type);
+				const meetingTitle = `${monthLong} ${year} ${typeDisplay}`;
 				const meetingUrl = `/meetings-detail/?id=${encodeURIComponent(meeting.id)}`;
 				
 				return `
 					<a href="${meetingUrl}" class="meeting-list-item">
 						<div class="meeting-date-badge">
-							<span class="month">${month}</span>
+							<span class="month">${monthShort}</span>
 							<span class="day">${day}</span>
 						</div>
 						<div class="meeting-info">
-							<div class="meeting-title">${meeting.title}</div>
+							<div class="meeting-title">${meetingTitle}</div>
 							<div class="meeting-type">${typeDisplay}</div>
 						</div>
 					</a>

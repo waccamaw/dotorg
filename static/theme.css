@@ -1273,6 +1273,7 @@ main {
 .year-meetings {
 	display: grid;
 	gap: 1rem;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
 
 .meeting-item {
@@ -1300,13 +1301,16 @@ main {
 /* Calendar Widget Style */
 .meeting-calendar {
 	flex-shrink: 0;
-	width: 80px;
-	height: fit-content;
+	width: 85px;
+	min-height: 85px;
 	background: var(--logo-primary);
 	border-radius: 8px;
 	overflow: hidden;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 	text-align: center;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 .calendar-month {

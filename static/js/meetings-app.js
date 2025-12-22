@@ -586,7 +586,7 @@ class MeetingsApp {
                             style="cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: space-between; padding: 1rem; margin-bottom: 0; background: var(--bg-secondary, #fff5eb); border-radius: 8px; transition: all 0.2s ease;"
                             onmouseover="this.style.background='#f0e6dc';"
                             onmouseout="this.style.background='var(--bg-secondary, #fff5eb)';">
-                            <span>${year} Meetings (${yearMeetings.length})</span>
+                            <span>${year} Meetings <span style="font-size: 0.75em; opacity: 0.5; font-weight: normal;">(${yearMeetings.length})</span></span>
                             <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="6 9 12 15 18 9"></polyline>
                             </svg>
@@ -627,7 +627,7 @@ class MeetingsApp {
                         style="cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: space-between; padding: 1rem; margin-bottom: 0; background: var(--bg-secondary, #fff5eb); border-radius: 8px; transition: all 0.2s ease;"
                         onmouseover="this.style.background='#f0e6dc';"
                         onmouseout="this.style.background='var(--bg-secondary, #fff5eb)';">
-                        <span>${year} Meetings</span>
+                        <span>${year} Meetings <span style="font-size: 0.75em; opacity: 0.5; font-weight: normal;">(${yearMeetings.length})</span></span>
                         <svg class="accordion-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
@@ -677,32 +677,32 @@ class MeetingsApp {
     renderMeetingCard(meeting) {
         const { pathComponents, title, date, type, visibility, hasTranscript, hasRecording, hasNotes } = meeting;
         const dateObj = new Date(date);
-        const month = dateObj.toLocaleString('en-US', { month: 'short' });
+        const month = dateObj.toLocaleString('en-US', { month: 'long' });
+        const year = dateObj.getFullYear();
         const typeDisplay = this.api.getTypeDisplayName(type);
         const typeBadge = this.api.getTypeBadgeClass(type);
+
+        // Build standardized title: "December 2025 Open Meeting"
+        const meetingTitle = `${month} ${year} ${typeDisplay}`;
 
         // Build meeting URL using ID
         const meetingUrl = `/meetings-detail/?id=${encodeURIComponent(meeting.id)}`;
 
         return `
             <a href="${meetingUrl}" class="meeting-item" data-year="${pathComponents.year}" data-type="${type}">
-                <div class="meeting-calendar">
-                    <div class="calendar-month">${month}</div>
-                    <div class="calendar-label">${typeDisplay}</div>
-                </div>
                 <div class="meeting-info">
                     <h3 class="meeting-title">
-                        ${title}
+                        ${meetingTitle}
                         ${visibility === 'members-only' ? '<span class="lock-icon" title="Members only">🔒</span>' : ''}
                     </h3>
                     <div class="meeting-meta">
-                        <span class="meeting-badge ${typeBadge}">${typeDisplay}</span>
                         <span class="meeting-date">${this.api.formatDate(date)}</span>
                     </div>
                     <div class="meeting-features">
-                        ${hasRecording ? '<span class="feature-badge">📹 Recording</span>' : ''}
-                        ${hasTranscript ? '<span class="feature-badge">📝 Transcript</span>' : ''}
-                        ${hasNotes ? '<span class="feature-badge">📋 Notes</span>' : ''}
+                        <span class="calendar-badge">${month.toUpperCase()} ${typeDisplay.toUpperCase()}</span>
+                        ${hasRecording ? '<span class="feature-badge">▶ Recording</span>' : ''}
+                        ${hasTranscript ? '<span class="feature-badge">⎙ Transcript</span>' : ''}
+                        ${hasNotes ? '<span class="feature-badge">◉ Notes</span>' : ''}
                     </div>
                 </div>
             </a>
