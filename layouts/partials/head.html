@@ -13,5 +13,24 @@
 	  gtag('config', 'G-P49D85S2B2');
 	</script>
 	
+	<script>
+		// Add page-specific classes to body for CSS targeting
+		document.addEventListener('DOMContentLoaded', function() {
+			const path = window.location.pathname;
+			if (path === '/resolutions/' || path === '/resolutions') {
+				document.body.classList.add('page-resolutions');
+				
+				// Remove the redundant heading from content
+				const content = document.querySelector('.e-content');
+				if (content) {
+					const firstPara = content.querySelector('p:first-of-type');
+					if (firstPara && firstPara.querySelector('strong')) {
+						firstPara.style.display = 'none';
+					}
+				}
+			}
+		});
+	</script>
+	
 	{{ partial "microblog_head.html" . }}
 </head>

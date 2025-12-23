@@ -4387,3 +4387,350 @@ width: 100%;
     text-align: center;
   }
 }
+
+/* Table Styling for Resolution Pages and Content Tables */
+article table {
+  width: 100%;
+  max-width: 1400px;
+  margin: 2rem auto;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  table-layout: auto;
+}
+
+/* First table (resolutions) gets more width */
+.page-resolutions article table:first-of-type {
+  max-width: 1600px;
+}
+
+/* Second table (constitution) stays narrower */
+.page-resolutions article table:nth-of-type(2) {
+  max-width: 1200px;
+}
+
+article table thead {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+  color: white;
+}
+
+article table thead th {
+  padding: 1.25rem 1.5rem;
+  font-weight: 700;
+  text-align: left;
+  font-size: 0.9rem;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  border: none;
+  white-space: nowrap;
+}
+
+/* Let the browser calculate optimal column widths based on content */
+article table thead th:nth-child(1) { min-width: 140px; }
+article table thead th:nth-child(2) { min-width: 180px; }
+article table thead th:nth-child(3) { min-width: 280px; }
+article table thead th:nth-child(4) { min-width: 250px; }
+
+article table tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: all 0.2s ease;
+}
+
+article table tbody tr:last-child {
+  border-bottom: none;
+}
+
+article table tbody tr:hover {
+  background-color: rgba(0,51,204,0.05);
+}
+
+article table tbody td {
+  padding: 1rem 1.5rem;
+  vertical-align: top;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  border: none;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+article table tbody td:first-child {
+  font-weight: 700;
+  color: var(--primary-color);
+  font-size: 0.85rem;
+}
+
+article table tbody td:nth-child(2) {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Courier New', monospace;
+  font-size: 0.8rem;
+  color: #888;
+  letter-spacing: -0.3px;
+}
+
+article table tbody td:nth-child(3) a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: inline;
+  border-bottom: 1px solid transparent;
+}
+
+article table tbody td:nth-child(3) a:hover {
+  color: var(--primary-hover);
+  border-bottom-color: var(--primary-hover);
+}
+
+article table tbody td:nth-child(4) {
+  color: #444;
+  line-height: 1.6;
+}
+
+/* Section headers */
+article .e-content > p > strong {
+  display: block;
+  font-size: 1.75rem;
+  margin: 3rem 0 1.5rem;
+  color: var(--primary-color);
+  border-left: 5px solid var(--primary-color);
+  padding-left: 1.5rem;
+  font-weight: 700;
+}
+
+article .e-content > p:first-of-type > strong {
+  margin-top: 0;
+  font-size: 2rem;
+  border-left: none;
+  padding-left: 0;
+  text-align: center;
+  border-bottom: 3px solid var(--primary-color);
+  padding-bottom: 1rem;
+}
+
+/* Special full-width layout for resolutions page */
+.page-resolutions .post-single {
+  max-width: 100%;
+  padding: 0;
+  background: transparent;
+}
+
+.page-resolutions .post-header {
+  max-width: var(--max-width);
+  margin: 0 auto 2rem;
+  padding: 0 1.5rem;
+}
+
+.page-resolutions .e-content {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.page-resolutions .post-footer,
+.page-resolutions .post-navigation {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .page-resolutions .e-content {
+    padding: 0 1rem;
+  }
+  
+  article table, 
+  article table thead, 
+  article table tbody, 
+  article table th, 
+  article table td, 
+  article table tr {
+    display: block;
+  }
+  
+  article table,
+  article table tbody {
+    background: transparent;
+  }
+  
+  article table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  article table tbody tr {
+    margin-bottom: 1.75rem;
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 1.25rem;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transform: none;
+  }
+  
+  article table tbody tr:hover {
+    transform: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+  
+  article table tbody td {
+    border: none;
+    position: relative;
+    padding: 0.875rem 0;
+    padding-left: 42%;
+    text-align: left;
+    white-space: normal;
+  }
+  
+  article table tbody td:first-child {
+    padding-top: 0;
+    border-top: none;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  article table tbody td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 38%;
+    padding-right: 1rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-align: left;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  article table tbody td:nth-child(1):before { 
+    content: "Category";
+    color: var(--primary-color);
+  }
+  
+  article table tbody td:nth-child(2):before { 
+    content: "Resolution";
+  }
+  
+  article table tbody td:nth-child(3):before { 
+    content: "Link";
+  }
+  
+  article table tbody td:nth-child(4):before { 
+    content: "Description";
+  }
+  
+  article table tbody td:nth-child(2) {
+    white-space: normal;
+    word-break: break-all;
+  }
+  
+  article .e-content > p > strong {
+    font-size: 1.5rem;
+    margin: 2rem 0 1rem;
+    padding-left: 1rem;
+    border-left-width: 4px;
+  }
+  
+  article .e-content > p:first-of-type > strong {
+    font-size: 1.65rem;
+    padding-bottom: 0.75rem;
+  }
+}
+
+@media (max-width: 768px) {
+  article table, 
+  article table thead, 
+  article table tbody, 
+  article table th, 
+  article table td, 
+  article table tr {
+    display: block;
+  }
+  
+  article table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  article table tbody tr {
+    margin-bottom: 1.75rem;
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 1.25rem;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transform: none;
+  }
+  
+  article table tbody tr:hover {
+    transform: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+  
+  article table tbody td {
+    border: none;
+    position: relative;
+    padding: 0.875rem 0;
+    padding-left: 42%;
+    text-align: left;
+    white-space: normal;
+  }
+  
+  article table tbody td:first-child {
+    padding-top: 0;
+    border-top: none;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  article table tbody td:before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 38%;
+    padding-right: 1rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-align: left;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  article table tbody td:nth-child(1):before { 
+    content: "Category";
+    color: var(--primary-color);
+  }
+  
+  article table tbody td:nth-child(2):before { 
+    content: "Resolution";
+  }
+  
+  article table tbody td:nth-child(3):before { 
+    content: "Link";
+  }
+  
+  article table tbody td:nth-child(4):before { 
+    content: "Description";
+  }
+  
+  article table tbody td:nth-child(2) {
+    white-space: normal;
+    word-break: break-all;
+  }
+  
+  article .e-content > p > strong {
+    font-size: 1.5rem;
+    margin: 2rem 0 1rem;
+    padding-left: 1rem;
+    border-left-width: 4px;
+  }
+  
+  article .e-content > p:first-of-type > strong {
+    font-size: 1.65rem;
+    padding-bottom: 0.75rem;
+  }
+}
