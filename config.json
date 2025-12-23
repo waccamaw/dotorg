@@ -1,91 +1,115 @@
 {
-    "title": "Waccamaw.org",
-    "baseURL": "https://waccamaw.org/",
-        "mediaTypes": {
-                "application/json": {
-                        "suffixes": [ "json" ]
-                }
-        },
-        "outputFormats": {
-                "RSS": {
-                        "baseName": "feed"
-                },
-                "JSON": {
-                        "baseName": "feed"
-                },
-                "RSD": {
-                        "mediaType": "application/xml",
-                        "baseName": "rsd",
-                        "isPlainText": true,
-                        "notAlternative": true
-                },
-                "ArchiveJSON": {
-                        "mediaType": "application/json",
-                        "path": "archive",
-                        "baseName": "index",
-                        "isPlainText": true,
-                        "notAlternative": true
-                },
-                "PhotosJSON": {
-                        "mediaType": "application/json",
-                        "path": "photos",
-                        "baseName": "index",
-                        "isPlainText": true,
-                        "notAlternative": true
-                },
-                "PodcastXML": {
-                        "mediaType": "application/rss+xml",
-                        "baseName": "podcast",
-                        "isPlainText": true,
-                        "notAlternative": true
-                },
-                "PodcastJSON": {
-                        "mediaType": "application/json",
-                        "baseName": "podcast",
-                        "isPlainText": true,
-                        "notAlternative": true
-                }
-        },
-        "outputs": {
-                "home": [ "HTML", "RSS", "JSON", "RSD", "ArchiveJSON", "PhotosJSON", "PodcastXML", "PodcastJSON" ],
-                "page": [ "HTML" ],
-                "section": [ "HTML" ],
-                "taxonomy": [ "HTML", "RSS", "JSON" ],
-                "term": [ "HTML", "RSS", "JSON" ]
-        },
-        "taxonomies": {
-                "category": "categories"
-        },
-        "rssLimit": 25,
-        "uglyURLs": false,
-        "blackfriday": {
-                "fractions": false
-        },
-        "markup": {
-                "goldmark": {
-                        "renderer": {
-                          "unsafe": true
-                        }
-                }
-        },
-        "enableRobotsTXT": true,
-        "languageCode": "en-us",
-        "defaultContentLanguage": "en-us",
-        "paginate": 25,
-        "pluralizeListTitles": false,
-        "params": {
-                "description": "The Waccamaw Indian People - First state-recognized tribe in South Carolina. Preserving our heritage and culture in Dog Bluff community near Aynor, SC.",
-                "about_me": "The Waccamaw Indian People are a state-recognized tribe in South Carolina, making history as the first tribe to gain official recognition in 2005.",
-                "itunes_email": "WaccamawChief@gmail.com",
-                "twitter_username": "Waccamaw_SC",
-                "github_username": "superterran",
-                "instagram_username": "waccamaw_sc",
-                "paginate_home": false,
-                "paginate_categories": false,
-                "paginate_replies": false,
-                "theme_seconds": "0",
-                "plugins_css": [],
-                "plugins_js": [],
-                "plugins_html": []
-        }
+  "title": "Waccamaw.org",
+  "baseURL": "https://waccamaw.org/",
+  "mediaTypes": {
+    "application/json": {
+      "suffixes": [
+        "json"
+      ]
+    }
+  },
+  "outputFormats": {
+    "RSS": {
+      "baseName": "feed"
+    },
+    "JSON": {
+      "baseName": "feed"
+    },
+    "RSD": {
+      "mediaType": "application/xml",
+      "baseName": "rsd",
+      "isPlainText": true,
+      "notAlternative": true
+    },
+    "ArchiveJSON": {
+      "mediaType": "application/json",
+      "path": "archive",
+      "baseName": "index",
+      "isPlainText": true,
+      "notAlternative": true
+    },
+    "PhotosJSON": {
+      "mediaType": "application/json",
+      "path": "photos",
+      "baseName": "index",
+      "isPlainText": true,
+      "notAlternative": true
+    },
+    "PodcastXML": {
+      "mediaType": "application/rss+xml",
+      "baseName": "podcast",
+      "isPlainText": true,
+      "notAlternative": true
+    },
+    "PodcastJSON": {
+      "mediaType": "application/json",
+      "baseName": "podcast",
+      "isPlainText": true,
+      "notAlternative": true
+    }
+  },
+  "outputs": {
+    "home": [
+      "HTML",
+      "RSS",
+      "JSON",
+      "RSD",
+      "ArchiveJSON",
+      "PhotosJSON",
+      "PodcastXML",
+      "PodcastJSON"
+    ],
+    "page": [
+      "HTML"
+    ],
+    "section": [
+      "HTML"
+    ],
+    "taxonomy": [
+      "HTML",
+      "RSS",
+      "JSON"
+    ],
+    "term": [
+      "HTML",
+      "RSS",
+      "JSON"
+    ]
+  },
+  "taxonomies": {
+    "category": "categories"
+  },
+  "rssLimit": 25,
+  "uglyURLs": false,
+  "blackfriday": {
+    "fractions": false
+  },
+  "markup": {
+    "goldmark": {
+      "renderer": {
+        "unsafe": true
+      }
+    }
+  },
+  "enableRobotsTXT": true,
+  "languageCode": "en-us",
+  "defaultContentLanguage": "en-us",
+  "paginate": 25,
+  "pluralizeListTitles": false,
+  "params": {
+    "description": "The Waccamaw Indian People - First state-recognized tribe in South Carolina. Preserving our heritage and culture in Dog Bluff community near Aynor, SC.",
+    "about_me": "The Waccamaw Indian People are a state-recognized tribe in South Carolina, making history as the first tribe to gain official recognition in 2005.",
+    "itunes_email": "WaccamawChief@gmail.com",
+    "twitter_username": "Waccamaw_SC",
+    "github_username": "superterran",
+    "instagram_username": "waccamaw_sc",
+    "paginate_home": false,
+    "paginate_categories": false,
+    "paginate_replies": false,
+    "theme_seconds": "0",
+    "plugins_css": [],
+    "plugins_js": [],
+    "plugins_html": []
+  },
+  "buildFuture": true
 }

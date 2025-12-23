@@ -448,7 +448,7 @@ newsletterForm.addEventListener('submit', async function(e) {
 		
 		<!-- Upcoming Meetings -->
 		<div class="meetings-subsection">
-			<h3>Upcoming Meetings</h3>
+			<h3>Upcoming Meetings & Events</h3>
 			<div id="upcomingMeetingsContainer">
 				<!-- Will be populated by JavaScript -->
 			</div>
@@ -469,10 +469,32 @@ newsletterForm.addEventListener('submit', async function(e) {
 <script src="/js/members-config.js"></script>
 <script src="/js/meetings-api.js"></script>
 <script>
-// Fetch and display meetings
+// Fetch and display meetings + upcoming events
 document.addEventListener('DOMContentLoaded', async () => {
 	const upcomingContainer = document.getElementById('upcomingMeetingsContainer');
 	const recentContainer = document.getElementById('recentMeetingsContainer');
+	
+	// Get all events from Hugo site data (will filter by date in JS)
+	const allEvents = [
+		{{ range where .Site.RegularPages "Type" "post" }}
+			{{ if (in .Params.categories "events") }}
+		{
+			title: {{ .Title }},
+			date: {{ .Date.Format "2006-01-02T15:04:05-0700" }},
+			url: {{ .Permalink }},
+			type: 'event'
+		},
+			{{ end }}
+		{{ end }}
+	].filter(e => e.title); // Remove empty entries
+	
+	console.log('[Homepage] All events found:', allEvents);
+	
+	// Filter for upcoming events
+	const now = new Date();
+	const upcomingEvents = allEvents.filter(e => new Date(e.date) > now);
+	
+	console.log('[Homepage] Upcoming events:', upcomingEvents);
 	
 	try {
 		const api = new MeetingsAPIClient();
@@ -480,37 +502,63 @@ document.addEventListener('DOMContentLoaded', async () => {
 		const allMeetings = response.meetings;
 		
 		// Separate upcoming and past meetings
-		const now = new Date();
 		const upcomingMeetings = allMeetings.filter(m => new Date(m.date) > now);
 		const pastMeetings = allMeetings.filter(m => new Date(m.date) <= now);
 		
-		// Display upcoming meetings
-		if (upcomingMeetings.length > 0) {
-			upcomingContainer.innerHTML = upcomingMeetings.slice(0, 3).map(meeting => {
-				const dateObj = new Date(meeting.date);
+		// Combine meetings and events, sort by date
+		const upcomingItems = [
+			...upcomingMeetings.map(m => ({ ...m, type: 'meeting' })),
+			...upcomingEvents
+		].sort((a, b) => new Date(a.date) - new Date(b.date));
+		
+		// Display upcoming meetings & events
+		if (upcomingItems.length > 0) {
+			upcomingContainer.innerHTML = upcomingItems.slice(0, 6).map(item => {
+				const dateObj = new Date(item.date);
 				const monthShort = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
 				const monthLong = dateObj.toLocaleString('en-US', { month: 'long' });
 				const year = dateObj.getFullYear();
 				const day = dateObj.getDate();
-				const typeDisplay = api.getTypeDisplayName(meeting.type);
-				const meetingTitle = `${monthLong} ${year} ${typeDisplay}`;
-				const meetingUrl = `/meetings-detail/?id=${encodeURIComponent(meeting.id)}`;
 				
-				return `
-					<a href="${meetingUrl}" class="meeting-list-item">
-						<div class="meeting-date-badge">
-							<span class="month">${monthShort}</span>
-							<span class="day">${day}</span>
-						</div>
-						<div class="meeting-info">
-							<div class="meeting-title">${meetingTitle}</div>
-							<div class="meeting-type">${typeDisplay}</div>
-						</div>
-					</a>
-				`;
+				if (item.type === 'event') {
+					// Display event
+					const itemUrl = item.url;
+					const itemTitle = item.title;
+					
+					return `
+						<a href="${itemUrl}" class="meeting-list-item">
+							<div class="meeting-date-badge">
+								<span class="month">${monthShort}</span>
+								<span class="day">${day}</span>
+							</div>
+							<div class="meeting-info">
+								<div class="meeting-title">${itemTitle}</div>
+								<div class="meeting-type">Event</div>
+							</div>
+						</a>
+					`;
+				} else {
+					// Display meeting
+					const typeDisplay = api.getTypeDisplayName(item.type);
+					const meetingTitle = `${monthLong} ${year} ${typeDisplay}`;
+					const meetingUrl = `/meetings-detail/?id=${encodeURIComponent(item.id)}`;
+					
+					return `
+						<a href="${meetingUrl}" class="meeting-list-item">
+							<div class="meeting-date-badge">
+								<span class="month">${monthShort}</span>
+								<span class="day">${day}</span>
+							</div>
+							<div class="meeting-info">
+								<div class="meeting-title">${meetingTitle}</div>
+								<div class="meeting-type">${typeDisplay}</div>
+							</div>
+						</a>
+					`;
+				}
 			}).join('');
 		} else {
-			upcomingContainer.innerHTML = '<div class="upcoming-empty">No upcoming meetings scheduled</div>';
+			upcomingContainer.innerHTML = '<div class="upcoming-empty">No upcoming meetings or events scheduled</div>';
 		}
 		
 		// Display recent meetings (6 total - 2 rows of 3)
@@ -543,7 +591,31 @@ document.addEventListener('DOMContentLoaded', async () => {
 		}
 	} catch (error) {
 		console.log('[Homepage] Meeting API unavailable:', error.message);
-		upcomingContainer.innerHTML = '<div class="upcoming-empty">Unable to load upcoming meetings</div>';
+		
+		// Fallback: show events even if meetings API fails
+		if (upcomingEvents.length > 0) {
+			upcomingContainer.innerHTML = upcomingEvents.slice(0, 6).map(item => {
+				const dateObj = new Date(item.date);
+				const monthShort = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+				const day = dateObj.getDate();
+				
+				return `
+					<a href="${item.url}" class="meeting-list-item">
+						<div class="meeting-date-badge">
+							<span class="month">${monthShort}</span>
+							<span class="day">${day}</span>
+						</div>
+						<div class="meeting-info">
+							<div class="meeting-title">${item.title}</div>
+							<div class="meeting-type">Event</div>
+						</div>
+					</a>
+				`;
+			}).join('');
+		} else {
+			upcomingContainer.innerHTML = '<div class="upcoming-empty">Unable to load upcoming meetings</div>';
+		}
+		
 		recentContainer.innerHTML = '<p style="padding: 2rem; text-align: center;"><a href="/meetings/" style="color: var(--link-color); text-decoration: none; font-weight: 500;">View tribal meetings →</a></p>';
 	}
 });
