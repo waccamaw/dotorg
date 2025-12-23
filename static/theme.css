@@ -4553,6 +4553,10 @@ article .e-content > p:first-of-type > strong {
     background: transparent;
   }
   
+  article table {
+    box-shadow: none;
+  }
+  
   article table thead tr {
     position: absolute;
     top: -9999px;
