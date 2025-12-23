@@ -3662,7 +3662,7 @@ width: 100%;
 	float: right;
 	width: 200px;
 	max-width: 30%;
-	margin: 0 0 1rem 1.5rem;
+	margin: 1rem 1rem 1rem 1.5rem;
 	background: var(--bg-secondary);
 	border-radius: 8px;
 }

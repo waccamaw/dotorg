@@ -88,10 +88,8 @@
 			</header>
 
 			<div class="p-summary post-summary">
-				{{ if .Title }}
-					{{ .Summary }}
-				{{ else }}
-					{{ .Content }}
+				{{ if .Content }}
+					<p>{{ .Content | plainify | htmlUnescape | truncate 300 }}</p>
 				{{ end }}
 			</div>
 
