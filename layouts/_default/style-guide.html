@@ -7,19 +7,19 @@
 	<div style="text-align: center; margin-bottom: 3rem;">
 		<img src="/logos/classic/logo.png" alt="Waccamaw Indian People Classic Logo" style="width: 300px;" title="Classic Logo - See proposed replacement designs below">
 		<div style="margin-top: 1rem; color: var(--text-light); font-size: 0.95rem; font-style: italic;">
-			Classic Logo — <a href="#logo" style="color: var(--primary-color);">See proposed replacement designs below ↓</a>
+			Classic Logo — <a href="#logo-proposal" style="color: var(--primary-color);">See proposed replacement designs below ↓</a>
 		</div>
 	</div>
         <p class="page-description">{{ .Content }}</p>
 	</header>
 
 	<!-- Color Palette -->
-	<section class="style-section">
-		<h2>Color Palette</h2>
+	<section class="style-section" id="colors">
+		<h2 id="color-palette">Color Palette<a href="#color-palette" class="heading-link">#</a></h2>
 		
 		<!-- Color Band Overview -->
 		<div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 3rem;">
-			<h3 style="margin-top: 0; margin-bottom: 1rem; font-size: 1.2rem;">Complete Color Palette</h3>
+			<h3 id="complete-color-palette" style="margin-top: 0; margin-bottom: 1rem; font-size: 1.2rem;">Complete Color Palette<a href="#complete-color-palette" class="heading-link">#</a></h3>
 			<div style="display: flex; flex-wrap: wrap; gap: 0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
 				<div style="flex: 1; min-width: 60px; height: 80px; background-color: #0033cc;" title="Primary Color"></div>
 				<div style="flex: 1; min-width: 60px; height: 80px; background-color: #0028a3;" title="Primary Hover"></div>
@@ -38,7 +38,7 @@
 			</p>
 		</div>
 		
-		<h3>Primary Colors</h3>
+		<h3 id="primary-colors">Primary Colors<a href="#primary-colors" class="heading-link">#</a></h3>
 		<div class="color-grid">
 			<div class="color-card">
 				<div class="color-swatch" style="background-color: #0033cc;"></div>
@@ -60,7 +60,7 @@
 			</div>
 		</div>
 
-		<h3>Text Colors</h3>
+		<h3 id="text-colors">Text Colors<a href="#text-colors" class="heading-link">#</a></h3>
 		<div class="color-grid">
 			<div class="color-card">
 				<div class="color-swatch" style="background-color: #2a2a2a;"></div>
@@ -88,7 +88,7 @@
 			</div>
 		</div>
 
-		<h3>Background Colors</h3>
+		<h3 id="background-colors">Background Colors<a href="#background-colors" class="heading-link">#</a></h3>
 		<div class="color-grid">
 			<div class="color-card">
 				<div class="color-swatch" style="background-color: #faf8f3; border: 1px solid #e0e0e0;"></div>
@@ -124,7 +124,7 @@
 			</div>
 		</div>
 
-		<h3>Logo Colors</h3>
+		<h3 id="logo-colors">Logo Colors<a href="#logo-colors" class="heading-link">#</a></h3>
 		<div class="color-grid">
 			<div class="color-card">
 				<div class="color-swatch" style="background-color: #004384;"></div>
@@ -146,7 +146,7 @@
 			</div>
 		</div>
 
-		<h3>Border Colors</h3>
+		<h3 id="border-colors">Border Colors<a href="#border-colors" class="heading-link">#</a></h3>
 		<div class="color-grid">
 			<div class="color-card">
 				<div class="color-swatch" style="background-color: #e0e0e0;"></div>
@@ -161,21 +161,253 @@
 
 	<!-- Logo -->
 	<section class="style-section" id="logo">
-		<h2>Logo</h2>
+		<h2 id="logo-heading">Logo<a href="#logo-heading" class="heading-link">#</a></h2>
 		
-		<p>Content about the current Waccamaw Indian People logo will be added here.</p>
+		<p style="margin-bottom: 2rem;">The Waccamaw Indian People's current logo features a stylized representation of a hawk, symbolizing vision, awareness, and connection to the natural world. This logo has served our tribe for many years across various applications.</p>
+
+		<h3 id="current-logo">Current Logo<a href="#current-logo" class="heading-link">#</a></h3>
+		<div class="logo-showcase" style="margin-bottom: 3rem;">
+			<div class="logo-item">
+				<img src="/logos/classic/logo.png" alt="Waccamaw Indian People Logo" width="400" style="max-width: 100%;">
+				<div class="logo-size">400px (Large Display)</div>
+			</div>
+			<div class="logo-item">
+				<img src="/logos/classic/logo.png" alt="Waccamaw Indian People Logo" width="200">
+				<div class="logo-size">200px (Medium)</div>
+			</div>
+			<div class="logo-item">
+				<img src="/logos/classic/logo.png" alt="Waccamaw Indian People Logo" width="100">
+				<div class="logo-size">100px (Small)</div>
+			</div>
+			<div class="logo-item">
+				<img src="/logos/classic/logo.png" alt="Waccamaw Indian People Logo" width="50">
+				<div class="logo-size">50px (Icon)</div>
+			</div>
+		</div>
+
+		<h3 id="dark-background-test">Design Constraints & Use Cases<a href="#dark-background-test" class="heading-link">#</a></h3>
+		<div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 2rem;">
+			<p style="margin: 0 0 1.5rem 0; color: var(--text-light);"><strong>Important for Designers:</strong> The current logo has white elements that create visibility issues on certain backgrounds. Additionally, the PNG format includes transparent pixels that may appear inconsistent. Below are real-world use cases showing these limitations.</p>
+			
+			<h4 style="margin: 1.5rem 0 1rem 0; font-size: 1.1rem; color: var(--text-color);">Background Color Tests</h4>
+			<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 2.5rem;">
+				<!-- Light Background -->
+				<div style="text-align: center;">
+					<div style="background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid var(--border-color);">
+						<img src="/logos/classic/logo.png" alt="Logo on white background" width="120">
+					</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✓ White background</div>
+				</div>
+				
+				<!-- Light Grey Background - Shows white pixels -->
+				<div style="text-align: center;">
+					<div style="background: #f0f0f0; padding: 2rem; border-radius: 8px; border: 1px solid var(--border-color);">
+						<img src="/logos/classic/logo.png" alt="Logo on light grey background" width="120">
+					</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">⚠️ Light grey (shows white pixels)</div>
+				</div>
+				
+				<!-- Dark Background -->
+				<div style="text-align: center;">
+					<div style="background: #2a2a2a; padding: 2rem; border-radius: 8px; border: 1px solid #1a1a1a;">
+						<img src="/logos/classic/logo.png" alt="Logo on dark background" width="120">
+					</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✗ Dark background</div>
+				</div>
+				
+				<!-- Primary Color Background -->
+				<div style="text-align: center;">
+					<div style="background: var(--primary-color); padding: 2rem; border-radius: 8px;">
+						<img src="/logos/classic/logo.png" alt="Logo on blue background" width="120">
+					</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✗ Blue background</div>
+				</div>
+			</div>
+
+			<h4 style="margin: 1.5rem 0 1rem 0; font-size: 1.1rem; color: var(--text-color);">T-Shirt Application Examples</h4>
+			<p style="margin: 0 0 1rem 0; font-size: 0.9rem; color: var(--text-light);">The logo must work on various fabric colors for merchandise:</p>
+			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+				<!-- White T-Shirt -->
+				<div style="text-align: center;">
+					<div style="background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%); padding: 2rem; border-radius: 8px; border: 1px solid var(--border-color); position: relative;">
+						<div style="position: absolute; top: 0.5rem; right: 0.5rem; font-size: 0.7rem; background: rgba(0,0,0,0.1); padding: 0.25rem 0.5rem; border-radius: 4px;">👕</div>
+						<img src="/logos/classic/logo.png" alt="Logo on white shirt" width="100">
+					</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✓ White shirt</div>
+				</div>
+				
+				<!-- Navy T-Shirt -->
+				<div style="text-align: center;">
+					<div style="background: linear-gradient(135deg, #1a2332 0%, #0d1219 100%); padding: 2rem; border-radius: 8px; border: 1px solid #0a0e14;">
+						<div style="position: absolute; top: 0.5rem; right: 0.5rem; font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 0.25rem 0.5rem; border-radius: 4px; color: white;">👕</div>
+						<img src="/logos/classic/logo.png" alt="Logo on navy shirt" width="100">
+					</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✗ Navy shirt</div>
+				</div>
+				
+				<!-- Red T-Shirt -->
+				<div style="text-align: center;">
+					<div style="background: linear-gradient(135deg, #8b1e1e 0%, #5a1414 100%); padding: 2rem; border-radius: 8px; border: 1px solid #3d0e0e;">
+						<div style="position: absolute; top: 0.5rem; right: 0.5rem; font-size: 0.7rem; background: rgba(255,255,255,0.2); padding: 0.25rem 0.5rem; border-radius: 4px; color: white;">👕</div>
+						<img src="/logos/classic/logo.png" alt="Logo on red shirt" width="100">
+					</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✗ Red shirt</div>
+				</div>
+				
+				<!-- Heather Grey T-Shirt -->
+				<div style="text-align: center;">
+					<div style="background: linear-gradient(135deg, #b8b8b8 0%, #9a9a9a 100%); padding: 2rem; border-radius: 8px; border: 1px solid #888;">
+						<div style="position: absolute; top: 0.5rem; right: 0.5rem; font-size: 0.7rem; background: rgba(0,0,0,0.1); padding: 0.25rem 0.5rem; border-radius: 4px;">👕</div>
+						<img src="/logos/classic/logo.png" alt="Logo on grey shirt" width="100">
+					</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">⚠️ Heather grey</div>
+				</div>
+			</div>
+
+			<h4 style="margin: 1.5rem 0 1rem 0; font-size: 1.1rem; color: var(--text-color);">Social Media Avatar Constraint</h4>
+			<p style="margin: 0 0 1rem 0; font-size: 0.9rem; color: var(--text-light);">Most social platforms crop avatars to circles, creating awkward framing with the current design:</p>
+			<div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+				<div style="text-align: center;">
+					<div style="width: 200px; height: 200px; border-radius: 50%; overflow: hidden; border: 3px solid var(--border-color); background: white;">
+						<img src="/logos/classic/logo.png" alt="Logo in circular frame" style="width: 100%; height: 100%; object-fit: cover;">
+					</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">Circular crop (200×200px)</div>
+					<div style="margin-top: 0.25rem; font-size: 0.8rem; color: #cc3333; font-weight: 600;">⚠️ Dreamcatcher elements cut off</div>
+				</div>
+				
+				<div style="flex: 1; min-width: 250px; padding: 1.5rem; background: var(--bg-secondary); border-radius: 8px; border-left: 4px solid #cc3333;">
+					<p style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: var(--text-color);">Design Challenge</p>
+					<p style="margin: 0; font-size: 0.9rem; color: var(--text-light);">The dreamcatcher feathers extend beyond the circular boundary, causing them to be cropped on Facebook, Twitter/X, LinkedIn, and other platforms. A new logo should be designed to work within a circular constraint or include a circular variant.</p>
+				</div>
+			</div>
+		</div>
+
+		<h3 id="source-material">Source Material<a href="#source-material" class="heading-link">#</a></h3>
+		<div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem;">
+			<p style="margin: 0 0 1.5rem 0;">The current logo was created using this photograph of a red hawk as the seed image. We have permission to use this image, though the original photographer is unknown.</p>
+			
+			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; align-items: start;">
+				<div class="logo-item">
+					<img src="/logos/classic/waccamaw-hawk.jpg" alt="Red Hawk - Source Image" style="width: 100%; max-width: 400px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+					<div class="logo-size" style="margin-top: 1rem;">Original Seed Image: Red Hawk Photograph</div>
+					<p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-light); font-style: italic;">Photographer unknown • Used with permission</p>
+				</div>
+				
+				<div style="padding: 1.5rem; background: var(--bg-secondary); border-radius: 8px; border-left: 4px solid var(--primary-color);">
+					<h4 style="margin-top: 0; margin-bottom: 1rem; color: var(--primary-color);">About the Red Hawk Symbol</h4>
+					<p style="margin: 0 0 1rem 0; font-size: 0.95rem;">The red hawk holds deep significance in our tribal culture, representing:</p>
+					<ul style="margin: 0; padding-left: 1.5rem; font-size: 0.95rem;">
+						<li><strong>Vision</strong> — Seeing the larger picture and planning ahead</li>
+						<li><strong>Awareness</strong> — Being attuned to our surroundings and community</li>
+						<li><strong>Connection</strong> — Bridging the spiritual and natural worlds</li>
+						<li><strong>Protection</strong> — Watching over our people and our land</li>
+					</ul>
+					<p style="margin: 1rem 0 0 0; font-size: 0.9rem; color: var(--text-light); font-style: italic;">This imagery connects us to our ancestors and the Dog Bluff community we've called home for over 300 years.</p>
+				</div>
+			</div>
+		</div>
+
+		<h3 id="circular-text">Circular Text (Circumscription)<a href="#circular-text" class="heading-link">#</a></h3>
+		<div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 2rem;">
+			<p style="margin: 0 0 1.5rem 0;">The current logo features the text <strong>"The People of The Waccamaw"</strong> in a circular band around the central hawk and dreamcatcher design. This design element warrants reconsideration.</p>
+			
+			<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start; margin-bottom: 2rem;">
+				<div style="text-align: center;">
+					<img src="/logos/classic/logo.png" alt="Current logo showing circular text" width="200">
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light); font-style: italic;">Current circular text reads:<br>"The People of The Waccamaw"</div>
+				</div>
+				
+				<div>
+					<div style="padding: 1.5rem; background: #fff5e6; border-left: 4px solid #d4a574; border-radius: 8px; margin-bottom: 1.5rem;">
+						<h4 style="margin: 0 0 1rem 0; color: var(--text-color);">Linguistic Consideration</h4>
+						<p style="margin: 0 0 0.75rem 0; font-size: 0.95rem;">While the exact etymology of "Waccamaw" is debated among linguists, several sources suggest it may derive from Siouan language roots potentially related to the concept of "people" or a similar communal meaning.</p>
+						<p style="margin: 0; font-size: 0.85rem; color: var(--text-light); font-style: italic;"><strong>Note:</strong> Definitive etymological sources for "Waccamaw" are limited. The South Carolina Department of Archives and History and tribal oral histories provide the most authoritative accounts of our name's origins.</p>
+					</div>
+					
+					<div style="padding: 1.5rem; background: var(--bg-secondary); border-left: 4px solid var(--primary-color); border-radius: 8px;">
+						<h4 style="margin: 0 0 1rem 0; color: var(--primary-color);">Call for More Meaningful Text</h4>
+						<p style="margin: 0 0 0.75rem 0; font-size: 0.95rem;">If the tribal name already carries communal meaning, the phrase "The People of The..." may be redundant. Additionally, nearly half the words ("The," "of," "The") are articles and prepositions that add little cultural significance.</p>
+						<p style="margin: 0 0 0.75rem 0; font-size: 0.95rem;"><strong>Design terminology:</strong> This circular text element is called a <strong>circumscription</strong> in logo design, or alternatively <strong>circular text</strong> or <strong>ring text</strong>.</p>
+						<p style="margin: 0; font-size: 0.95rem; font-weight: 600;">We encourage tribal members and designers to propose more culturally meaningful text that:</p>
+						<ul style="margin: 0.5rem 0 0 1.25rem; font-size: 0.9rem;">
+							<li>Honors our Siouan linguistic heritage</li>
+							<li>Reflects our cultural values and identity</li>
+							<li>Reduces redundancy and filler words</li>
+							<li>Works well in circular composition</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			
+			<div style="background: linear-gradient(to right, var(--bg-secondary), transparent); padding: 1rem 1.5rem; border-radius: 8px; border-left: 4px solid var(--logo-primary);">
+				<p style="margin: 0; font-size: 0.9rem;"><strong>💡 Ideas for consideration:</strong> Phrases in our ancestral language, our founding year (or state recognition year), cultural values like "Vision • Protection • Community," or geographic markers like "Dog Bluff, South Carolina" could all serve as more meaningful alternatives.</p>
+			</div>
+		</div>
+
+		<!-- Draft Logo Proposal -->
+		<div id="logo-proposal" style="border: 2px dashed var(--border-color); border-radius: 12px; padding: 2rem; background: var(--bg-secondary); margin-top: 3rem;">
+			<h3 id="draft-logo-proposal">Draft Logo Proposal<a href="#draft-logo-proposal" class="heading-link">#</a></h3>
+			
+			<div style="background: white; border-left: 4px solid var(--primary-color); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+				<p style="margin: 0 0 1rem 0;"><strong>📢 Seeking Tribal Member Artists!</strong></p>
+				<p style="margin: 0 0 1rem 0;">The design shown below is a <strong>directional concept</strong> created to explore possibilities for a new tribal logo. Our goal is to work with a <strong>talented tribal member artist</strong> to create a hand-crafted, culturally authentic logo that represents our people.</p>
+				<p style="margin: 0;"><strong>Are you an artist or designer?</strong> We'd love to hear from you! Please <a href="/contact/" style="color: var(--primary-color); font-weight: 600;">reach out through our contact form</a> to discuss collaborating on this important project.</p>
+			</div>
+
+			<details style="margin-bottom: 2rem;">
+				<summary style="cursor: pointer; font-size: 1.1rem; font-weight: 600; color: var(--primary-color); padding: 1rem; background: white; border-radius: 8px; list-style: none;">
+					<span style="display: inline-block; margin-right: 0.5rem;">▶</span> View Draft Concept Design
+				</summary>
+				
+				<div style="margin-top: 2rem; padding: 2rem; background: white; border-radius: 8px;">
+					<p style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--text-light); margin-bottom: 2rem; font-style: italic; color: var(--text-light);">
+						<strong>Note:</strong> This is a draft concept only. It represents a modern evolution idea featuring detailed illustrative artwork of a red hawk in a circular frame with dual-tone blues.
+					</p>
+					
+					<div style="text-align: center; margin: 2rem 0 3rem;">
+						<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="400" height="400">
+						<div style="margin-top: 1rem; color: var(--text-light); font-size: 0.9rem;">400x400px - Large Display (Draft)</div>
+					</div>
+					
+					<div class="logo-showcase">
+						<div class="logo-item">
+							<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="150">
+							<div class="logo-size">150x150px</div>
+						</div>
+						<div class="logo-item">
+							<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="100">
+							<div class="logo-size">100x100px</div>
+						</div>
+						<div class="logo-item">
+							<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="50">
+							<div class="logo-size">50px (Header)</div>
+						</div>
+						<div class="logo-item">
+							<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="32">
+							<div class="logo-size">32px (Favicon)</div>
+						</div>
+					</div>
+
+					<div class="readme-content">
+						{{ $readme := readFile "static/logos/doug-2025/README.md" }}
+						{{ $readme = replace $readme "./logo.svg" "/logos/doug-2025/logo.svg" }}
+						{{ $readme | markdownify }}
+					</div>
+				</div>
+			</details>
+		</div>
 	</section>
 
 	<!-- Typography -->
-	<section class="style-section">
-		<h2>Typography</h2>
+	<section class="style-section" id="typography">
+		<h2 id="typography-heading">Typography<a href="#typography-heading" class="heading-link">#</a></h2>
 		
-		<h3>Font Stack</h3>
+		<h3 id="font-stack">Font Stack<a href="#font-stack" class="heading-link">#</a></h3>
 		<div class="font-stack">
 			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
 		</div>
 		
-		<h3>Headings</h3>
+		<h3 id="headings">Headings<a href="#headings" class="heading-link">#</a></h3>
 		<div class="typography-sample">
 			<h1>Heading 1 - Main Page Title</h1>
 			<h2>Heading 2 - Section Title</h2>
@@ -184,7 +416,7 @@
 			<p>Body text - Regular paragraph content using the system font stack for optimal readability and native feel across all platforms.</p>
 		</div>
 
-		<h3>Links</h3>
+		<h3 id="links">Links<a href="#links" class="heading-link">#</a></h3>
 		<div class="typography-sample">
 			<p>This is a <a href="#">standard link</a> in body text.</p>
 			<p>Links use <code>--link-color: #0033cc</code> and hover to <code>--link-hover: #0028a3</code></p>
@@ -192,13 +424,13 @@
 	</section>
 
 	<!-- Layout -->
-	<section class="style-section">
-		<h2>Layout</h2>
+	<section class="style-section" id="layout">
+		<h2 id="layout-heading">Layout<a href="#layout-heading" class="heading-link">#</a></h2>
 		
-		<h3>Max Width</h3>
+		<h3 id="max-width">Max Width<a href="#max-width" class="heading-link">#</a></h3>
 		<p>Content containers use a maximum width of <code>--max-width: 900px</code> for optimal readability.</p>
 		
-		<h3>Spacing</h3>
+		<h3 id="spacing">Spacing<a href="#spacing" class="heading-link">#</a></h3>
 		<p>The design uses consistent spacing:</p>
 		<ul>
 			<li>Small gaps: 0.5rem - 1rem</li>
@@ -206,7 +438,7 @@
 			<li>Large gaps: 3rem - 4rem</li>
 		</ul>
 
-		<h3>Border Radius</h3>
+		<h3 id="border-radius">Border Radius<a href="#border-radius" class="heading-link">#</a></h3>
 		<p>Rounded corners for visual softness:</p>
 		<ul>
 			<li>Small elements (buttons, tags): 4px</li>
@@ -217,10 +449,10 @@
 	</section>
 
 	<!-- Components -->
-	<section class="style-section">
-		<h2>Components</h2>
+	<section class="style-section" id="components">
+		<h2 id="components-heading">Components<a href="#components-heading" class="heading-link">#</a></h2>
 		
-		<h3>Buttons</h3>
+		<h3 id="buttons">Buttons<a href="#buttons" class="heading-link">#</a></h3>
 		<div class="typography-sample">
 			<a href="#" class="search-icon" style="display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
 				<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -231,7 +463,7 @@
 			<p style="margin-top: 1rem;">Icon buttons use transparent backgrounds with hover effects</p>
 		</div>
 
-		<h3>Cards</h3>
+		<h3 id="cards">Cards<a href="#cards" class="heading-link">#</a></h3>
 		<div class="color-card" style="max-width: 300px;">
 			<div class="color-swatch" style="background: linear-gradient(135deg, #0033cc 0%, #0028a3 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
 				Sample Card
@@ -244,17 +476,31 @@
 	</section>
 
 	<!-- Podcast -->
-	<section class="style-section">
-		<h2>Podcast</h2>
+	<section class="style-section" id="podcast">
+		<h2 id="podcast-heading">Podcast<a href="#podcast-heading" class="heading-link">#</a></h2>
 		
 		<p style="margin-bottom: 2rem;">The <strong>Waccamaw Public Meetings</strong> podcast distributes audio recordings from public tribal meetings through major podcast platforms, enabling wider accessibility and archival preservation of tribal communications.</p>
 
-		<h3>Podcast Artwork</h3>
+		<h3 id="podcast-artwork">Podcast Artwork<a href="#podcast-artwork" class="heading-link">#</a></h3>
 		<div style="margin-bottom: 2rem;">
+			
+			<div style="background: white; border-left: 4px solid var(--primary-color); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+				<p style="margin: 0 0 1rem 0;"><strong>🎨 Seeking Talented Designers!</strong></p>
+				<p style="margin: 0 0 1rem 0;">The artwork shown below is a <strong>placeholder design</strong>. We're looking for a designer to create professional podcast artwork that:</p>
+				<ul style="margin: 0 0 1rem 0; padding-left: 1.5rem;">
+					<li><strong>Modern & Clean</strong> — Contemporary design aesthetic appropriate for 2025+</li>
+					<li><strong>Brand Consistent</strong> — Aligns with Waccamaw visual identity and color palette</li>
+					<li><strong>Cross-Platform Excellence</strong> — Looks at home in Material Design (Android) and Apple ecosystem interfaces</li>
+					<li><strong>Scalable</strong> — Works at all sizes from 32×32px favicons to 3000×3000px high-res displays</li>
+					<li><strong>Culturally Meaningful</strong> — Incorporates tribal imagery or symbolism thoughtfully</li>
+				</ul>
+				<p style="margin: 0;"><strong>Interested in designing this?</strong> Please <a href="/contact/" style="color: var(--primary-color); font-weight: 600;">reach out through our contact form</a> to discuss this project.</p>
+			</div>
+			
 			<!-- Large Display - Full Row -->
 			<div class="logo-item" style="text-align: center; margin-bottom: 2rem;">
 				<img src="/logos/podcast.png" alt="Waccamaw Public Meetings Podcast Artwork" style="width: 100%; max-width: 600px; aspect-ratio: 1/1; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-				<div class="logo-size">Full Width Display (up to 600×600px)</div>
+				<div class="logo-size">Full Width Display (up to 600×600px) — <em style="color: var(--text-light);">Placeholder Artwork</em></div>
 			</div>
 			
 			<!-- Smaller Sizes - Grid Row -->
@@ -270,55 +516,56 @@
 			</div>
 		</div>
 
-		<h3>Technical Specifications</h3>
-		<div class="color-grid" style="margin-bottom: 2rem;">
-			<div class="color-card">
-				<div class="color-swatch" style="background: linear-gradient(135deg, #0033cc 0%, #0028a3 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem;">
-					📐
+		<h3 id="technical-specifications">Technical Specifications<a href="#technical-specifications" class="heading-link">#</a></h3>
+		<div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; margin-bottom: 2rem;">
+			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0; border-bottom: 1px solid var(--border-color);">
+				<div style="padding: 1.25rem; border-right: 1px solid var(--border-color);">
+					<h4 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--primary-color); text-transform: uppercase; letter-spacing: 0.5px;">Artwork Requirements</h4>
+					<dl style="margin: 0; font-size: 0.9rem; line-height: 1.8;">
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">Dimensions:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">3000×3000px</dd><br>
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">Format:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">JPG or PNG</dd><br>
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">Color Space:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">RGB</dd><br>
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">File Size:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">Under 512KB</dd>
+					</dl>
 				</div>
-				<div class="color-info">
-					<div class="color-name">Artwork Requirements</div>
-					<p style="margin-top: 0.5rem; font-size: 0.9rem;">
-						<strong>Dimensions:</strong> 3000×3000px (square)<br>
-						<strong>Format:</strong> JPG or PNG<br>
-						<strong>Color Space:</strong> RGB<br>
-						<strong>File Size:</strong> Under 512KB
-					</p>
+				<div style="padding: 1.25rem; border-right: 1px solid var(--border-color);">
+					<h4 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--primary-color); text-transform: uppercase; letter-spacing: 0.5px;">Podcast Metadata</h4>
+					<dl style="margin: 0; font-size: 0.9rem; line-height: 1.8;">
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">Title:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">Waccamaw Public Meetings</dd><br>
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">Author:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">waccamaw.org</dd><br>
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">Category:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">Government, Society & Culture</dd><br>
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">Language:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">English (en-us)</dd><br>
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">Type:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">Episodic</dd><br>
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">Explicit:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">No</dd>
+					</dl>
 				</div>
-			</div>
-			<div class="color-card">
-				<div class="color-swatch" style="background: linear-gradient(135deg, #004384 0%, #002D5A 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem;">
-					📻
-				</div>
-				<div class="color-info">
-					<div class="color-name">Podcast Metadata</div>
-					<p style="margin-top: 0.5rem; font-size: 0.9rem;">
-						<strong>Title:</strong> Waccamaw Public Meetings<br>
-						<strong>Author:</strong> waccamaw.org<br>
-						<strong>Category:</strong> Government, Society & Culture<br>
-						<strong>Language:</strong> English (en-us)<br>
-						<strong>Type:</strong> Episodic<br>
-						<strong>Explicit:</strong> No
-					</p>
-				</div>
-			</div>
-			<div class="color-card">
-				<div class="color-swatch" style="background: linear-gradient(135deg, #2a2a2a 0%, #6b6b6b 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 1.5rem;">
-					🎙️
-				</div>
-				<div class="color-info">
-					<div class="color-name">Episode Format</div>
-					<p style="margin-top: 0.5rem; font-size: 0.9rem;">
-						<strong>Audio:</strong> M4A (AAC encoding)<br>
-						<strong>Feed:</strong> RSS 2.0 with iTunes tags<br>
-						<strong>ID:</strong> 1863314453 (Apple Podcasts)<br>
-						<strong>URL:</strong> <a href="https://meetings.waccamaw.org/podcasts/feed.xml" target="_blank" style="font-size: 0.8rem;">meetings.waccamaw.org/podcasts/feed.xml</a>
-					</p>
+				<div style="padding: 1.25rem;">
+					<h4 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; color: var(--primary-color); text-transform: uppercase; letter-spacing: 0.5px;">Episode Format</h4>
+					<dl style="margin: 0; font-size: 0.9rem; line-height: 1.8;">
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">Audio:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">M4A (AAC)</dd><br>
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">Feed:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">RSS 2.0 + iTunes</dd><br>
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">ID:</dt>
+						<dd style="display: inline; margin: 0; color: var(--text-light);">1863314453</dd><br>
+						<dt style="display: inline; font-weight: 600; color: var(--text-color);">URL:</dt>
+						<dd style="display: inline; margin: 0;"><a href="https://meetings.waccamaw.org/podcasts/feed.xml" target="_blank" style="color: var(--primary-color); font-size: 0.85rem; word-break: break-all;">meetings.waccamaw.org/podcasts/feed.xml</a></dd>
+					</dl>
 				</div>
 			</div>
 		</div>
 
-		<h3>Subscribe on Major Platforms</h3>
+		<h3 id="subscribe-platforms">Subscribe on Major Platforms<a href="#subscribe-platforms" class="heading-link">#</a></h3>
 		<div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 2rem;">
 			<p style="margin-top: 0; margin-bottom: 1.5rem; color: var(--text-light);">Listen to public tribal meetings on your preferred podcast platform:</p>
 			<div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center;">
@@ -378,7 +625,7 @@
 			</p>
 		</div>
 
-		<h3>Latest Episode Preview</h3>
+		<h3 id="latest-episode">Latest Episode Preview<a href="#latest-episode" class="heading-link">#</a></h3>
 		<div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
 			<div style="display: grid; grid-template-columns: 120px 1fr; gap: 1.5rem; align-items: start;">
 				<img src="/logos/podcast.png" alt="Episode Artwork" style="width: 120px; height: 120px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
@@ -411,7 +658,7 @@
 			</div>
 		</div>
 
-		<h3>Usage Guidelines</h3>
+		<h3 id="podcast-usage-guidelines">Usage Guidelines<a href="#podcast-usage-guidelines" class="heading-link">#</a></h3>
 		<div style="background: #fff5eb; border: 1px solid #e0e0e0; border-radius: 8px; padding: 1.5rem; margin-bottom: 1rem;">
 			<h4 style="margin-top: 0; margin-bottom: 1rem;">What's Published</h4>
 			<ul style="margin: 0; padding-left: 1.5rem;">
@@ -433,10 +680,10 @@
 	</section>
 
 	<!-- Usage Guidelines -->
-	<section class="style-section">
-		<h2>Usage Guidelines</h2>
+	<section class="style-section" id="usage-guidelines">
+		<h2 id="usage-guidelines-heading">Usage Guidelines<a href="#usage-guidelines-heading" class="heading-link">#</a></h2>
 		
-		<h3>Accessibility</h3>
+		<h3 id="accessibility">Accessibility<a href="#accessibility" class="heading-link">#</a></h3>
 		<ul>
 			<li>All colors meet WCAG AA contrast standards for text</li>
 			<li>Interactive elements have clear focus states</li>
@@ -444,14 +691,14 @@
 			<li>Semantic HTML structure throughout</li>
 		</ul>
 
-		<h3>Responsive Design</h3>
+		<h3 id="responsive-design">Responsive Design<a href="#responsive-design" class="heading-link">#</a></h3>
 		<ul>
 			<li>Mobile-first approach with breakpoint at 768px</li>
 			<li>Flexible layouts using CSS Grid and Flexbox</li>
 			<li>Logo and navigation adapt for smaller screens</li>
 		</ul>
 
-		<h3>CSS Variables</h3>
+		<h3 id="css-variables">CSS Variables<a href="#css-variables" class="heading-link">#</a></h3>
 		<p>All colors and key values are defined as CSS custom properties in <code>:root</code> for easy theme customization and maintenance.</p>
 		
 		<div class="font-stack" style="margin-top: 1rem;">
@@ -463,59 +710,6 @@
 			}
 		</div>
 	</section>
-
-	<!-- Draft Logo Proposal (Hidden) -->
-	<section class="style-section" id="logo-proposal" style="border: 2px dashed var(--border-color); border-radius: 12px; padding: 2rem; background: var(--bg-secondary);">
-		<h2 style="margin-top: 0;">Draft Logo Proposal</h2>
-		
-		<div style="background: white; border-left: 4px solid var(--primary-color); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
-			<p style="margin: 0 0 1rem 0;"><strong>📢 Seeking Tribal Member Artists!</strong></p>
-			<p style="margin: 0 0 1rem 0;">The design shown below is a <strong>directional concept</strong> created to explore possibilities for a new tribal logo. Our goal is to work with a <strong>talented tribal member artist</strong> to create a hand-crafted, culturally authentic logo that represents our people.</p>
-			<p style="margin: 0;"><strong>Are you an artist or designer?</strong> We'd love to hear from you! Please <a href="/contact/" style="color: var(--primary-color); font-weight: 600;">reach out through our contact form</a> to discuss collaborating on this important project.</p>
-		</div>
-
-		<details style="margin-bottom: 2rem;">
-			<summary style="cursor: pointer; font-size: 1.1rem; font-weight: 600; color: var(--primary-color); padding: 1rem; background: white; border-radius: 8px; list-style: none;">
-				<span style="display: inline-block; margin-right: 0.5rem;">▶</span> View Draft Concept Design
-			</summary>
-			
-			<div style="margin-top: 2rem; padding: 2rem; background: white; border-radius: 8px;">
-				<p style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--text-light); margin-bottom: 2rem; font-style: italic; color: var(--text-light);">
-					<strong>Note:</strong> This is a draft concept only. It represents a modern evolution idea featuring detailed illustrative artwork of a red hawk in a circular frame with dual-tone blues.
-				</p>
-				
-				<div style="text-align: center; margin: 2rem 0 3rem;">
-					<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="400" height="400">
-					<div style="margin-top: 1rem; color: var(--text-light); font-size: 0.9rem;">400x400px - Large Display (Draft)</div>
-				</div>
-				
-				<div class="logo-showcase">
-					<div class="logo-item">
-						<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="150">
-						<div class="logo-size">150x150px</div>
-					</div>
-					<div class="logo-item">
-						<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="100">
-						<div class="logo-size">100x100px</div>
-					</div>
-					<div class="logo-item">
-						<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="50">
-						<div class="logo-size">50x50px (Header)</div>
-					</div>
-					<div class="logo-item">
-						<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="32">
-						<div class="logo-size">32x32px (Favicon)</div>
-					</div>
-				</div>
-
-				<div class="readme-content">
-					{{ $readme := readFile "static/logos/doug-2025/README.md" }}
-					{{ $readme = replace $readme "./logo.svg" "/logos/doug-2025/logo.svg" }}
-					{{ $readme | markdownify }}
-				</div>
-			</div>
-		</details>
-	</section>
 </div>
 
 <style>
@@ -526,6 +720,25 @@
 	
 	details summary:hover {
 		background: var(--bg-secondary);
+	}
+	
+	/* Heading anchor links */
+	.heading-link {
+		color: var(--border-color);
+		text-decoration: none;
+		margin-left: 0.5rem;
+		font-weight: 400;
+		opacity: 0;
+		transition: opacity 0.2s, color 0.2s;
+	}
+	
+	h2:hover .heading-link,
+	h3:hover .heading-link {
+		opacity: 1;
+	}
+	
+	.heading-link:hover {
+		color: var(--primary-color);
 	}
 </style>
 
