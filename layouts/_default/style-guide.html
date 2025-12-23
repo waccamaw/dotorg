@@ -163,39 +163,7 @@
 	<section class="style-section" id="logo">
 		<h2>Logo</h2>
 		
-		<p style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--primary-color); margin-bottom: 2rem;">
-			<strong>Proposed Replacement Design:</strong> The design below represents a modern evolution of the tribal logo, featuring detailed illustrative artwork of a red hawk in a circular frame with dual-tone blues.
-		</p>
-		
-		<div style="text-align: center; margin: 2rem 0 3rem;">
-			<img src="/logos/doug-2025/logo.svg" alt="Waccamaw Indian People Logo" width="400" height="400">
-			<div style="margin-top: 1rem; color: var(--text-light); font-size: 0.9rem;">400x400px - Large Display</div>
-		</div>
-		
-		<div class="logo-showcase">
-			<div class="logo-item">
-				<img src="/logos/doug-2025/logo.svg" alt="Waccamaw Indian People Logo" width="150">
-				<div class="logo-size">150x150px</div>
-			</div>
-			<div class="logo-item">
-				<img src="/logos/doug-2025/logo.svg" alt="Waccamaw Indian People Logo" width="100">
-				<div class="logo-size">100x100px</div>
-			</div>
-			<div class="logo-item">
-				<img src="/logos/doug-2025/logo.svg" alt="Waccamaw Indian People Logo" width="50">
-				<div class="logo-size">50x50px (Header)</div>
-			</div>
-			<div class="logo-item">
-				<img src="/logos/doug-2025/logo.svg" alt="Waccamaw Indian People Logo" width="32">
-				<div class="logo-size">32x32px (Favicon)</div>
-			</div>
-		</div>
-
-		<div class="readme-content">
-			{{ $readme := readFile "static/logos/doug-2025/README.md" }}
-			{{ $readme = replace $readme "./logo.svg" "/logos/doug-2025/logo.svg" }}
-			{{ $readme | markdownify }}
-		</div>
+		<p>Content about the current Waccamaw Indian People logo will be added here.</p>
 	</section>
 
 	<!-- Typography -->
@@ -495,6 +463,70 @@
 			}
 		</div>
 	</section>
+
+	<!-- Draft Logo Proposal (Hidden) -->
+	<section class="style-section" id="logo-proposal" style="border: 2px dashed var(--border-color); border-radius: 12px; padding: 2rem; background: var(--bg-secondary);">
+		<h2 style="margin-top: 0;">Draft Logo Proposal</h2>
+		
+		<div style="background: white; border-left: 4px solid var(--primary-color); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+			<p style="margin: 0 0 1rem 0;"><strong>📢 Seeking Tribal Member Artists!</strong></p>
+			<p style="margin: 0 0 1rem 0;">The design shown below is a <strong>directional concept</strong> created to explore possibilities for a new tribal logo. Our goal is to work with a <strong>talented tribal member artist</strong> to create a hand-crafted, culturally authentic logo that represents our people.</p>
+			<p style="margin: 0;"><strong>Are you an artist or designer?</strong> We'd love to hear from you! Please <a href="/contact/" style="color: var(--primary-color); font-weight: 600;">reach out through our contact form</a> to discuss collaborating on this important project.</p>
+		</div>
+
+		<details style="margin-bottom: 2rem;">
+			<summary style="cursor: pointer; font-size: 1.1rem; font-weight: 600; color: var(--primary-color); padding: 1rem; background: white; border-radius: 8px; list-style: none;">
+				<span style="display: inline-block; margin-right: 0.5rem;">▶</span> View Draft Concept Design
+			</summary>
+			
+			<div style="margin-top: 2rem; padding: 2rem; background: white; border-radius: 8px;">
+				<p style="background: var(--bg-secondary); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--text-light); margin-bottom: 2rem; font-style: italic; color: var(--text-light);">
+					<strong>Note:</strong> This is a draft concept only. It represents a modern evolution idea featuring detailed illustrative artwork of a red hawk in a circular frame with dual-tone blues.
+				</p>
+				
+				<div style="text-align: center; margin: 2rem 0 3rem;">
+					<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="400" height="400">
+					<div style="margin-top: 1rem; color: var(--text-light); font-size: 0.9rem;">400x400px - Large Display (Draft)</div>
+				</div>
+				
+				<div class="logo-showcase">
+					<div class="logo-item">
+						<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="150">
+						<div class="logo-size">150x150px</div>
+					</div>
+					<div class="logo-item">
+						<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="100">
+						<div class="logo-size">100x100px</div>
+					</div>
+					<div class="logo-item">
+						<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="50">
+						<div class="logo-size">50x50px (Header)</div>
+					</div>
+					<div class="logo-item">
+						<img src="/logos/doug-2025/logo.svg" alt="Draft Logo Concept" width="32">
+						<div class="logo-size">32x32px (Favicon)</div>
+					</div>
+				</div>
+
+				<div class="readme-content">
+					{{ $readme := readFile "static/logos/doug-2025/README.md" }}
+					{{ $readme = replace $readme "./logo.svg" "/logos/doug-2025/logo.svg" }}
+					{{ $readme | markdownify }}
+				</div>
+			</div>
+		</details>
+	</section>
 </div>
+
+<style>
+	details[open] summary span {
+		transform: rotate(90deg);
+		transition: transform 0.2s;
+	}
+	
+	details summary:hover {
+		background: var(--bg-secondary);
+	}
+</style>
 
 {{ end }}
