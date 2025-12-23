@@ -1,7 +1,12 @@
 {{ define "main" }}
 
 <div class="updates-feed">
-	<h1>{{ .Title }}</h1>
+	<h1 onclick="toggleCategoryFilter()" style="cursor: pointer;">
+		{{ .Title }}
+		<svg class="filter-icon" id="filterIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+		</svg>
+	</h1>
 	
 	{{ $allPosts := where .Site.RegularPages "Type" "post" }}
 	
@@ -15,8 +20,7 @@
 	{{ $categories = $categories | uniq }}
 	
 	{{ if $categories }}
-	<div class="category-filter">
-		<span class="filter-label">Filter by category:</span>
+	<div class="category-filter" id="categoryFilter" style="display: none;">
 		<div class="category-links">
 			<a href="/updates/" class="category-link">All</a>
 			{{ range sort $categories }}
@@ -25,6 +29,27 @@
 		</div>
 	</div>
 	{{ end }}
+
+	<script>
+	function toggleCategoryFilter() {
+		const filter = document.getElementById('categoryFilter');
+		const icon = document.getElementById('filterIcon');
+		
+		if (filter.style.display === 'none') {
+			filter.style.display = 'block';
+			setTimeout(() => {
+				filter.classList.add('show');
+			}, 10);
+			icon.style.transform = 'rotate(180deg)';
+		} else {
+			filter.classList.remove('show');
+			setTimeout(() => {
+				filter.style.display = 'none';
+			}, 300);
+			icon.style.transform = 'rotate(0deg)';
+		}
+	}
+	</script>
 	
 	<!-- Show first 10 posts -->
 	{{ $displayPosts := first 10 $allPosts }}
