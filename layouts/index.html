@@ -751,7 +751,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 					window['eventData_' + eventId] = item;
 					
 					return `
-						<a href="#" class="meeting-list-item" data-event-id="${eventId}" onclick="openEventLightbox(window['${eventId}']); return false;">
+						<a href="#" class="meeting-list-item" data-event-id="${eventId}" onclick="openEventLightbox(window['eventData_${eventId}']); return false;">
 							<div class="meeting-date-badge">
 								<span class="month">${monthShort}</span>
 								<span class="day">${day}</span>
@@ -806,7 +806,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 					window['eventData_' + eventId] = item;
 					
 					return `
-						<a href="#" class="meeting-list-item" data-event-id="${eventId}" onclick="openEventLightbox(window['${eventId}']); return false;">
+						<a href="#" class="meeting-list-item" data-event-id="${eventId}" onclick="openEventLightbox(window['eventData_${eventId}']); return false;">
 							<div class="meeting-date-badge">
 								<span class="month">${monthShort}</span>
 								<span class="day">${day}</span>
@@ -857,7 +857,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 				window['eventData_' + eventId] = item;
 				
 				return `
-					<a href="#" class="meeting-list-item" data-event-id="${eventId}" onclick="openEventLightbox(window['${eventId}']); return false;">
+					<a href="#" class="meeting-list-item" data-event-id="${eventId}" onclick="openEventLightbox(window['eventData_${eventId}']); return false;">
 						<div class="meeting-date-badge">
 							<span class="month">${monthShort}</span>
 							<span class="day">${day}</span>
@@ -887,7 +887,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 				window['eventData_' + eventId] = item;
 				
 				return `
-					<a href="#" class="meeting-list-item" data-event-id="${eventId}" onclick="openEventLightbox(window['${eventId}']); return false;">
+					<a href="#" class="meeting-list-item" data-event-id="${eventId}" onclick="openEventLightbox(window['eventData_${eventId}']); return false;">
 						<div class="meeting-date-badge">
 							<span class="month">${monthShort}</span>
 							<span class="day">${day}</span>
