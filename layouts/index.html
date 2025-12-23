@@ -442,7 +442,7 @@ newsletterForm.addEventListener('submit', async function(e) {
 	<!-- Meetings Section -->
 	<div class="meetings-section">
 		<div class="meetings-section-header">
-			<h2>Tribal Meetings</h2>
+			<h2>Tribal Meetings and Events</h2>
 			<p>Stay informed about tribal meetings, decisions, and community gatherings.</p>
 		</div>
 		
@@ -456,26 +456,231 @@ newsletterForm.addEventListener('submit', async function(e) {
 		
 		<!-- Recent Meetings -->
 		<div class="meetings-subsection">
-			<h3>Recent Meetings</h3>
+			<h3>Recent Meetings and Events</h3>
 			<div id="recentMeetingsContainer" class="recent-meetings-list">
 				<!-- Will be populated by JavaScript -->
 			</div>
 		</div>
 		
-		<a href="/meetings/" class="view-all-link">View all meetings →</a>
+		<div style="display: flex; gap: 2rem; align-items: center; justify-content: center; flex-wrap: wrap;">
+			<a href="/meetings/" class="view-all-link">View All Meetings</a>
+			<a href="https://calendar.google.com/calendar/ical/nativecalendar13%40gmail.com/public/basic.ics" class="view-all-link" target="_blank" rel="noopener noreferrer">
+				<span style="display: inline-flex; align-items: center; gap: 0.5rem;">
+					<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="opacity: 0.7;">
+						<path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+					</svg>
+					Event Calendar
+				</span>
+			</a>
+		</div>
+	</div>
+</div>
+
+<!-- Event Details Lightbox -->
+<div id="eventLightbox" class="event-lightbox" style="display: none;">
+	<div class="event-lightbox-overlay"></div>
+	<div class="event-lightbox-content">
+		<button class="event-lightbox-close" aria-label="Close">&times;</button>
+		<div class="event-lightbox-body">
+			<h2 id="eventTitle"></h2>
+			<div class="event-details">
+				<div class="event-detail-row">
+					<strong>📅 Date:</strong>
+					<span id="eventDate"></span>
+				</div>
+				<div class="event-detail-row" id="eventLocationRow" style="display: none;">
+					<strong>📍 Location:</strong>
+					<span id="eventLocation"></span>
+				</div>
+				<div class="event-detail-row" id="eventDescriptionRow" style="display: none;">
+					<strong>📝 Description:</strong>
+					<div id="eventDescription"></div>
+				</div>
+			</div>
+			<div class="event-lightbox-actions">
+				<a id="eventViewLink" href="#" target="_blank" rel="noopener noreferrer" class="event-view-button">View in Google Calendar</a>
+			</div>
+		</div>
 	</div>
 </div>
 
 <script src="/js/members-config.js"></script>
 <script src="/js/meetings-api.js"></script>
 <script>
-// Fetch and display meetings + upcoming events
+// Lightbox functions
+function openEventLightbox(event) {
+	const lightbox = document.getElementById('eventLightbox');
+	const dateObj = new Date(event.date);
+	const formattedDate = dateObj.toLocaleDateString('en-US', { 
+		weekday: 'long', 
+		year: 'numeric', 
+		month: 'long', 
+		day: 'numeric',
+		hour: 'numeric',
+		minute: '2-digit'
+	});
+	
+	document.getElementById('eventTitle').textContent = event.title;
+	document.getElementById('eventDate').textContent = formattedDate;
+	
+	// Show/hide location
+	const locationRow = document.getElementById('eventLocationRow');
+	if (event.location) {
+		document.getElementById('eventLocation').textContent = event.location;
+		locationRow.style.display = 'flex';
+	} else {
+		locationRow.style.display = 'none';
+	}
+	
+	// Show/hide description
+	const descriptionRow = document.getElementById('eventDescriptionRow');
+	if (event.description) {
+		document.getElementById('eventDescription').textContent = event.description;
+		descriptionRow.style.display = 'flex';
+	} else {
+		descriptionRow.style.display = 'none';
+	}
+	
+	// Set calendar link
+	const viewLink = document.getElementById('eventViewLink');
+	if (event.url && event.url !== '#') {
+		viewLink.href = event.url;
+		viewLink.style.display = 'inline-block';
+	} else {
+		viewLink.href = 'https://calendar.google.com/calendar/u/0/r?cid=nativecalendar13@gmail.com';
+		viewLink.style.display = 'inline-block';
+	}
+	
+	lightbox.style.display = 'flex';
+	document.body.style.overflow = 'hidden';
+}
+
+function closeEventLightbox() {
+	const lightbox = document.getElementById('eventLightbox');
+	lightbox.style.display = 'none';
+	document.body.style.overflow = '';
+}
+
+// Close on overlay click or close button
+document.addEventListener('DOMContentLoaded', () => {
+	const lightbox = document.getElementById('eventLightbox');
+	const closeBtn = lightbox.querySelector('.event-lightbox-close');
+	const overlay = lightbox.querySelector('.event-lightbox-overlay');
+	
+	closeBtn.addEventListener('click', closeEventLightbox);
+	overlay.addEventListener('click', closeEventLightbox);
+	
+	// Close on escape key
+	document.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape' && lightbox.style.display === 'flex') {
+			closeEventLightbox();
+		}
+	});
+});
+
+// Simple iCal parser for Google Calendar
+function parseICalEvents(icalData) {
+	const events = [];
+	const eventBlocks = icalData.split('BEGIN:VEVENT');
+	
+	eventBlocks.forEach((block, index) => {
+		if (index === 0) return; // Skip the header
+		
+		const event = {};
+		const lines = block.split(/\r?\n/);
+		
+		lines.forEach(line => {
+			// Handle SUMMARY (title)
+			if (line.startsWith('SUMMARY:')) {
+				event.title = line.replace('SUMMARY:', '').trim();
+			}
+			// Handle DTSTART (start date)
+			else if (line.startsWith('DTSTART')) {
+				const dateMatch = line.match(/DTSTART[^:]*:(\d{8}T?\d{0,6}Z?)/);
+				if (dateMatch) {
+					const dateStr = dateMatch[1];
+					// Parse YYYYMMDDTHHMMSSZ format
+					if (dateStr.includes('T')) {
+						const year = dateStr.substr(0, 4);
+						const month = dateStr.substr(4, 2);
+						const day = dateStr.substr(6, 2);
+						const hour = dateStr.substr(9, 2);
+						const minute = dateStr.substr(11, 2);
+						const second = dateStr.substr(13, 2);
+						event.date = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
+					} else {
+						// All-day event: YYYYMMDD
+						const year = dateStr.substr(0, 4);
+						const month = dateStr.substr(4, 2);
+						const day = dateStr.substr(6, 2);
+						event.date = `${year}-${month}-${day}T00:00:00Z`;
+					}
+				}
+			}
+			// Handle DESCRIPTION
+			else if (line.startsWith('DESCRIPTION:')) {
+				event.description = line.replace('DESCRIPTION:', '').trim();
+			}
+			// Handle LOCATION
+			else if (line.startsWith('LOCATION:')) {
+				event.location = line.replace('LOCATION:', '').trim();
+			}
+			// Handle URL
+			else if (line.startsWith('URL:')) {
+				event.url = line.replace('URL:', '').trim();
+			}
+		});
+		
+		if (event.title && event.date) {
+			events.push(event);
+		}
+	});
+	
+	return events;
+}
+
+// Fetch Google Calendar events
+async function fetchGoogleCalendarEvents() {
+	const icalUrl = 'https://calendar.google.com/calendar/ical/nativecalendar13%40gmail.com/public/basic.ics';
+	
+	// Use CORS proxy to bypass browser restrictions
+	const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(icalUrl);
+	
+	try {
+		console.log('[Google Calendar] Fetching events from:', icalUrl);
+		console.log('[Google Calendar] Using proxy:', proxyUrl);
+		const response = await fetch(proxyUrl);
+		
+		if (!response.ok) {
+			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+		}
+		
+		const icalData = await response.text();
+		console.log('[Google Calendar] Raw iCal data received:', icalData.substring(0, 200));
+		const events = parseICalEvents(icalData);
+		
+		console.log('[Google Calendar] Parsed events:', events);
+		
+		// Add type and ensure URL exists
+		return events.map(e => ({
+			...e,
+			type: 'calendar-event',
+			url: e.url || 'https://calendar.google.com/calendar/u/0/r?cid=nativecalendar13@gmail.com'
+		}));
+	} catch (error) {
+		console.error('[Google Calendar] Failed to fetch events:', error);
+		console.error('[Google Calendar] Error details:', error.message);
+		return [];
+	}
+}
+
+// Fetch and display meetings + events
 document.addEventListener('DOMContentLoaded', async () => {
 	const upcomingContainer = document.getElementById('upcomingMeetingsContainer');
 	const recentContainer = document.getElementById('recentMeetingsContainer');
 	
-	// Get all events from Hugo site data (will filter by date in JS)
-	const allEvents = [
+	// Get all events from Hugo site data
+	const hugoEvents = [
 		{{ range where .Site.RegularPages "Type" "post" }}
 			{{ if (in .Params.categories "events") }}
 		{
@@ -488,13 +693,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 		{{ end }}
 	].filter(e => e.title); // Remove empty entries
 	
-	console.log('[Homepage] All events found:', allEvents);
+	console.log('[Homepage] Hugo events found:', hugoEvents);
 	
-	// Filter for upcoming events
+	// Fetch Google Calendar events
+	const googleEvents = await fetchGoogleCalendarEvents();
+	
+	// Combine all events
+	const allEvents = [...hugoEvents, ...googleEvents];
+	console.log('[Homepage] All events combined:', allEvents);
+	
 	const now = new Date();
-	const upcomingEvents = allEvents.filter(e => new Date(e.date) > now);
 	
-	console.log('[Homepage] Upcoming events:', upcomingEvents);
+	// Separate upcoming and past events
+	const upcomingEvents = allEvents.filter(e => new Date(e.date) > now);
+	const pastEvents = allEvents.filter(e => new Date(e.date) <= now);
 	
 	try {
 		const api = new MeetingsAPIClient();
@@ -505,35 +717,48 @@ document.addEventListener('DOMContentLoaded', async () => {
 		const upcomingMeetings = allMeetings.filter(m => new Date(m.date) > now);
 		const pastMeetings = allMeetings.filter(m => new Date(m.date) <= now);
 		
-		// Combine meetings and events, sort by date
+		// Combine meetings and events, sort chronologically
 		const upcomingItems = [
 			...upcomingMeetings.map(m => ({ ...m, type: 'meeting' })),
 			...upcomingEvents
-		].sort((a, b) => new Date(a.date) - new Date(b.date));
+		].sort((a, b) => new Date(a.date) - new Date(b.date)); // Earliest first
 		
-		// Display upcoming meetings & events
+		const recentItems = [
+			...pastMeetings.map(m => ({ ...m, type: 'meeting' })),
+			...pastEvents
+		].sort((a, b) => new Date(b.date) - new Date(a.date)); // Most recent first
+		
+		console.log('[Homepage] Upcoming items:', upcomingItems);
+		console.log('[Homepage] Recent items:', recentItems);
+		
+		// Display upcoming meetings & events (up to 6)
 		if (upcomingItems.length > 0) {
-			upcomingContainer.innerHTML = upcomingItems.slice(0, 6).map(item => {
+			upcomingContainer.innerHTML = upcomingItems.slice(0, 6).map((item, index) => {
 				const dateObj = new Date(item.date);
 				const monthShort = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
 				const monthLong = dateObj.toLocaleString('en-US', { month: 'long' });
 				const year = dateObj.getFullYear();
 				const day = dateObj.getDate();
 				
-				if (item.type === 'event') {
+				if (item.type === 'event' || item.type === 'calendar-event') {
 					// Display event
-					const itemUrl = item.url;
 					const itemTitle = item.title;
+					const eventType = item.type === 'calendar-event' ? 'Calendar Event' : 'Event';
+					const eventLocation = item.location ? ` • ${item.location}` : '';
+					const eventId = 'event-' + index;
+					
+					// Store event data for lightbox
+					window['eventData_' + eventId] = item;
 					
 					return `
-						<a href="${itemUrl}" class="meeting-list-item">
+						<a href="#" class="meeting-list-item" data-event-id="${eventId}" onclick="openEventLightbox(window['${eventId}']); return false;">
 							<div class="meeting-date-badge">
 								<span class="month">${monthShort}</span>
 								<span class="day">${day}</span>
 							</div>
 							<div class="meeting-info">
 								<div class="meeting-title">${itemTitle}</div>
-								<div class="meeting-type">Event</div>
+								<div class="meeting-type">${eventType}${eventLocation}</div>
 							</div>
 						</a>
 					`;
@@ -561,30 +786,56 @@ document.addEventListener('DOMContentLoaded', async () => {
 			upcomingContainer.innerHTML = '<div class="upcoming-empty">No upcoming meetings or events scheduled</div>';
 		}
 		
-		// Display recent meetings (6 total - 2 rows of 3)
-		if (pastMeetings.length > 0) {
-			recentContainer.innerHTML = pastMeetings.slice(0, 6).map(meeting => {
-				const dateObj = new Date(meeting.date);
+		// Display recent meetings & events (up to 8)
+		if (recentItems.length > 0) {
+			recentContainer.innerHTML = recentItems.slice(0, 8).map((item, index) => {
+				const dateObj = new Date(item.date);
 				const monthShort = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
 				const monthLong = dateObj.toLocaleString('en-US', { month: 'long' });
 				const year = dateObj.getFullYear();
 				const day = dateObj.getDate();
-				const typeDisplay = api.getTypeDisplayName(meeting.type);
-				const meetingTitle = `${monthLong} ${year} ${typeDisplay}`;
-				const meetingUrl = `/meetings-detail/?id=${encodeURIComponent(meeting.id)}`;
 				
-				return `
-					<a href="${meetingUrl}" class="meeting-list-item">
-						<div class="meeting-date-badge">
-							<span class="month">${monthShort}</span>
-							<span class="day">${day}</span>
-						</div>
-						<div class="meeting-info">
-							<div class="meeting-title">${meetingTitle}</div>
-							<div class="meeting-type">${typeDisplay}</div>
-						</div>
-					</a>
-				`;
+				if (item.type === 'event' || item.type === 'calendar-event') {
+					// Display event
+					const itemTitle = item.title;
+					const eventType = item.type === 'calendar-event' ? 'Calendar Event' : 'Event';
+					const eventLocation = item.location ? ` • ${item.location}` : '';
+					const eventId = 'recent-event-' + index;
+					
+					// Store event data for lightbox
+					window['eventData_' + eventId] = item;
+					
+					return `
+						<a href="#" class="meeting-list-item" data-event-id="${eventId}" onclick="openEventLightbox(window['${eventId}']); return false;">
+							<div class="meeting-date-badge">
+								<span class="month">${monthShort}</span>
+								<span class="day">${day}</span>
+							</div>
+							<div class="meeting-info">
+								<div class="meeting-title">${itemTitle}</div>
+								<div class="meeting-type">${eventType}${eventLocation}</div>
+							</div>
+						</a>
+					`;
+				} else {
+					// Display meeting
+					const typeDisplay = api.getTypeDisplayName(item.type);
+					const meetingTitle = `${monthLong} ${year} ${typeDisplay}`;
+					const meetingUrl = `/meetings-detail/?id=${encodeURIComponent(item.id)}`;
+					
+					return `
+						<a href="${meetingUrl}" class="meeting-list-item">
+							<div class="meeting-date-badge">
+								<span class="month">${monthShort}</span>
+								<span class="day">${day}</span>
+							</div>
+							<div class="meeting-info">
+								<div class="meeting-title">${meetingTitle}</div>
+								<div class="meeting-type">${typeDisplay}</div>
+							</div>
+						</a>
+					`;
+				}
 			}).join('');
 		} else {
 			recentContainer.innerHTML = '<p style="padding: 2rem; text-align: center; color: var(--text-light);">No recent meetings available.</p>';
@@ -594,29 +845,63 @@ document.addEventListener('DOMContentLoaded', async () => {
 		
 		// Fallback: show events even if meetings API fails
 		if (upcomingEvents.length > 0) {
-			upcomingContainer.innerHTML = upcomingEvents.slice(0, 6).map(item => {
+			upcomingContainer.innerHTML = upcomingEvents.slice(0, 6).map((item, index) => {
 				const dateObj = new Date(item.date);
 				const monthShort = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
 				const day = dateObj.getDate();
+				const eventType = item.type === 'calendar-event' ? 'Calendar Event' : 'Event';
+				const eventLocation = item.location ? ` • ${item.location}` : '';
+				const eventId = 'fallback-event-' + index;
+				
+				// Store event data for lightbox
+				window['eventData_' + eventId] = item;
 				
 				return `
-					<a href="${item.url}" class="meeting-list-item">
+					<a href="#" class="meeting-list-item" data-event-id="${eventId}" onclick="openEventLightbox(window['${eventId}']); return false;">
 						<div class="meeting-date-badge">
 							<span class="month">${monthShort}</span>
 							<span class="day">${day}</span>
 						</div>
 						<div class="meeting-info">
 							<div class="meeting-title">${item.title}</div>
-							<div class="meeting-type">Event</div>
+							<div class="meeting-type">${eventType}${eventLocation}</div>
 						</div>
 					</a>
 				`;
 			}).join('');
 		} else {
-			upcomingContainer.innerHTML = '<div class="upcoming-empty">Unable to load upcoming meetings</div>';
+			upcomingContainer.innerHTML = '<div class="upcoming-empty">No upcoming events scheduled</div>';
 		}
 		
-		recentContainer.innerHTML = '<p style="padding: 2rem; text-align: center;"><a href="/meetings/" style="color: var(--link-color); text-decoration: none; font-weight: 500;">View tribal meetings →</a></p>';
+		// Show recent events
+		if (pastEvents.length > 0) {
+			recentContainer.innerHTML = pastEvents.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 8).map((item, index) => {
+				const dateObj = new Date(item.date);
+				const monthShort = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+				const day = dateObj.getDate();
+				const eventType = item.type === 'calendar-event' ? 'Calendar Event' : 'Event';
+				const eventLocation = item.location ? ` • ${item.location}` : '';
+				const eventId = 'fallback-recent-event-' + index;
+				
+				// Store event data for lightbox
+				window['eventData_' + eventId] = item;
+				
+				return `
+					<a href="#" class="meeting-list-item" data-event-id="${eventId}" onclick="openEventLightbox(window['${eventId}']); return false;">
+						<div class="meeting-date-badge">
+							<span class="month">${monthShort}</span>
+							<span class="day">${day}</span>
+						</div>
+						<div class="meeting-info">
+							<div class="meeting-title">${item.title}</div>
+							<div class="meeting-type">${eventType}${eventLocation}</div>
+						</div>
+					</a>
+				`;
+			}).join('');
+		} else {
+			recentContainer.innerHTML = '<p style="padding: 2rem; text-align: center;"><a href="/meetings/" style="color: var(--link-color); text-decoration: none; font-weight: 500;">View tribal meetings →</a></p>';
+		}
 	}
 });
 </script>
