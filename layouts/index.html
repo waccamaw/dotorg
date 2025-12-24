@@ -488,17 +488,38 @@ newsletterForm.addEventListener('submit', async function(e) {
 					<strong>📅 Date:</strong>
 					<span id="eventDate"></span>
 				</div>
+				<div class="event-detail-row" id="eventTypeRow" style="display: none;">
+					<strong>🏛️ Type:</strong>
+					<span id="eventType"></span>
+				</div>
+				<div class="event-detail-row" id="eventSourceRow" style="display: none;">
+					<strong>📆 Source:</strong>
+					<span id="eventSource"></span>
+				</div>
 				<div class="event-detail-row" id="eventLocationRow" style="display: none;">
 					<strong>📍 Location:</strong>
 					<span id="eventLocation"></span>
+				</div>
+				<div class="event-detail-row" id="eventDurationRow" style="display: none;">
+					<strong>⏱️ Duration:</strong>
+					<span id="eventDuration"></span>
+				</div>
+				<div class="event-detail-row" id="eventVisibilityRow" style="display: none;">
+					<strong>👁️ Visibility:</strong>
+					<span id="eventVisibility"></span>
 				</div>
 				<div class="event-detail-row" id="eventDescriptionRow" style="display: none;">
 					<strong>📝 Description:</strong>
 					<div id="eventDescription"></div>
 				</div>
+				<div class="event-detail-row" id="eventRecordingRow" style="display: none;">
+					<strong>🎥 Recording:</strong>
+					<div id="eventRecording"></div>
+				</div>
 			</div>
 			<div class="event-lightbox-actions">
-				<a id="eventViewLink" href="#" target="_blank" rel="noopener noreferrer" class="event-view-button">View in Google Calendar</a>
+				<a id="eventViewLink" href="#" target="_blank" rel="noopener noreferrer" class="event-view-button">View Details</a>
+				<a id="eventVideoLink" href="#" target="_blank" rel="noopener noreferrer" class="event-view-button" style="display: none; background: #e74c3c;">Watch Recording</a>
 			</div>
 		</div>
 	</div>
@@ -523,13 +544,81 @@ function openEventLightbox(event) {
 	document.getElementById('eventTitle').textContent = event.title;
 	document.getElementById('eventDate').textContent = formattedDate;
 	
+	// Show/hide meeting type (for meetings)
+	const typeRow = document.getElementById('eventTypeRow');
+	if (event.type === 'meeting' && event.meeting_type) {
+		const typeMap = {
+			'executive': 'Executive Meeting',
+			'open': 'Open Meeting',
+			'committee': 'Committee Meeting',
+			'powwow': 'Powwow Planning',
+			'general': 'General Meeting'
+		};
+		document.getElementById('eventType').textContent = typeMap[event.meeting_type] || event.meeting_type;
+		typeRow.style.display = 'flex';
+	} else {
+		typeRow.style.display = 'none';
+	}
+	
+	// Show/hide source (calendar name)
+	const sourceRow = document.getElementById('eventSourceRow');
+	if (event.calendarSource) {
+		document.getElementById('eventSource').textContent = event.calendarSource;
+		sourceRow.style.display = 'flex';
+	} else if (event.type === 'meeting') {
+		document.getElementById('eventSource').textContent = 'Tribal Meetings Database';
+		sourceRow.style.display = 'flex';
+	} else if (event.type === 'event') {
+		document.getElementById('eventSource').textContent = 'Website Event';
+		sourceRow.style.display = 'flex';
+	} else {
+		sourceRow.style.display = 'none';
+	}
+	
 	// Show/hide location
 	const locationRow = document.getElementById('eventLocationRow');
 	if (event.location) {
-		document.getElementById('eventLocation').textContent = event.location;
+		const locationElement = document.getElementById('eventLocation');
+		// Check if location is a URL
+		const isUrl = event.location.startsWith('http://') || event.location.startsWith('https://');
+		
+		if (isUrl) {
+			// Make it a clickable link
+			locationElement.innerHTML = `<a href="${event.location}" target="_blank" rel="noopener noreferrer" style="color: var(--link-color); text-decoration: underline; word-break: break-all;">${event.location}</a>`;
+		} else {
+			locationElement.textContent = event.location;
+		}
 		locationRow.style.display = 'flex';
 	} else {
 		locationRow.style.display = 'none';
+	}
+	
+	// Show/hide duration (for meetings)
+	const durationRow = document.getElementById('eventDurationRow');
+	if (event.duration_minutes) {
+		const hours = Math.floor(event.duration_minutes / 60);
+		const minutes = event.duration_minutes % 60;
+		let durationText = '';
+		if (hours > 0) durationText += `${hours}h `;
+		if (minutes > 0) durationText += `${minutes}m`;
+		document.getElementById('eventDuration').textContent = durationText.trim();
+		durationRow.style.display = 'flex';
+	} else {
+		durationRow.style.display = 'none';
+	}
+	
+	// Show/hide visibility (for meetings)
+	const visibilityRow = document.getElementById('eventVisibilityRow');
+	if (event.visibility) {
+		const visibilityMap = {
+			'public': '🌍 Public',
+			'members-only': '🔒 Members Only',
+			'private': '🔐 Private'
+		};
+		document.getElementById('eventVisibility').textContent = visibilityMap[event.visibility] || event.visibility;
+		visibilityRow.style.display = 'flex';
+	} else {
+		visibilityRow.style.display = 'none';
 	}
 	
 	// Show/hide description
@@ -541,15 +630,46 @@ function openEventLightbox(event) {
 		descriptionRow.style.display = 'none';
 	}
 	
-	// Set calendar link
+	// Show/hide recording info (for meetings)
+	const recordingRow = document.getElementById('eventRecordingRow');
+	const videoLink = document.getElementById('eventVideoLink');
+	if (event.recording_available && (event.video_url || event.audio_url)) {
+		let recordingHTML = '<div style="display: flex; flex-direction: column; gap: 0.5rem;">';
+		if (event.video_url) {
+			recordingHTML += '<span>✅ Video available</span>';
+			videoLink.href = event.video_url;
+			videoLink.textContent = 'Watch Video';
+			videoLink.style.display = 'inline-block';
+		} else if (event.audio_url) {
+			recordingHTML += '<span>🎧 Audio available</span>';
+			videoLink.href = event.audio_url;
+			videoLink.textContent = 'Listen to Audio';
+			videoLink.style.display = 'inline-block';
+		}
+		recordingHTML += '</div>';
+		document.getElementById('eventRecording').innerHTML = recordingHTML;
+		recordingRow.style.display = 'flex';
+	} else {
+		recordingRow.style.display = 'none';
+		videoLink.style.display = 'none';
+	}
+	
+	// Set primary view link
 	const viewLink = document.getElementById('eventViewLink');
-	if (event.url && event.url !== '#') {
+	if (event.type === 'meeting') {
+		viewLink.href = `/meetings-detail/?id=${encodeURIComponent(event.id)}`;
+		viewLink.textContent = 'View Meeting Details';
+		viewLink.target = '_self';
+	} else if (event.url && event.url !== '#') {
 		viewLink.href = event.url;
-		viewLink.style.display = 'inline-block';
+		viewLink.textContent = event.type === 'calendar-event' ? 'View in Calendar' : 'View Event';
+		viewLink.target = '_blank';
 	} else {
 		viewLink.href = 'https://calendar.google.com/calendar/u/0/r?cid=nativecalendar13@gmail.com';
-		viewLink.style.display = 'inline-block';
+		viewLink.textContent = 'View Calendar';
+		viewLink.target = '_blank';
 	}
+	viewLink.style.display = 'inline-block';
 	
 	lightbox.style.display = 'flex';
 	document.body.style.overflow = 'hidden';
@@ -619,11 +739,19 @@ function parseICalEvents(icalData) {
 			}
 			// Handle DESCRIPTION
 			else if (line.startsWith('DESCRIPTION:')) {
-				event.description = line.replace('DESCRIPTION:', '').trim();
+				event.description = line.replace('DESCRIPTION:', '').trim()
+					.replace(/\\,/g, ',')
+					.replace(/\\;/g, ';')
+					.replace(/\\n/g, '\n')
+					.replace(/\\\\/g, '\\');
 			}
 			// Handle LOCATION
 			else if (line.startsWith('LOCATION:')) {
-				event.location = line.replace('LOCATION:', '').trim();
+				event.location = line.replace('LOCATION:', '').trim()
+					.replace(/\\,/g, ',')
+					.replace(/\\;/g, ';')
+					.replace(/\\n/g, '\n')
+					.replace(/\\\\/g, '\\');
 			}
 			// Handle URL
 			else if (line.startsWith('URL:')) {
@@ -639,16 +767,29 @@ function parseICalEvents(icalData) {
 	return events;
 }
 
-// Fetch Google Calendar events
-async function fetchGoogleCalendarEvents() {
-	const icalUrl = 'https://calendar.google.com/calendar/ical/nativecalendar13%40gmail.com/public/basic.ics';
-	
-	// Use CORS proxy to bypass browser restrictions
-	const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(icalUrl);
+// Calendar sources configuration
+const CALENDAR_SOURCES = [
+	{
+		name: 'Native Calendar',
+		id: 'nativecalendar13@gmail.com',
+		url: 'https://calendar.google.com/calendar/ical/nativecalendar13%40gmail.com/public/basic.ics',
+		webUrl: 'https://calendar.google.com/calendar/u/0/r?cid=nativecalendar13@gmail.com'
+	},
+	{
+		name: 'Peoples Alliance',
+		id: 'wip.peoples.alliance@gmail.com',
+		url: 'https://calendar.google.com/calendar/ical/wip.peoples.alliance%40gmail.com/public/basic.ics',
+		webUrl: 'https://calendar.google.com/calendar/u/0/r?cid=wip.peoples.alliance@gmail.com'
+	}
+	// Add more calendars here as needed
+];
+
+// Fetch events from a single calendar
+async function fetchCalendarEvents(calendar) {
+	const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(calendar.url);
 	
 	try {
-		console.log('[Google Calendar] Fetching events from:', icalUrl);
-		console.log('[Google Calendar] Using proxy:', proxyUrl);
+		console.log(`[${calendar.name}] Fetching events from:`, calendar.url);
 		const response = await fetch(proxyUrl);
 		
 		if (!response.ok) {
@@ -656,22 +797,65 @@ async function fetchGoogleCalendarEvents() {
 		}
 		
 		const icalData = await response.text();
-		console.log('[Google Calendar] Raw iCal data received:', icalData.substring(0, 200));
+		console.log(`[${calendar.name}] Raw iCal data received:`, icalData.substring(0, 200));
 		const events = parseICalEvents(icalData);
 		
-		console.log('[Google Calendar] Parsed events:', events);
+		console.log(`[${calendar.name}] Parsed ${events.length} events`);
 		
-		// Add type and ensure URL exists
+		// Add calendar source info to each event
 		return events.map(e => ({
 			...e,
 			type: 'calendar-event',
-			url: e.url || 'https://calendar.google.com/calendar/u/0/r?cid=nativecalendar13@gmail.com'
+			calendarSource: calendar.name,
+			calendarId: calendar.id,
+			url: e.url || calendar.webUrl
 		}));
 	} catch (error) {
-		console.error('[Google Calendar] Failed to fetch events:', error);
-		console.error('[Google Calendar] Error details:', error.message);
+		console.error(`[${calendar.name}] Failed to fetch events:`, error.message);
 		return [];
 	}
+}
+
+// Deduplicate events based on title and date
+function deduplicateEvents(events) {
+	const seen = new Map();
+	const deduplicated = [];
+	
+	events.forEach(event => {
+		// Create a unique key from title + date (normalized)
+		const eventDate = new Date(event.date);
+		const dateKey = eventDate.toISOString().split('T')[0]; // YYYY-MM-DD
+		const titleKey = event.title.toLowerCase().trim();
+		const uniqueKey = `${titleKey}|${dateKey}`;
+		
+		if (!seen.has(uniqueKey)) {
+			seen.set(uniqueKey, event);
+			deduplicated.push(event);
+		} else {
+			console.log(`[Deduplication] Skipping duplicate: "${event.title}" on ${dateKey} from ${event.calendarSource}`);
+		}
+	});
+	
+	return deduplicated;
+}
+
+// Fetch and merge events from all calendars
+async function fetchGoogleCalendarEvents() {
+	console.log('[Google Calendars] Fetching from', CALENDAR_SOURCES.length, 'sources');
+	
+	// Fetch all calendars in parallel
+	const calendarPromises = CALENDAR_SOURCES.map(calendar => fetchCalendarEvents(calendar));
+	const calendarResults = await Promise.all(calendarPromises);
+	
+	// Flatten all events into one array
+	const allCalendarEvents = calendarResults.flat();
+	console.log('[Google Calendars] Total events fetched:', allCalendarEvents.length);
+	
+	// Deduplicate events by title + date combination
+	const deduplicatedEvents = deduplicateEvents(allCalendarEvents);
+	console.log('[Google Calendars] After deduplication:', deduplicatedEvents.length);
+	
+	return deduplicatedEvents;
 }
 
 // Fetch and display meetings + events
@@ -744,7 +928,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 					// Display event
 					const itemTitle = item.title;
 					const eventType = item.type === 'calendar-event' ? 'Calendar Event' : 'Event';
-					const eventLocation = item.location ? ` • ${item.location}` : '';
+					// Only show location if it's not a URL
+					const isUrl = item.location && (item.location.startsWith('http://') || item.location.startsWith('https://'));
+					const eventLocation = item.location && !isUrl ? ` • ${item.location}` : '';
 					const eventId = 'event-' + index;
 					
 					// Store event data for lightbox
@@ -799,7 +985,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 					// Display event
 					const itemTitle = item.title;
 					const eventType = item.type === 'calendar-event' ? 'Calendar Event' : 'Event';
-					const eventLocation = item.location ? ` • ${item.location}` : '';
+					// Only show location if it's not a URL
+					const isUrl = item.location && (item.location.startsWith('http://') || item.location.startsWith('https://'));
+					const eventLocation = item.location && !isUrl ? ` • ${item.location}` : '';
 					const eventId = 'recent-event-' + index;
 					
 					// Store event data for lightbox
@@ -850,7 +1038,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 				const monthShort = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
 				const day = dateObj.getDate();
 				const eventType = item.type === 'calendar-event' ? 'Calendar Event' : 'Event';
-				const eventLocation = item.location ? ` • ${item.location}` : '';
+				// Only show location if it's not a URL
+				const isUrl = item.location && (item.location.startsWith('http://') || item.location.startsWith('https://'));
+				const eventLocation = item.location && !isUrl ? ` • ${item.location}` : '';
 				const eventId = 'fallback-event-' + index;
 				
 				// Store event data for lightbox
