@@ -730,10 +730,11 @@ function parseICalEvents(icalData) {
 						event.date = `${year}-${month}-${day}T${hour}:${minute}:${second}Z`;
 					} else {
 						// All-day event: YYYYMMDD
+						// Use local time (no Z) to prevent timezone shifting
 						const year = dateStr.substr(0, 4);
 						const month = dateStr.substr(4, 2);
 						const day = dateStr.substr(6, 2);
-						event.date = `${year}-${month}-${day}T00:00:00Z`;
+						event.date = `${year}-${month}-${day}T12:00:00`;
 					}
 				}
 			}
