@@ -1,6 +1,7 @@
 {{ define "main" }}
 <link rel="stylesheet" href="/theme.css?v={{ now.Unix }}">
 <link rel="stylesheet" href="/members/css/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
 <div class="member-portal-wrapper">
     <!-- Login Screen -->
@@ -164,31 +165,16 @@
                 <button id="backToDashboardBtn" class="btn btn-secondary">← Back to Portal</button>
             </div>
 
-            <!-- Metrics Cards -->
-            <div class="metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
-                <div class="metric-card" style="background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); padding: 1.5rem; border-radius: 8px; text-align: center;">
-                    <div class="metric-value" id="activeCount" style="font-size: 3rem; font-weight: 700; color: #2e7d32; margin-bottom: 0.5rem;">-</div>
-                    <div class="metric-label" style="font-size: 0.875rem; color: #558b2f; font-weight: 600; text-transform: uppercase;">Active Members</div>
+            <!-- Email Marketing Overview Chart -->
+            <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <h3 style="margin-bottom: 1.5rem; text-align: center; color: #2a2a2a;">Membership Roll & Marketing Reach</h3>
+                <div style="max-width: 500px; margin: 0 auto; position: relative; height: 400px;">
+                    <canvas id="emailReachChart"></canvas>
                 </div>
-                <div class="metric-card" style="background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); padding: 1.5rem; border-radius: 8px; text-align: center;">
-                    <div class="metric-value" id="inactiveCount" style="font-size: 3rem; font-weight: 700; color: #c62828; margin-bottom: 0.5rem;">-</div>
-                    <div class="metric-label" style="font-size: 0.875rem; color: #d32f2f; font-weight: 600; text-transform: uppercase;">Inactive Members</div>
-                </div>
-                <div class="metric-card" style="background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); padding: 1.5rem; border-radius: 8px; text-align: center;">
-                    <div class="metric-value" id="critical30Count" style="font-size: 3rem; font-weight: 700; color: #e65100; margin-bottom: 0.5rem;">-</div>
-                    <div class="metric-label" style="font-size: 0.875rem; color: #ef6c00; font-weight: 600; text-transform: uppercase;">Critical (&lt;30 days)</div>
-                </div>
-                <div class="metric-card" style="background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%); padding: 1.5rem; border-radius: 8px; text-align: center;">
-                    <div class="metric-value" id="warning60Count" style="font-size: 3rem; font-weight: 700; color: #f57f17; margin-bottom: 0.5rem;">-</div>
-                    <div class="metric-label" style="font-size: 0.875rem; color: #f9a825; font-weight: 600; text-transform: uppercase;">Warning (30-90 days)</div>
-                </div>
-                <div class="metric-card" style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 1.5rem; border-radius: 8px; text-align: center;">
-                    <div class="metric-value" id="retiredDeceasedCount" style="font-size: 3rem; font-weight: 700; color: #1565c0; margin-bottom: 0.5rem;">-</div>
-                    <div class="metric-label" style="font-size: 0.875rem; color: #1976d2; font-weight: 600; text-transform: uppercase;">Retired & Deceased</div>
-                </div>
-                <div class="metric-card" style="background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%); padding: 1.5rem; border-radius: 8px; text-align: center; border: 2px solid #2e7d32;">
-                    <div class="metric-value" id="atRiskEmailCount" style="font-size: 3rem; font-weight: 700; color: #1b5e20; margin-bottom: 0.5rem;">-</div>
-                    <div class="metric-label" style="font-size: 0.875rem; color: #2e7d32; font-weight: 600; text-transform: uppercase;">📧 At Risk (Can Email)</div>
+                <div id="chartSummary" style="margin-top: 2rem; padding: 1.5rem; background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%); border-radius: 8px; text-align: center;">
+                    <div style="font-size: 3rem; font-weight: 700; color: #1b5e20; margin-bottom: 0.5rem;" id="emailPercentage">-</div>
+                    <div style="font-size: 1rem; color: #2e7d32; font-weight: 600;">of total members are in your marketing list</div>
+                    <div style="margin-top: 1rem; font-size: 0.875rem; color: #558b2f;" id="emailCount">-</div>
                 </div>
             </div>
 

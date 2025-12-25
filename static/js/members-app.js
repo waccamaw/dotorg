@@ -972,13 +972,8 @@ class MemberPortalApp {
             const metrics = this.calculateDashboardMetrics(response.members);
             console.log('[Email Dashboard] Metrics:', metrics);
             
-            // Update metric cards
-            document.getElementById('activeCount').textContent = metrics.active;
-            document.getElementById('inactiveCount').textContent = metrics.inactive;
-            document.getElementById('critical30Count').textContent = metrics.critical30;
-            document.getElementById('warning60Count').textContent = metrics.warning60;
-            document.getElementById('retiredDeceasedCount').textContent = metrics.retiredDeceased;
-            document.getElementById('atRiskEmailCount').textContent = metrics.atRiskMembers.length;
+            // Create pie chart showing marketing reach across entire roll
+            this.createEmailReachChart(metrics);
             
             // Store at-risk members for export
             this.atRiskMembers = metrics.atRiskMembers;
@@ -1078,6 +1073,85 @@ class MemberPortalApp {
         metrics.atRiskMembers.sort((a, b) => a.daysUntil - b.daysUntil);
         
         return metrics;
+    }
+
+    /**
+     * Create pie chart showing email marketing reach across entire membership roll
+     */
+    createEmailReachChart(metrics) {
+        const ctx = document.getElementById('emailReachChart');
+        if (!ctx) return;
+
+        // Destroy existing chart if it exists
+        if (this.emailChart) {
+            this.emailChart.destroy();
+        }
+
+        // Marketing list = inactive + at-risk (critical + warning)
+        const atRisk = metrics.critical30 + metrics.warning60;
+        const marketingList = metrics.inactive + atRisk;
+        const totalMembers = metrics.active + metrics.inactive + metrics.critical30 + metrics.warning60 + metrics.retiredDeceased;
+        const percentage = totalMembers > 0 ? Math.round((marketingList / totalMembers) * 100) : 0;
+
+        // Update summary stats
+        document.getElementById('emailPercentage').textContent = `${percentage}%`;
+        document.getElementById('emailCount').textContent = 
+            `${marketingList} members (${metrics.inactive} inactive + ${atRisk} at-risk) out of ${totalMembers} total`;
+
+        // Create chart
+        this.emailChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    '📧 Marketing List (Inactive)',
+                    '⚠️ Marketing List (At-Risk)',
+                    '✅ Active (No Email Needed)',
+                    '🔒 Retired & Deceased (Excluded)'
+                ],
+                datasets: [{
+                    data: [
+                        metrics.inactive,
+                        atRisk,
+                        metrics.active,
+                        metrics.retiredDeceased
+                    ],
+                    backgroundColor: [
+                        '#ef5350',  // Red - inactive (needs re-engagement)
+                        '#ffa726',  // Orange - at-risk (needs retention)
+                        '#66bb6a',  // Green - active (no action)
+                        '#90a4ae'   // Gray - retired/deceased (excluded)
+                    ],
+                    borderWidth: 3,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     /**
