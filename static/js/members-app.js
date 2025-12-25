@@ -962,7 +962,7 @@ class MemberPortalApp {
     }
 
     /**
-     * Show email marketing dashboard (executive leadership only)
+     * Show member engagement dashboard (executive leadership only)
      */
     async showEmailDashboard() {
         console.log('[Email Dashboard] Loading email dashboard...');
@@ -1003,13 +1003,13 @@ class MemberPortalApp {
             const metrics = this.calculateDashboardMetrics(response.members);
             console.log('[Email Dashboard] Metrics:', metrics);
             
-            // Create pie chart showing marketing reach across entire roll
+            // Create pie chart showing engagement outreach across entire roll
             this.createEmailReachChart(metrics);
             
             // Store at-risk members for display
             this.atRiskMembers = metrics.atRiskMembers;
             
-            // Display marketing list table
+            // Display outreach list table
             this.displayAtRiskMembers(metrics.atRiskMembers);
             
         } catch (error) {
@@ -1046,7 +1046,7 @@ class MemberPortalApp {
             const status = fields.Status || 'Active';
             const statusLower = status.toLowerCase();
             
-            // Count retired, deceased, resigned, and revoked (excluded from email marketing)
+            // Count retired, deceased, resigned, and revoked (excluded from engagement outreach)
             if (statusLower === 'deceased' || statusLower === 'retired' || 
                 statusLower === 'resigned' || statusLower === 'revoked') {
                 metrics.retiredDeceased++;
@@ -1062,14 +1062,14 @@ class MemberPortalApp {
             
             // Calculate days until expiration for ACTIVE members only
             // Only include active members whose membership expires SOON (within 90 days)
-            // Active members with already-expired memberships are data quality issues, not marketing targets
+            // Active members with already-expired memberships are data quality issues, not engagement targets
             if (fields.Expires && statusLower === 'active') {
                 const expiryDate = new Date(fields.Expires);
                 const daysUntil = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
                 
                 let riskLevel = null;
                 
-                // Only add to marketing list if expiring SOON (0-90 days in the future)
+                // Only add to outreach list if expiring SOON (0-90 days in the future)
                 // Skip active members whose memberships already expired (data quality issue)
                 if (daysUntil >= 0 && daysUntil <= 30) {
                     riskLevel = 'critical';
@@ -1095,7 +1095,7 @@ class MemberPortalApp {
                 }
             }
             
-            // Add inactive members to the at-risk list for marketing purposes
+            // Add inactive members to the at-risk list for engagement outreach
             // (Resigned and Revoked are excluded above)
             if (statusLower === 'inactive') {
                 metrics.atRiskMembers.push({
@@ -1119,7 +1119,7 @@ class MemberPortalApp {
     }
 
     /**
-     * Create pie chart showing email marketing reach across entire membership roll
+     * Create pie chart showing member engagement outreach across entire membership roll
      */
     createEmailReachChart(metrics) {
         const ctx = document.getElementById('emailReachChart');
@@ -1130,18 +1130,18 @@ class MemberPortalApp {
             this.emailChart.destroy();
         }
 
-        // Marketing list = inactive + at-risk (critical + warning)
+        // Outreach list = inactive + at-risk (critical + warning)
         const atRisk = metrics.critical30 + metrics.warning60;
-        const marketingList = metrics.inactive + atRisk;
+        const outreachList = metrics.inactive + atRisk;
         const totalMembers = metrics.active + metrics.inactive + metrics.critical30 + metrics.warning60 + metrics.retiredDeceased;
-        const percentage = totalMembers > 0 ? Math.round((marketingList / totalMembers) * 100) : 0;
+        const percentage = totalMembers > 0 ? Math.round((outreachList / totalMembers) * 100) : 0;
 
-        // Calculate how many in marketing list have email addresses
-        const marketingWithEmail = metrics.atRiskMembers.filter(m => {
+        // Calculate how many in outreach list have email addresses
+        const outreachWithEmail = metrics.atRiskMembers.filter(m => {
             const email = m.email || '';
             return email && email.trim() !== '' && email !== '-';
         }).length;
-        const emailReachPercentage = marketingList > 0 ? Math.round((marketingWithEmail / marketingList) * 100) : 0;
+        const emailReachPercentage = outreachList > 0 ? Math.round((outreachWithEmail / outreachList) * 100) : 0;
 
         // Determine severity styling (healthy is <= 10%, anything higher is dire)
         const isHealthy = percentage <= 10;
@@ -1173,18 +1173,18 @@ class MemberPortalApp {
         // Update summary stats
         percentageEl.textContent = `${percentage}%`;
         countEl.textContent = 
-            `${marketingList} members (${metrics.inactive} inactive + ${atRisk} at-risk) out of ${totalMembers} total`;
+            `${outreachList} members (${metrics.inactive} inactive + ${atRisk} at-risk) out of ${totalMembers} total`;
         emailReachPercentageEl.textContent = `${emailReachPercentage}%`;
         emailReachMessageEl.textContent = 
-            `of marketing list can be reached via email (${marketingWithEmail} of ${marketingList} have email addresses)`;
+            `of outreach list can be reached via email (${outreachWithEmail} of ${outreachList} have email addresses)`;
 
         // Create chart
         this.emailChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: [
-                    '📧 Marketing List (Inactive)',
-                    '⚠️ Marketing List (At-Risk)',
+                    '📧 Outreach List (Inactive)',
+                    '⚠️ Outreach List (At-Risk)',
                     '✅ Active (No Email Needed)',
                     '🔒 Retired & Deceased (Excluded)'
                 ],

@@ -146,7 +146,7 @@
                 <div class="action-grid">
                     <a href="#" class="action-card" id="emailDashboardBtn">
                         <div class="action-icon">📧</div>
-                        <div class="action-title">Email Marketing Dashboard</div>
+                        <div class="action-title">Member Engagement Dashboard</div>
                         <div class="action-subtitle">Member engagement & at-risk analysis</div>
                     </a>
                 </div>
@@ -154,12 +154,12 @@
         </div>
     </section>
 
-    <!-- Email Marketing Dashboard (Executive Leadership Only) -->
+    <!-- Member Engagement Dashboard (Executive Leadership Only) -->
     <section id="emailDashboardScreen" class="dashboard" style="display: none;">
         <div class="dashboard-container">
             <div class="dashboard-header">
                 <div class="dashboard-title">
-                    <h2>📧 Email Marketing Dashboard</h2>
+                    <h2>📧 Member Engagement Dashboard</h2>
                     <p>Member engagement metrics and at-risk analysis</p>
                 </div>
                 <button id="backToDashboardBtn" class="btn btn-secondary">← Back to Portal</button>
@@ -167,7 +167,7 @@
 
             <!-- Email Marketing Overview Chart -->
             <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <h3 style="margin-bottom: 1.5rem; text-align: center; color: #2a2a2a;">Membership Roll & Marketing Reach</h3>
+                <h3 style="margin-bottom: 1.5rem; text-align: center; color: #2a2a2a;">Membership Roll & Engagement Outreach</h3>
                 <div style="max-width: 500px; margin: 0 auto; position: relative; height: 400px;">
                     <canvas id="emailReachChart"></canvas>
                 </div>
@@ -177,15 +177,15 @@
                     <div style="margin-top: 1rem; font-size: 0.875rem;" id="emailCount">-</div>
                     <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid rgba(255,255,255,0.3);">
                         <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;" id="emailReachPercentage">-</div>
-                        <div style="font-size: 0.9rem; font-weight: 600;" id="emailReachMessage">of marketing list can be reached via email</div>
+                        <div style="font-size: 0.9rem; font-weight: 600;" id="emailReachMessage">of outreach list can be reached via email</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Marketing List Table with Search & Pagination -->
+            <!-- Engagement Outreach List Table with Search & Pagination -->
             <div class="member-list-section">
                 <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;">
-                    <h3>Marketing List (Inactive + At-Risk Members)</h3>
+                    <h3>Outreach List (Inactive + At-Risk Members)</h3>
                     <div class="dashboard-controls">
                         <input type="text" id="memberSearch" class="search-input" placeholder="🔍 Search by name...">
                         <select id="reachableFilter" class="filter-select">
@@ -231,7 +231,7 @@
                 
                 <!-- Filter Explanation -->
                 <div style="margin-top: 2rem; padding: 1.5rem; background: #f5f9ff; border-left: 4px solid #1976d2; border-radius: 4px;">
-                    <h4 style="margin-bottom: 0.75rem; color: #1565c0; font-size: 1rem;">📋 Email Marketing Filter Criteria</h4>
+                    <h4 style="margin-bottom: 0.75rem; color: #1565c0; font-size: 1rem;">📋 Member Engagement Filter Criteria</h4>
                     <p style="color: #666; font-size: 0.9375rem; line-height: 1.6; margin-bottom: 0.5rem;">
                         The at-risk members list above includes members who meet the following criteria:
                     </p>
@@ -240,7 +240,7 @@
                         <li>Membership expires within <strong>90 days</strong> (Critical: &lt;30 days, Warning: 30-90 days)</li>
                     </ul>
                     <p style="color: #666; font-size: 0.9375rem; line-height: 1.6; margin-top: 0.75rem;">
-                        <strong>Excluded from email marketing:</strong> Members marked as <em>Deceased</em>, <em>Retired</em>, <em>Resigned</em>, or <em>Revoked</em> are not included in this list.
+                        <strong>Excluded from outreach:</strong> Members marked as <em>Deceased</em>, <em>Retired</em>, <em>Resigned</em>, or <em>Revoked</em> are not included in this list.
                     </p>
                 </div>
             </div>
