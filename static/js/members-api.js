@@ -148,6 +148,45 @@ class APIClient {
     hasActiveSession() {
         return !!this.getSessionToken() && !!this.getMemberData();
     }
+
+    /**
+     * Make authenticated fetch request
+     * @param {string} url - Full URL to fetch
+     * @param {Object} options - Fetch options
+     * @returns {Promise<Object>} JSON response
+     */
+    async fetchWithAuth(url, options = {}) {
+        const token = this.getSessionToken();
+
+        const headers = {
+            'Content-Type': 'application/json',
+            ...options.headers
+        };
+
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const config = {
+            ...options,
+            headers,
+            credentials: 'include'
+        };
+
+        try {
+            const response = await fetch(url, config);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || data.message || `HTTP error! status: ${response.status}`);
+            }
+
+            return data;
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            throw error;
+        }
+    }
 }
 
 // Create singleton instance

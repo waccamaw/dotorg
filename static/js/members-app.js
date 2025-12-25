@@ -2,6 +2,17 @@
 class MemberPortalApp {
     constructor() {
         this.currentView = 'request';
+        
+        // Pagination & filtering state
+        this.currentPage = 1;
+        this.pageSize = 25;
+        this.sortColumn = 'daysUntil';
+        this.sortDirection = 'asc';
+        this.searchQuery = '';
+        this.riskFilter = 'all';
+        this.filteredMembers = [];
+        this.atRiskMembers = [];
+        
         this.init();
     }
 
@@ -117,6 +128,30 @@ class MemberPortalApp {
         }
         if (cancelPhotoUpload) {
             cancelPhotoUpload.addEventListener('click', () => this.closePhotoUploadModal());
+        }
+
+        // Email dashboard button
+        const emailDashboardBtn = document.getElementById('emailDashboardBtn');
+        if (emailDashboardBtn) {
+            emailDashboardBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showEmailDashboard();
+            });
+        }
+
+        // Back to dashboard button
+        const backToDashboardBtn = document.getElementById('backToDashboardBtn');
+        if (backToDashboardBtn) {
+            backToDashboardBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.showDashboard();
+            });
+        }
+
+        // Export at-risk members button
+        const exportAtRiskBtn = document.getElementById('exportAtRiskBtn');
+        if (exportAtRiskBtn) {
+            exportAtRiskBtn.addEventListener('click', () => this.exportAtRiskToCSV());
         }
 
         // Photo file input
@@ -360,6 +395,17 @@ class MemberPortalApp {
                 
                 // Update debug view (local only)
                 this.updateDebugView(statusResponse);
+                
+                // Show admin section if user has executive leadership access
+                if (statusResponse.status.isExecutiveLeadership) {
+                    console.log('[Member Portal] User has executive leadership access');
+                    const adminActions = document.getElementById('adminActions');
+                    if (adminActions) {
+                        adminActions.style.display = 'block';
+                    }
+                } else {
+                    console.log('[Member Portal] User does not have executive leadership access');
+                }
             } else {
                 console.warn('[Member Portal] Invalid status response:', statusResponse);
             }
@@ -399,6 +445,11 @@ class MemberPortalApp {
         document.getElementById('verificationSentScreen').style.display = 'none';
         document.getElementById('memberDashboard').style.display = 'none';
         document.getElementById('memberInfoScreen').style.display = 'none';
+        
+        const emailDashboardScreen = document.getElementById('emailDashboardScreen');
+        if (emailDashboardScreen) {
+            emailDashboardScreen.style.display = 'none';
+        }
     }
 
     /**
@@ -877,6 +928,465 @@ class MemberPortalApp {
                 submitBtn.textContent = 'Upload Photo';
             }
         }
+    }
+
+    /**
+     * Show email marketing dashboard (executive leadership only)
+     */
+    async showEmailDashboard() {
+        console.log('[Email Dashboard] Loading email dashboard...');
+        
+        // Check executive leadership permission
+        const statusResponse = await api.getMemberStatus();
+        if (!statusResponse?.status?.isExecutiveLeadership) {
+            alert('Access denied: Executive leadership only');
+            return;
+        }
+        
+        this.hideAllScreens();
+        document.getElementById('emailDashboardScreen').style.display = 'block';
+        document.getElementById('logoutBtn').style.display = 'inline-block';
+        this.currentView = 'email-dashboard';
+        
+        // Load dashboard data
+        await this.loadEmailDashboardData();
+    }
+
+    /**
+     * Load email dashboard data from API
+     */
+    async loadEmailDashboardData() {
+        try {
+            console.log('[Email Dashboard] Fetching member list...');
+            
+            const response = await api.fetchWithAuth(`${CONFIG.API_BASE_URL}/api/admin/member-list`);
+            console.log('[Email Dashboard] Response:', response);
+            
+            if (!response.success) {
+                throw new Error(response.error || 'Failed to fetch member list');
+            }
+            
+            console.log(`[Email Dashboard] Loaded ${response.count} members`);
+            
+            // Calculate metrics
+            const metrics = this.calculateDashboardMetrics(response.members);
+            console.log('[Email Dashboard] Metrics:', metrics);
+            
+            // Update metric cards
+            document.getElementById('activeCount').textContent = metrics.active;
+            document.getElementById('inactiveCount').textContent = metrics.inactive;
+            document.getElementById('critical30Count').textContent = metrics.critical30;
+            document.getElementById('warning60Count').textContent = metrics.warning60;
+            
+            // Store at-risk members for export
+            this.atRiskMembers = metrics.atRiskMembers;
+            
+            // Show export button if there are at-risk members
+            const exportBtn = document.getElementById('exportAtRiskBtn');
+            if (exportBtn && this.atRiskMembers.length > 0) {
+                exportBtn.style.display = 'inline-block';
+            }
+            
+            // Display at-risk members table
+            this.displayAtRiskMembers(metrics.atRiskMembers);
+            
+        } catch (error) {
+            console.error('[Email Dashboard] Error loading data:', error);
+            
+            const listContainer = document.getElementById('atRiskMemberList');
+            if (listContainer) {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #dc3545;">
+                        <p><strong>Error loading member data</strong></p>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+    }
+
+    /**
+     * Calculate dashboard metrics from member list
+     */
+    calculateDashboardMetrics(members) {
+        const now = new Date();
+        const metrics = {
+            active: 0,
+            inactive: 0,
+            critical30: 0,
+            warning60: 0,
+            atRiskMembers: []
+        };
+        
+        members.forEach(member => {
+            const fields = member.fields || {};
+            const status = fields.Status || 'Active';
+            
+            // Count active/inactive
+            if (status.toLowerCase() === 'active') {
+                metrics.active++;
+            } else if (status.toLowerCase() === 'inactive') {
+                metrics.inactive++;
+            }
+            
+            // Calculate days until expiration
+            if (fields.Expires) {
+                const expiryDate = new Date(fields.Expires);
+                const daysUntil = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+                
+                let riskLevel = null;
+                
+                if (daysUntil < 0) {
+                    riskLevel = 'expired';
+                    metrics.critical30++;
+                } else if (daysUntil <= 30) {
+                    riskLevel = 'critical';
+                    metrics.critical30++;
+                } else if (daysUntil <= 90) {
+                    riskLevel = 'warning';
+                    metrics.warning60++;
+                }
+                
+                // Add to at-risk list if applicable
+                if (riskLevel) {
+                    metrics.atRiskMembers.push({
+                        id: member.id,
+                        email: fields.Email_x0020_Addr || '-',
+                        firstName: fields.First_x0020_Name || '',
+                        lastName: fields.Last_x0020_Name || '',
+                        status: status,
+                        expires: fields.Expires,
+                        daysUntil: daysUntil,
+                        riskLevel: riskLevel,
+                        lastUpdated: fields.Status_x0020_Updated || fields.Modified || '-'
+                    });
+                }
+            }
+        });
+        
+        // Sort at-risk members by days until expiration (most critical first)
+        metrics.atRiskMembers.sort((a, b) => a.daysUntil - b.daysUntil);
+        
+        return metrics;
+    }
+
+    /**
+     * Display at-risk members in a table with sorting, filtering, and pagination
+     */
+    displayAtRiskMembers(atRiskMembers) {
+        console.log('[Email Dashboard] Displaying at-risk members:', atRiskMembers.length);
+        this.atRiskMembers = atRiskMembers;
+        
+        // Reset filters when loading new data
+        this.searchQuery = '';
+        this.riskFilter = 'all';
+        this.currentPage = 1;
+        
+        // Reset UI controls
+        const searchInput = document.getElementById('memberSearch');
+        const filterSelect = document.getElementById('riskFilter');
+        if (searchInput) searchInput.value = '';
+        if (filterSelect) filterSelect.value = 'all';
+        
+        this.renderFilteredTable();
+    }
+    
+    /**
+     * Filter and render the table based on current search/filter/sort state
+     */
+    renderFilteredTable() {
+        const listContainer = document.getElementById('atRiskMemberList');
+        if (!listContainer) {
+            console.error('[Email Dashboard] atRiskMemberList container not found');
+            return;
+        }
+        
+        console.log('[Email Dashboard] Rendering table with', this.atRiskMembers.length, 'at-risk members');
+        console.log('[Email Dashboard] Search:', this.searchQuery, 'Filter:', this.riskFilter);
+        
+        // Apply search filter
+        let filtered = this.atRiskMembers.filter(member => {
+            const searchMatch = !this.searchQuery || 
+                member.firstName.toLowerCase().includes(this.searchQuery) ||
+                member.lastName.toLowerCase().includes(this.searchQuery) ||
+                member.email.toLowerCase().includes(this.searchQuery);
+            
+            const riskMatch = this.riskFilter === 'all' || member.riskLevel === this.riskFilter;
+            
+            return searchMatch && riskMatch;
+        });
+        
+        // Apply sorting
+        filtered.sort((a, b) => {
+            let aVal, bVal;
+            
+            switch (this.sortColumn) {
+                case 'name':
+                    aVal = `${a.firstName} ${a.lastName}`.toLowerCase();
+                    bVal = `${b.firstName} ${b.lastName}`.toLowerCase();
+                    break;
+                case 'email':
+                    aVal = a.email.toLowerCase();
+                    bVal = b.email.toLowerCase();
+                    break;
+                case 'status':
+                    aVal = a.status.toLowerCase();
+                    bVal = b.status.toLowerCase();
+                    break;
+                case 'expires':
+                    aVal = new Date(a.expires).getTime();
+                    bVal = new Date(b.expires).getTime();
+                    break;
+                case 'daysUntil':
+                    aVal = a.daysUntil;
+                    bVal = b.daysUntil;
+                    break;
+                case 'riskLevel':
+                    const riskOrder = { expired: 0, critical: 1, warning: 2 };
+                    aVal = riskOrder[a.riskLevel];
+                    bVal = riskOrder[b.riskLevel];
+                    break;
+                default:
+                    return 0;
+            }
+            
+            if (aVal < bVal) return this.sortDirection === 'asc' ? -1 : 1;
+            if (aVal > bVal) return this.sortDirection === 'asc' ? 1 : -1;
+            return 0;
+        });
+        
+        this.filteredMembers = filtered;
+        
+        // Calculate pagination
+        console.log('[Email Dashboard] Pagination state:', {
+            currentPage: this.currentPage,
+            pageSize: this.pageSize,
+            filteredLength: filtered.length
+        });
+        
+        this.totalPages = Math.ceil(filtered.length / this.pageSize);
+        if (this.currentPage > this.totalPages) this.currentPage = this.totalPages || 1;
+        
+        const startIdx = (this.currentPage - 1) * this.pageSize;
+        const endIdx = Math.min(startIdx + this.pageSize, filtered.length);
+        const pageMembers = filtered.slice(startIdx, endIdx);
+        
+        console.log('[Email Dashboard] Rendering:', {
+            totalPages: this.totalPages,
+            startIdx,
+            endIdx,
+            pageMembersCount: pageMembers.length
+        });
+        
+        // Render table
+        if (filtered.length === 0) {
+            listContainer.innerHTML = `
+                <div style="text-align: center; padding: 3rem; color: #666;">
+                    <p style="font-size: 1.25rem; margin-bottom: 0.5rem;">🔍 No members found</p>
+                    <p style="color: #999;">Try adjusting your search or filter criteria.</p>
+                </div>
+            `;
+            document.getElementById('tablePagination').style.display = 'none';
+            return;
+        }
+        
+        let html = `
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        ${this.renderSortableHeader('name', 'Name')}
+                        ${this.renderSortableHeader('email', 'Email')}
+                        ${this.renderSortableHeader('status', 'Status')}
+                        ${this.renderSortableHeader('expires', 'Expires')}
+                        ${this.renderSortableHeader('daysUntil', 'Days')}
+                        ${this.renderSortableHeader('riskLevel', 'Risk Level')}
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        pageMembers.forEach(member => {
+            const riskLabel = member.riskLevel === 'expired' ? 'EXPIRED' :
+                             member.riskLevel === 'critical' ? 'CRITICAL' : 'WARNING';
+            const daysText = member.daysUntil < 0 ? `${Math.abs(member.daysUntil)} ago` : `${member.daysUntil} days`;
+            
+            html += `
+                <tr>
+                    <td>${member.firstName} ${member.lastName}</td>
+                    <td><a href="mailto:${member.email}">${member.email}</a></td>
+                    <td>${member.status}</td>
+                    <td>${this.formatDate(member.expires)}</td>
+                    <td>${daysText}</td>
+                    <td>
+                        <span class="risk-badge ${member.riskLevel}">
+                            ${riskLabel}
+                        </span>
+                    </td>
+                </tr>
+            `;
+        });
+        
+        html += `
+                </tbody>
+            </table>
+        `;
+        
+        listContainer.innerHTML = html;
+        
+        // Add click handlers to headers for sorting
+        const headers = listContainer.querySelectorAll('th.sortable');
+        headers.forEach(header => {
+            header.addEventListener('click', () => {
+                const column = header.dataset.column;
+                if (this.sortColumn === column) {
+                    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this.sortColumn = column;
+                    this.sortDirection = 'asc';
+                }
+                this.renderFilteredTable();
+            });
+        });
+        
+        // Update pagination controls
+        this.updatePaginationControls(filtered.length, startIdx, endIdx);
+    }
+    
+    /**
+     * Render a sortable table header
+     */
+    renderSortableHeader(column, label) {
+        const isActive = this.sortColumn === column;
+        const sortClass = isActive ? (this.sortDirection === 'asc' ? 'sort-asc' : 'sort-desc') : '';
+        return `<th class="sortable ${sortClass}" data-column="${column}">${label}</th>`;
+    }
+    
+    /**
+     * Update pagination controls
+     */
+    updatePaginationControls(totalItems, startIdx, endIdx) {
+        const paginationContainer = document.getElementById('tablePagination');
+        if (!paginationContainer) return;
+        
+        if (totalItems === 0) {
+            paginationContainer.style.display = 'none';
+            return;
+        }
+        
+        paginationContainer.style.display = 'flex';
+        
+        // Update info text
+        const paginationInfo = document.getElementById('paginationInfo');
+        if (paginationInfo) {
+            paginationInfo.textContent = `Showing ${startIdx + 1}-${endIdx} of ${totalItems}`;
+        }
+        
+        // Update button states
+        const firstPageBtn = document.getElementById('firstPageBtn');
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        const lastPageBtn = document.getElementById('lastPageBtn');
+        
+        if (firstPageBtn) firstPageBtn.disabled = this.currentPage === 1;
+        if (prevPageBtn) prevPageBtn.disabled = this.currentPage === 1;
+        if (nextPageBtn) nextPageBtn.disabled = this.currentPage === this.totalPages;
+        if (lastPageBtn) lastPageBtn.disabled = this.currentPage === this.totalPages;
+        
+        // Render page numbers
+        this.renderPageNumbers();
+    }
+    
+    /**
+     * Render page number buttons
+     */
+    renderPageNumbers() {
+        const pageNumbersContainer = document.getElementById('pageNumbers');
+        if (!pageNumbersContainer) return;
+        
+        const maxButtons = 5;
+        let startPage = Math.max(1, this.currentPage - Math.floor(maxButtons / 2));
+        let endPage = Math.min(this.totalPages, startPage + maxButtons - 1);
+        
+        if (endPage - startPage < maxButtons - 1) {
+            startPage = Math.max(1, endPage - maxButtons + 1);
+        }
+        
+        let html = '';
+        for (let i = startPage; i <= endPage; i++) {
+            const activeClass = i === this.currentPage ? 'active' : '';
+            html += `<button class="page-number ${activeClass}" data-page="${i}">${i}</button>`;
+        }
+        
+        pageNumbersContainer.innerHTML = html;
+        
+        // Add click handlers
+        pageNumbersContainer.querySelectorAll('.page-number').forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.goToPage(parseInt(btn.dataset.page));
+            });
+        });
+    }
+    
+    /**
+     * Go to a specific page
+     */
+    goToPage(pageNumber) {
+        if (pageNumber < 1 || pageNumber > this.totalPages) return;
+        this.currentPage = pageNumber;
+        this.renderFilteredTable();
+    }
+
+    /**
+     * Export at-risk members to CSV
+     */
+    exportAtRiskToCSV() {
+        if (!this.atRiskMembers || this.atRiskMembers.length === 0) {
+            alert('No at-risk members to export');
+            return;
+        }
+        
+        console.log('[Email Dashboard] Exporting', this.atRiskMembers.length, 'at-risk members to CSV');
+        
+        // Build CSV content
+        const headers = ['First Name', 'Last Name', 'Email', 'Status', 'Expires', 'Days Until Expiration', 'Risk Level', 'Last Updated'];
+        const rows = this.atRiskMembers.map(member => [
+            member.firstName,
+            member.lastName,
+            member.email,
+            member.status,
+            this.formatDate(member.expires),
+            member.daysUntil < 0 ? `${Math.abs(member.daysUntil)} days ago` : `${member.daysUntil} days`,
+            member.riskLevel.toUpperCase(),
+            this.formatDate(member.lastUpdated)
+        ]);
+        
+        // Create CSV string
+        let csv = headers.join(',') + '\n';
+        rows.forEach(row => {
+            csv += row.map(field => {
+                // Escape fields with commas or quotes
+                const fieldStr = String(field);
+                if (fieldStr.includes(',') || fieldStr.includes('"') || fieldStr.includes('\n')) {
+                    return `"${fieldStr.replace(/"/g, '""')}"`;
+                }
+                return fieldStr;
+            }).join(',') + '\n';
+        });
+        
+        // Create download
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        const timestamp = new Date().toISOString().split('T')[0];
+        
+        link.setAttribute('href', url);
+        link.setAttribute('download', `waccamaw-at-risk-members-${timestamp}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        console.log('[Email Dashboard] CSV download initiated');
     }
 }
 
