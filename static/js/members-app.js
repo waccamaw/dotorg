@@ -23,6 +23,9 @@ class MemberPortalApp {
     async init() {
         console.log('Initializing Waccamaw Member Portal...');
         
+        // Inject email template modal
+        this.injectEmailTemplateModal();
+        
         // Apply logo toggle
         this.applyLogoToggle();
         
@@ -43,6 +46,71 @@ class MemberPortalApp {
 
         // Setup event listeners
         this.setupEventListeners();
+    }
+
+    /**
+     * Inject email template preview modal into the DOM
+     */
+    injectEmailTemplateModal() {
+        // Check if modal already exists
+        if (document.getElementById('emailTemplateModal')) {
+            return;
+        }
+
+        const modalHTML = `
+            <div id="emailTemplateModal" class="modal" style="display: none;">
+                <div class="modal-content" style="max-width: 800px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column;">
+                    <div class="modal-header" style="flex-shrink: 0;">
+                        <h3 id="emailTemplateTitle">Email Template Preview</h3>
+                        <button class="modal-close" id="closeEmailTemplateModal">×</button>
+                    </div>
+                    <div class="modal-body" style="flex: 1; overflow-y: auto; padding: 0;">
+                        <iframe id="emailTemplateFrame" style="width: 100%; min-height: 600px; border: none; background: white;"></iframe>
+                    </div>
+                    <div class="modal-footer" style="flex-shrink: 0;">
+                        <button id="closeEmailTemplateBtn" class="btn btn-secondary">Close</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Append to body
+        const wrapper = document.querySelector('.member-portal-wrapper');
+        if (wrapper) {
+            wrapper.insertAdjacentHTML('beforeend', modalHTML);
+            console.log('[Email Template] Modal injected into DOM');
+        } else {
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            console.log('[Email Template] Modal injected into body');
+        }
+
+        // Setup modal close handlers immediately after injection
+        this.setupModalCloseHandlers();
+    }
+
+    /**
+     * Setup modal close handlers
+     */
+    setupModalCloseHandlers() {
+        const modal = document.getElementById('emailTemplateModal');
+        const closeBtn1 = document.getElementById('closeEmailTemplateModal');
+        const closeBtn2 = document.getElementById('closeEmailTemplateBtn');
+
+        if (closeBtn1) {
+            closeBtn1.addEventListener('click', () => this.closeEmailTemplateModal());
+        }
+        if (closeBtn2) {
+            closeBtn2.addEventListener('click', () => this.closeEmailTemplateModal());
+        }
+
+        // Click outside modal to close
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.closeEmailTemplateModal();
+                }
+            });
+        }
     }
 
     /**
@@ -183,6 +251,21 @@ class MemberPortalApp {
                 this.currentPage = 1;
                 this.renderFilteredTable();
             });
+        }
+
+        // Email template preview buttons
+        const previewInactiveBtn = document.getElementById('previewInactiveBtn');
+        const previewCriticalBtn = document.getElementById('previewCriticalBtn');
+        const previewWarningBtn = document.getElementById('previewWarningBtn');
+
+        if (previewInactiveBtn) {
+            previewInactiveBtn.addEventListener('click', () => this.showEmailTemplate('inactive'));
+        }
+        if (previewCriticalBtn) {
+            previewCriticalBtn.addEventListener('click', () => this.showEmailTemplate('critical'));
+        }
+        if (previewWarningBtn) {
+            previewWarningBtn.addEventListener('click', () => this.showEmailTemplate('warning'));
         }
 
         // Photo file input
@@ -1303,7 +1386,87 @@ class MemberPortalApp {
         if (filterSelect) filterSelect.value = 'all';
         if (reachableSelect) reachableSelect.value = 'reachable';
         
+        // Add email template preview section if not already present
+        this.addTemplatePreviewSection();
+        
         this.renderFilteredTable();
+    }
+    
+    /**
+     * Add email template preview section to the dashboard
+     */
+    addTemplatePreviewSection() {
+        // Check if section already exists
+        if (document.getElementById('emailTemplatePreviewSection')) {
+            return;
+        }
+        
+        // Find the member list section
+        const memberListSection = document.querySelector('.member-list-section');
+        if (!memberListSection) {
+            console.error('[Email Dashboard] Cannot find member list section to inject preview buttons');
+            return;
+        }
+        
+        // Create preview section HTML
+        const previewSection = document.createElement('div');
+        previewSection.id = 'emailTemplatePreviewSection';
+        previewSection.style.marginTop = '2rem';
+        previewSection.style.padding = '1.5rem';
+        previewSection.style.background = '#f5f9ff';
+        previewSection.style.borderLeft = '4px solid #1976d2';
+        previewSection.style.borderRadius = '4px';
+        
+        previewSection.innerHTML = `
+            <h4 style="margin-bottom: 0.75rem; color: #1565c0; font-size: 1rem;">📧 Email Template Previews</h4>
+            <p style="color: #666; font-size: 0.9375rem; line-height: 1.6; margin-bottom: 1rem;">
+                Preview the automated reminder emails that will be sent to members:
+            </p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <button id="previewInactiveBtn" class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <span>📧</span>
+                    <span>Inactive Member Email</span>
+                </button>
+                <button id="previewCriticalBtn" class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <span>⚠️</span>
+                    <span>Critical (&lt;30 Days) Email</span>
+                </button>
+                <button id="previewWarningBtn" class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                    <span>📋</span>
+                    <span>Warning (30-90 Days) Email</span>
+                </button>
+            </div>
+        `;
+        
+        // Insert before the criteria section or at the end
+        const criteriaSection = memberListSection.querySelector('[style*="margin-top: 2rem"]');
+        if (criteriaSection) {
+            memberListSection.insertBefore(previewSection, criteriaSection);
+        } else {
+            memberListSection.appendChild(previewSection);
+        }
+        
+        // Re-attach event listeners for the new buttons
+        this.attachTemplatePreviewListeners();
+    }
+    
+    /**
+     * Attach event listeners to template preview buttons
+     */
+    attachTemplatePreviewListeners() {
+        const previewInactiveBtn = document.getElementById('previewInactiveBtn');
+        const previewCriticalBtn = document.getElementById('previewCriticalBtn');
+        const previewWarningBtn = document.getElementById('previewWarningBtn');
+        
+        if (previewInactiveBtn) {
+            previewInactiveBtn.addEventListener('click', () => this.showEmailTemplate('inactive'));
+        }
+        if (previewCriticalBtn) {
+            previewCriticalBtn.addEventListener('click', () => this.showEmailTemplate('critical'));
+        }
+        if (previewWarningBtn) {
+            previewWarningBtn.addEventListener('click', () => this.showEmailTemplate('warning'));
+        }
     }
     
     /**
@@ -1633,6 +1796,132 @@ class MemberPortalApp {
         document.body.removeChild(link);
         
         console.log('[Email Dashboard] CSV download initiated');
+    }
+
+    /**
+     * Show email template preview in modal
+     * @param {string} type - 'inactive', 'critical', or 'warning'
+     */
+    async showEmailTemplate(type) {
+        const modal = document.getElementById('emailTemplateModal');
+        const titleEl = document.getElementById('emailTemplateTitle');
+        const iframe = document.getElementById('emailTemplateFrame');
+        
+        if (!modal || !iframe) {
+            console.error('[Email Template] Modal elements not found');
+            return;
+        }
+
+        // Map template types to file names and titles
+        const templates = {
+            'inactive': {
+                file: 'reminder-inactive.html',
+                title: '📧 Inactive Member Reminder Email'
+            },
+            'critical': {
+                file: 'reminder-at-risk-critical.html',
+                title: '⚠️ Critical - Expiring Within 30 Days Email'
+            },
+            'warning': {
+                file: 'reminder-at-risk-warning.html',
+                title: '📋 Warning - Expiring 30-90 Days Email'
+            }
+        };
+
+        const template = templates[type];
+        if (!template) {
+            console.error('[Email Template] Unknown template type:', type);
+            return;
+        }
+
+        try {
+            // Update modal title
+            titleEl.textContent = template.title;
+
+            // Show modal
+            modal.style.display = 'flex';
+
+            // Load template into iframe
+            const templatePath = `/members/email-templates/${template.file}`;
+            console.log('[Email Template] Loading template:', templatePath);
+            
+            // Fetch the template content
+            const response = await fetch(templatePath);
+            if (!response.ok) {
+                throw new Error(`Failed to load template: ${response.statusText}`);
+            }
+            
+            const htmlContent = await response.text();
+            
+            // Populate sample data
+            const populatedHtml = this.populateTemplateVariables(htmlContent, type);
+            
+            // Write to iframe
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(populatedHtml);
+            iframeDoc.close();
+            
+            console.log('[Email Template] Template loaded successfully');
+        } catch (error) {
+            console.error('[Email Template] Error loading template:', error);
+            alert(`Error loading template: ${error.message}`);
+            this.closeEmailTemplateModal();
+        }
+    }
+
+    /**
+     * Populate template variables with sample data
+     * @param {string} html - Template HTML content
+     * @param {string} type - Template type
+     * @returns {string} - Populated HTML
+     */
+    populateTemplateVariables(html, type) {
+        // Sample member data for preview
+        const sampleData = {
+            first_name: 'John',
+            last_name: 'Doe',
+            full_name: 'John Doe',
+            email: 'john.doe@example.com',
+            expires: this.formatDate(new Date(Date.now() + 15 * 24 * 60 * 60 * 1000)), // 15 days from now
+            days_until_expiry: type === 'critical' ? '15' : type === 'warning' ? '45' : 'N/A',
+            status: type === 'inactive' ? 'Inactive' : 'Active',
+            last_payment_date: this.formatDate(new Date(Date.now() - 365 * 24 * 60 * 60 * 1000)), // 1 year ago
+            reminder_type: type,
+            tribal_roll_email: 'tribalroll@waccamaw.org',
+            chell_email: 'chell.hatcher@waccamaw.org',
+            membership_fees_url: 'https://waccamaw.org/membership-fees/',
+            member_portal_url: 'https://waccamaw.org/members/'
+        };
+
+        // Replace template variables
+        let populatedHtml = html;
+        Object.keys(sampleData).forEach(key => {
+            const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
+            populatedHtml = populatedHtml.replace(regex, sampleData[key]);
+        });
+
+        return populatedHtml;
+    }
+
+    /**
+     * Close email template modal
+     */
+    closeEmailTemplateModal() {
+        const modal = document.getElementById('emailTemplateModal');
+        const iframe = document.getElementById('emailTemplateFrame');
+        
+        if (modal) {
+            modal.style.display = 'none';
+        }
+        
+        // Clear iframe content
+        if (iframe) {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write('');
+            iframeDoc.close();
+        }
     }
 }
 
