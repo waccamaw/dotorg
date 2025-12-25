@@ -167,7 +167,8 @@
 
             <!-- Email Marketing Overview Chart -->
             <div style="background: white; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                <h3 style="margin-bottom: 1.5rem; text-align: center; color: #2a2a2a;">Membership Roll & Engagement Outreach</h3>
+                <h3 style="margin-bottom: 0.5rem; text-align: center; color: #2a2a2a;">Membership Roll & Engagement Outreach</h3>
+                <p style="text-align: center; font-size: 0.85rem; color: #6b6b6b; margin-bottom: 1.5rem; font-style: italic;">💵 Financial projections assume $50/year membership fee (for demonstration purposes)</p>
                 <div style="max-width: 500px; margin: 0 auto; position: relative; height: 400px;">
                     <canvas id="emailReachChart"></canvas>
                 </div>
@@ -175,6 +176,7 @@
                     <div style="font-size: 3rem; font-weight: 700; margin-bottom: 0.5rem;" id="emailPercentage">-</div>
                     <div style="font-size: 1rem; font-weight: 600;" id="summaryMessage">of tribal roll needs membership attention</div>
                     <div style="margin-top: 1rem; font-size: 0.875rem;" id="emailCount">-</div>
+                    <div style="margin-top: 0.75rem; font-size: 1.1rem; font-weight: 700;" id="potentialRevenue">-</div>
                     <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid rgba(255,255,255,0.3);">
                         <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;" id="emailReachPercentage">-</div>
                         <div style="font-size: 0.9rem; font-weight: 600;" id="emailReachMessage">of outreach list can be reached via email</div>
@@ -225,6 +227,7 @@
                             <option value="25" selected>25</option>
                             <option value="50">50</option>
                             <option value="100">100</option>
+                            <option value="all">View All</option>
                         </select>
                     </div>
                 </div>

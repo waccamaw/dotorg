@@ -219,6 +219,38 @@ class MemberPortalApp {
         if (submitPhotoUpload) {
             submitPhotoUpload.addEventListener('click', () => this.handlePhotoUpload());
         }
+
+        // Pagination controls
+        const firstPageBtn = document.getElementById('firstPageBtn');
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        const lastPageBtn = document.getElementById('lastPageBtn');
+        const pageSizeSelect = document.getElementById('pageSizeSelect');
+
+        if (firstPageBtn) {
+            firstPageBtn.addEventListener('click', () => this.goToPage(1));
+        }
+        if (prevPageBtn) {
+            prevPageBtn.addEventListener('click', () => this.goToPage(this.currentPage - 1));
+        }
+        if (nextPageBtn) {
+            nextPageBtn.addEventListener('click', () => this.goToPage(this.currentPage + 1));
+        }
+        if (lastPageBtn) {
+            lastPageBtn.addEventListener('click', () => this.goToPage(this.totalPages));
+        }
+        if (pageSizeSelect) {
+            pageSizeSelect.addEventListener('change', (e) => {
+                const value = e.target.value;
+                if (value === 'all') {
+                    this.pageSize = Infinity;
+                } else {
+                    this.pageSize = parseInt(value);
+                }
+                this.currentPage = 1;
+                this.renderFilteredTable();
+            });
+        }
     }
 
     /**
@@ -1151,6 +1183,7 @@ class MemberPortalApp {
         const countEl = document.getElementById('emailCount');
         const emailReachPercentageEl = document.getElementById('emailReachPercentage');
         const emailReachMessageEl = document.getElementById('emailReachMessage');
+        const potentialRevenueEl = document.getElementById('potentialRevenue');
         
         if (isHealthy) {
             // Green for healthy state
@@ -1160,6 +1193,7 @@ class MemberPortalApp {
             countEl.style.color = '#558b2f';
             emailReachPercentageEl.style.color = '#1b5e20';
             emailReachMessageEl.style.color = '#2e7d32';
+            potentialRevenueEl.style.color = '#1b5e20';
         } else {
             // Red for dire state
             summaryBox.style.background = 'linear-gradient(135deg, #ffebee 0%, #ef9a9a 100%)';
@@ -1168,24 +1202,38 @@ class MemberPortalApp {
             countEl.style.color = '#d32f2f';
             emailReachPercentageEl.style.color = '#b71c1c';
             emailReachMessageEl.style.color = '#c62828';
+            potentialRevenueEl.style.color = '#b71c1c';
         }
 
+        // Calculate potential revenue at $50/member
+        const membershipFee = 50;
+        const potentialRevenue = outreachList * membershipFee;
+        const formattedPotentialRevenue = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(potentialRevenue);
+        
         // Update summary stats
         percentageEl.textContent = `${percentage}%`;
         countEl.textContent = 
             `${outreachList} members (${metrics.inactive} inactive + ${atRisk} at-risk) out of ${totalMembers} total`;
+        
+        // Add revenue to summary
+        potentialRevenueEl.textContent = `${formattedPotentialRevenue} in potential membership revenue`;
+        
         emailReachPercentageEl.textContent = `${emailReachPercentage}%`;
         emailReachMessageEl.textContent = 
             `of outreach list can be reached via email (${outreachWithEmail} of ${outreachList} have email addresses)`;
 
-        // Create chart
+        // Create chart with financial info in labels
+        const inactiveRevenue = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(metrics.inactive * membershipFee);
+        const atRiskRevenue = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(atRisk * membershipFee);
+        const activeRevenue = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(metrics.active * membershipFee);
+        
         this.emailChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: [
-                    '📧 Outreach List (Inactive)',
-                    '⚠️ Outreach List (At-Risk)',
-                    '✅ Active (No Email Needed)',
+                    `📧 Outreach List (Inactive) - ${inactiveRevenue}`,
+                    `⚠️ Outreach List (At-Risk) - ${atRiskRevenue}`,
+                    `✅ Active (No Email Needed) - valued at ${activeRevenue}`,
                     '🔒 Retired & Deceased (Excluded)'
                 ],
                 datasets: [{
@@ -1333,6 +1381,26 @@ class MemberPortalApp {
             filteredLength: filtered.length
         });
         
+        // Handle "View All" case (pageSize = Infinity)
+        if (this.pageSize === Infinity) {
+            this.totalPages = 1;
+            this.currentPage = 1;
+            const startIdx = 0;
+            const endIdx = filtered.length;
+            const pageMembers = filtered;
+            
+            console.log('[Email Dashboard] Rendering (View All):', {
+                totalPages: this.totalPages,
+                startIdx,
+                endIdx,
+                pageMembersCount: pageMembers.length
+            });
+            
+            this.renderTable(pageMembers, listContainer);
+            this.updatePaginationControls(filtered.length, startIdx, endIdx);
+            return;
+        }
+        
         this.totalPages = Math.ceil(filtered.length / this.pageSize);
         if (this.currentPage > this.totalPages) this.currentPage = this.totalPages || 1;
         
@@ -1348,7 +1416,17 @@ class MemberPortalApp {
         });
         
         // Render table
-        if (filtered.length === 0) {
+        this.renderTable(pageMembers, listContainer);
+        
+        // Update pagination controls
+        this.updatePaginationControls(filtered.length, startIdx, endIdx);
+    }
+    
+    /**
+     * Render table with members
+     */
+    renderTable(pageMembers, listContainer) {
+        if (!pageMembers || pageMembers.length === 0) {
             listContainer.innerHTML = `
                 <div style="text-align: center; padding: 3rem; color: #666;">
                     <p style="font-size: 1.25rem; margin-bottom: 0.5rem;">🔍 No members found</p>
@@ -1418,9 +1496,6 @@ class MemberPortalApp {
                 this.renderFilteredTable();
             });
         });
-        
-        // Update pagination controls
-        this.updatePaginationControls(filtered.length, startIdx, endIdx);
     }
     
     /**
