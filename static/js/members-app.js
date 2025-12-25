@@ -1093,9 +1093,30 @@ class MemberPortalApp {
         const totalMembers = metrics.active + metrics.inactive + metrics.critical30 + metrics.warning60 + metrics.retiredDeceased;
         const percentage = totalMembers > 0 ? Math.round((marketingList / totalMembers) * 100) : 0;
 
+        // Determine severity styling (healthy is <= 10%, anything higher is dire)
+        const isHealthy = percentage <= 10;
+        const summaryBox = document.getElementById('chartSummary');
+        const percentageEl = document.getElementById('emailPercentage');
+        const messageEl = document.getElementById('summaryMessage');
+        const countEl = document.getElementById('emailCount');
+        
+        if (isHealthy) {
+            // Green for healthy state
+            summaryBox.style.background = 'linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%)';
+            percentageEl.style.color = '#1b5e20';
+            messageEl.style.color = '#2e7d32';
+            countEl.style.color = '#558b2f';
+        } else {
+            // Red for dire state
+            summaryBox.style.background = 'linear-gradient(135deg, #ffebee 0%, #ef9a9a 100%)';
+            percentageEl.style.color = '#b71c1c';
+            messageEl.style.color = '#c62828';
+            countEl.style.color = '#d32f2f';
+        }
+
         // Update summary stats
-        document.getElementById('emailPercentage').textContent = `${percentage}%`;
-        document.getElementById('emailCount').textContent = 
+        percentageEl.textContent = `${percentage}%`;
+        countEl.textContent = 
             `${marketingList} members (${metrics.inactive} inactive + ${atRisk} at-risk) out of ${totalMembers} total`;
 
         // Create chart
