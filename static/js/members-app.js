@@ -10,6 +10,7 @@ class MemberPortalApp {
         this.sortDirection = 'asc';
         this.searchQuery = '';
         this.riskFilter = 'all';
+        this.reachableFilter = 'reachable';
         this.filteredMembers = [];
         this.atRiskMembers = [];
         
@@ -152,6 +153,36 @@ class MemberPortalApp {
         const exportAtRiskBtn = document.getElementById('exportAtRiskBtn');
         if (exportAtRiskBtn) {
             exportAtRiskBtn.addEventListener('click', () => this.exportAtRiskToCSV());
+        }
+
+        // Search input
+        const memberSearch = document.getElementById('memberSearch');
+        if (memberSearch) {
+            memberSearch.addEventListener('input', (e) => {
+                this.searchQuery = e.target.value.toLowerCase();
+                this.currentPage = 1;
+                this.renderFilteredTable();
+            });
+        }
+
+        // Risk filter
+        const riskFilter = document.getElementById('riskFilter');
+        if (riskFilter) {
+            riskFilter.addEventListener('change', (e) => {
+                this.riskFilter = e.target.value;
+                this.currentPage = 1;
+                this.renderFilteredTable();
+            });
+        }
+
+        // Reachable filter
+        const reachableFilter = document.getElementById('reachableFilter');
+        if (reachableFilter) {
+            reachableFilter.addEventListener('change', (e) => {
+                this.reachableFilter = e.target.value;
+                this.currentPage = 1;
+                this.renderFilteredTable();
+            });
         }
 
         // Photo file input
@@ -975,16 +1006,10 @@ class MemberPortalApp {
             // Create pie chart showing marketing reach across entire roll
             this.createEmailReachChart(metrics);
             
-            // Store at-risk members for export
+            // Store at-risk members for display
             this.atRiskMembers = metrics.atRiskMembers;
             
-            // Show export button if there are at-risk members
-            const exportBtn = document.getElementById('exportAtRiskBtn');
-            if (exportBtn && this.atRiskMembers.length > 0) {
-                exportBtn.style.display = 'inline-block';
-            }
-            
-            // Display at-risk members table
+            // Display marketing list table
             this.displayAtRiskMembers(metrics.atRiskMembers);
             
         } catch (error) {
@@ -1021,8 +1046,9 @@ class MemberPortalApp {
             const status = fields.Status || 'Active';
             const statusLower = status.toLowerCase();
             
-            // Count retired and deceased (excluded from email marketing)
-            if (statusLower === 'deceased' || statusLower === 'retired') {
+            // Count retired, deceased, resigned, and revoked (excluded from email marketing)
+            if (statusLower === 'deceased' || statusLower === 'retired' || 
+                statusLower === 'resigned' || statusLower === 'revoked') {
                 metrics.retiredDeceased++;
                 return; // Skip adding to at-risk list
             }
@@ -1034,25 +1060,26 @@ class MemberPortalApp {
                 metrics.inactive++;
             }
             
-            // Calculate days until expiration
-            if (fields.Expires) {
+            // Calculate days until expiration for ACTIVE members only
+            // Only include active members whose membership expires SOON (within 90 days)
+            // Active members with already-expired memberships are data quality issues, not marketing targets
+            if (fields.Expires && statusLower === 'active') {
                 const expiryDate = new Date(fields.Expires);
                 const daysUntil = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
                 
                 let riskLevel = null;
                 
-                if (daysUntil < 0) {
-                    riskLevel = 'expired';
-                    metrics.critical30++;
-                } else if (daysUntil <= 30) {
+                // Only add to marketing list if expiring SOON (0-90 days in the future)
+                // Skip active members whose memberships already expired (data quality issue)
+                if (daysUntil >= 0 && daysUntil <= 30) {
                     riskLevel = 'critical';
                     metrics.critical30++;
-                } else if (daysUntil <= 90) {
+                } else if (daysUntil > 30 && daysUntil <= 90) {
                     riskLevel = 'warning';
                     metrics.warning60++;
                 }
                 
-                // Add to at-risk list if applicable
+                // Add to at-risk list if expiring within 90 days
                 if (riskLevel) {
                     metrics.atRiskMembers.push({
                         id: member.id,
@@ -1066,6 +1093,22 @@ class MemberPortalApp {
                         lastUpdated: fields.Status_x0020_Updated || fields.Modified || '-'
                     });
                 }
+            }
+            
+            // Add inactive members to the at-risk list for marketing purposes
+            // (Resigned and Revoked are excluded above)
+            if (statusLower === 'inactive') {
+                metrics.atRiskMembers.push({
+                    id: member.id,
+                    email: fields.Email_x0020_Addr || '-',
+                    firstName: fields.First_x0020_Name || '',
+                    lastName: fields.Last_x0020_Name || '',
+                    status: status,
+                    expires: fields.Expires,
+                    daysUntil: fields.Expires ? Math.ceil((new Date(fields.Expires) - now) / (1000 * 60 * 60 * 24)) : -9999,
+                    riskLevel: 'expired',
+                    lastUpdated: fields.Status_x0020_Updated || fields.Modified || '-'
+                });
             }
         });
         
@@ -1093,12 +1136,21 @@ class MemberPortalApp {
         const totalMembers = metrics.active + metrics.inactive + metrics.critical30 + metrics.warning60 + metrics.retiredDeceased;
         const percentage = totalMembers > 0 ? Math.round((marketingList / totalMembers) * 100) : 0;
 
+        // Calculate how many in marketing list have email addresses
+        const marketingWithEmail = metrics.atRiskMembers.filter(m => {
+            const email = m.email || '';
+            return email && email.trim() !== '' && email !== '-';
+        }).length;
+        const emailReachPercentage = marketingList > 0 ? Math.round((marketingWithEmail / marketingList) * 100) : 0;
+
         // Determine severity styling (healthy is <= 10%, anything higher is dire)
         const isHealthy = percentage <= 10;
         const summaryBox = document.getElementById('chartSummary');
         const percentageEl = document.getElementById('emailPercentage');
         const messageEl = document.getElementById('summaryMessage');
         const countEl = document.getElementById('emailCount');
+        const emailReachPercentageEl = document.getElementById('emailReachPercentage');
+        const emailReachMessageEl = document.getElementById('emailReachMessage');
         
         if (isHealthy) {
             // Green for healthy state
@@ -1106,18 +1158,25 @@ class MemberPortalApp {
             percentageEl.style.color = '#1b5e20';
             messageEl.style.color = '#2e7d32';
             countEl.style.color = '#558b2f';
+            emailReachPercentageEl.style.color = '#1b5e20';
+            emailReachMessageEl.style.color = '#2e7d32';
         } else {
             // Red for dire state
             summaryBox.style.background = 'linear-gradient(135deg, #ffebee 0%, #ef9a9a 100%)';
             percentageEl.style.color = '#b71c1c';
             messageEl.style.color = '#c62828';
             countEl.style.color = '#d32f2f';
+            emailReachPercentageEl.style.color = '#b71c1c';
+            emailReachMessageEl.style.color = '#c62828';
         }
 
         // Update summary stats
         percentageEl.textContent = `${percentage}%`;
         countEl.textContent = 
             `${marketingList} members (${metrics.inactive} inactive + ${atRisk} at-risk) out of ${totalMembers} total`;
+        emailReachPercentageEl.textContent = `${emailReachPercentage}%`;
+        emailReachMessageEl.textContent = 
+            `of marketing list can be reached via email (${marketingWithEmail} of ${marketingList} have email addresses)`;
 
         // Create chart
         this.emailChart = new Chart(ctx, {
@@ -1185,13 +1244,16 @@ class MemberPortalApp {
         // Reset filters when loading new data
         this.searchQuery = '';
         this.riskFilter = 'all';
+        this.reachableFilter = 'reachable';
         this.currentPage = 1;
         
         // Reset UI controls
         const searchInput = document.getElementById('memberSearch');
         const filterSelect = document.getElementById('riskFilter');
+        const reachableSelect = document.getElementById('reachableFilter');
         if (searchInput) searchInput.value = '';
         if (filterSelect) filterSelect.value = 'all';
+        if (reachableSelect) reachableSelect.value = 'reachable';
         
         this.renderFilteredTable();
     }
@@ -1207,18 +1269,20 @@ class MemberPortalApp {
         }
         
         console.log('[Email Dashboard] Rendering table with', this.atRiskMembers.length, 'at-risk members');
-        console.log('[Email Dashboard] Search:', this.searchQuery, 'Filter:', this.riskFilter);
+        console.log('[Email Dashboard] Search:', this.searchQuery, 'Filter:', this.riskFilter, 'Reachable:', this.reachableFilter);
         
-        // Apply search filter
+        // Apply search filter (name only, no email)
         let filtered = this.atRiskMembers.filter(member => {
             const searchMatch = !this.searchQuery || 
                 member.firstName.toLowerCase().includes(this.searchQuery) ||
-                member.lastName.toLowerCase().includes(this.searchQuery) ||
-                member.email.toLowerCase().includes(this.searchQuery);
+                member.lastName.toLowerCase().includes(this.searchQuery);
             
             const riskMatch = this.riskFilter === 'all' || member.riskLevel === this.riskFilter;
             
-            return searchMatch && riskMatch;
+            const reachableMatch = this.reachableFilter === 'all' || 
+                (this.reachableFilter === 'reachable' && member.email && member.email.trim() !== '' && member.email !== '-');
+            
+            return searchMatch && riskMatch && reachableMatch;
         });
         
         // Apply sorting
@@ -1300,7 +1364,7 @@ class MemberPortalApp {
                 <thead>
                     <tr>
                         ${this.renderSortableHeader('name', 'Name')}
-                        ${this.renderSortableHeader('email', 'Email')}
+                        <th style="text-align: center; width: 80px;">📧</th>
                         ${this.renderSortableHeader('status', 'Status')}
                         ${this.renderSortableHeader('expires', 'Expires')}
                         ${this.renderSortableHeader('daysUntil', 'Days')}
@@ -1314,11 +1378,13 @@ class MemberPortalApp {
             const riskLabel = member.riskLevel === 'expired' ? 'EXPIRED' :
                              member.riskLevel === 'critical' ? 'CRITICAL' : 'WARNING';
             const daysText = member.daysUntil < 0 ? `${Math.abs(member.daysUntil)} ago` : `${member.daysUntil} days`;
+            const hasEmail = member.email && member.email.trim() !== '' && member.email !== '-';
+            const emailIndicator = hasEmail ? '✓' : '';
             
             html += `
                 <tr>
                     <td>${member.firstName} ${member.lastName}</td>
-                    <td><a href="mailto:${member.email}">${member.email}</a></td>
+                    <td style="text-align: center; color: #66bb6a; font-weight: bold; font-size: 1.2rem;">${emailIndicator}</td>
                     <td>${member.status}</td>
                     <td>${this.formatDate(member.expires)}</td>
                     <td>${daysText}</td>

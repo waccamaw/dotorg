@@ -175,22 +175,30 @@
                     <div style="font-size: 3rem; font-weight: 700; margin-bottom: 0.5rem;" id="emailPercentage">-</div>
                     <div style="font-size: 1rem; font-weight: 600;" id="summaryMessage">of tribal roll needs membership attention</div>
                     <div style="margin-top: 1rem; font-size: 0.875rem;" id="emailCount">-</div>
+                    <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid rgba(255,255,255,0.3);">
+                        <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;" id="emailReachPercentage">-</div>
+                        <div style="font-size: 0.9rem; font-weight: 600;" id="emailReachMessage">of marketing list can be reached via email</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- At-Risk Members Table with Search & Pagination -->
+            <!-- Marketing List Table with Search & Pagination -->
             <div class="member-list-section">
                 <div class="section-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; gap: 1rem; flex-wrap: wrap;">
-                    <h3>At-Risk Members</h3>
+                    <h3>Marketing List (Inactive + At-Risk Members)</h3>
                     <div class="dashboard-controls">
-                        <input type="text" id="memberSearch" class="search-input" placeholder="🔍 Search by name or email...">
+                        <input type="text" id="memberSearch" class="search-input" placeholder="🔍 Search by name...">
+                        <select id="reachableFilter" class="filter-select">
+                            <option value="all">All Members</option>
+                            <option value="reachable" selected>📧 Reachable Only (Have Email)</option>
+                        </select>
                         <select id="riskFilter" class="filter-select">
                             <option value="all">All Risk Levels</option>
                             <option value="expired">Expired Only</option>
                             <option value="critical">Critical (<30 days)</option>
                             <option value="warning">Warning (30-90 days)</option>
                         </select>
-                        <button id="exportAtRiskBtn" class="btn btn-primary" style="display: none;">📥 Export CSV</button>
+
                     </div>
                 </div>
                 <div id="atRiskMemberList" class="dashboard-table-container">
@@ -228,11 +236,11 @@
                         The at-risk members list above includes members who meet the following criteria:
                     </p>
                     <ul style="color: #666; font-size: 0.9375rem; line-height: 1.8; margin-left: 1.5rem; margin-top: 0.5rem;">
-                        <li>Status is <strong>Inactive</strong>, or</li>
-                        <li>Membership expires within <strong>90 days</strong> (Critical: <30 days, Warning: 30-90 days)</li>
+                        <li>Status is <strong>Inactive</strong> (lapsed memberships that can be renewed), or</li>
+                        <li>Membership expires within <strong>90 days</strong> (Critical: &lt;30 days, Warning: 30-90 days)</li>
                     </ul>
                     <p style="color: #666; font-size: 0.9375rem; line-height: 1.6; margin-top: 0.75rem;">
-                        <strong>Excluded from email marketing:</strong> Members marked as <em>Deceased</em> or <em>Retired</em> are not included in this list.
+                        <strong>Excluded from email marketing:</strong> Members marked as <em>Deceased</em>, <em>Retired</em>, <em>Resigned</em>, or <em>Revoked</em> are not included in this list.
                     </p>
                 </div>
             </div>
