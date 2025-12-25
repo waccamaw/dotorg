@@ -977,6 +977,8 @@ class MemberPortalApp {
             document.getElementById('inactiveCount').textContent = metrics.inactive;
             document.getElementById('critical30Count').textContent = metrics.critical30;
             document.getElementById('warning60Count').textContent = metrics.warning60;
+            document.getElementById('retiredDeceasedCount').textContent = metrics.retiredDeceased;
+            document.getElementById('atRiskEmailCount').textContent = metrics.atRiskMembers.length;
             
             // Store at-risk members for export
             this.atRiskMembers = metrics.atRiskMembers;
@@ -1015,17 +1017,25 @@ class MemberPortalApp {
             inactive: 0,
             critical30: 0,
             warning60: 0,
+            retiredDeceased: 0,
             atRiskMembers: []
         };
         
         members.forEach(member => {
             const fields = member.fields || {};
             const status = fields.Status || 'Active';
+            const statusLower = status.toLowerCase();
+            
+            // Count retired and deceased (excluded from email marketing)
+            if (statusLower === 'deceased' || statusLower === 'retired') {
+                metrics.retiredDeceased++;
+                return; // Skip adding to at-risk list
+            }
             
             // Count active/inactive
-            if (status.toLowerCase() === 'active') {
+            if (statusLower === 'active') {
                 metrics.active++;
-            } else if (status.toLowerCase() === 'inactive') {
+            } else if (statusLower === 'inactive') {
                 metrics.inactive++;
             }
             
