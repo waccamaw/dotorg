@@ -5,9 +5,9 @@
 
 	<header class="page-header">
 	<div style="text-align: center; margin-bottom: 3rem;">
-		<img src="/logos/classic/logo.png" alt="Waccamaw Indian People Classic Logo" style="width: 300px;" title="Classic Logo - See proposed replacement designs below">
+		<img src="/logos/classic/logo.svg" alt="Waccamaw Indian People Classic Logo" style="width: 450px; max-width: 90vw;" title="Classic Logo (SVG) - Scalable vector format">
 		<div style="margin-top: 1rem; color: var(--text-light); font-size: 0.95rem; font-style: italic;">
-			Classic Logo — <a href="#logo-proposal" style="color: var(--primary-color);">See proposed replacement designs below ↓</a>
+			Classic Logo (SVG Preferred) — <a href="#logo-variants" style="color: var(--primary-color);">See interactive color variants below ↓</a>
 		</div>
 	</div>
         <p class="page-description">{{ .Content }}</p>
@@ -185,95 +185,194 @@
 		<h3 id="current-logo">Current Logo<a href="#current-logo" class="heading-link">#</a></h3>
 		<div class="logo-showcase" style="margin-bottom: 3rem;">
 			<div class="logo-item">
-				<img src="/logos/classic/logo.png" alt="Waccamaw Indian People Logo" width="400" style="max-width: 100%;">
+				<img src="/logos/classic/logo.svg" alt="Waccamaw Indian People Logo" width="400" style="max-width: 100%;">
 				<div class="logo-size">400px (Large Display)</div>
 			</div>
 			<div class="logo-item">
-				<img src="/logos/classic/logo.png" alt="Waccamaw Indian People Logo" width="200">
+				<img src="/logos/classic/logo.svg" alt="Waccamaw Indian People Logo" width="200">
 				<div class="logo-size">200px (Medium)</div>
 			</div>
 			<div class="logo-item">
-				<img src="/logos/classic/logo.png" alt="Waccamaw Indian People Logo" width="100">
+				<img src="/logos/classic/logo.svg" alt="Waccamaw Indian People Logo" width="100">
 				<div class="logo-size">100px (Small)</div>
 			</div>
 			<div class="logo-item">
-				<img src="/logos/classic/logo.png" alt="Waccamaw Indian People Logo" width="50">
+				<img src="/logos/classic/logo.svg" alt="Waccamaw Indian People Logo" width="50">
 				<div class="logo-size">50px (Icon)</div>
 			</div>
 		</div>
 
+		<h3 id="logo-variants">Interactive Logo Color Variants<a href="#logo-variants" class="heading-link">#</a></h3>
+		<div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 2rem;">
+			<p style="margin: 0 0 1.5rem 0; color: var(--text-light);">The SVG logo can be dynamically colored to work on different backgrounds. Click any color below to see the logo adapt:</p>
+			
+			<!-- Logo Display Area -->
+			<div id="logo-display-area" style="background: #ffffff; padding: 3rem; border-radius: 8px; margin-bottom: 2rem; transition: background-color 0.3s ease; border: 2px solid var(--border-color); text-align: center; overflow: hidden;">
+				<svg id="dynamic-logo" width="400" height="400" viewBox="0 0 2160 2160" style="max-width: 100%; height: auto; transition: filter 0.3s ease, transform 0.2s ease;">
+					<use href="/logos/classic/logo.svg#Layer_1"></use>
+				</svg>
+			</div>
+			
+			<!-- Color Selection Interface -->
+			<div style="margin-bottom: 1.5rem;">
+				<h5 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; font-weight: 600; color: var(--text-color);">1. Choose Logo Color (Foreground)</h5>
+				<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.75rem;">
+					<button onclick="changeLogoColor('#092D70')" style="padding: 0.75rem; background: #092D70; color: white; border: 2px solid #092D70; border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-weight: 600; font-size: 0.85rem;">
+						Original Blue
+					</button>
+					
+					<button onclick="changeLogoColor('#ffffff')" style="padding: 0.75rem; background: #ffffff; color: var(--text-color); border: 2px solid var(--border-color); border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-weight: 600; font-size: 0.85rem;">
+						White
+					</button>
+					
+					<button onclick="changeLogoColor('#2a2a2a')" style="padding: 0.75rem; background: #2a2a2a; color: white; border: 2px solid #1a1a1a; border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-weight: 600; font-size: 0.85rem;">
+						Dark Grey
+					</button>
+					
+					<button onclick="changeLogoColor('#ffd700')" style="padding: 0.75rem; background: #ffd700; color: #2a2a2a; border: 2px solid #e6c200; border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-weight: 600; font-size: 0.85rem;">
+						Gold
+					</button>
+					
+					<button onclick="changeLogoColor('#f4e4c1')" style="padding: 0.75rem; background: #f4e4c1; color: #2a2a2a; border: 2px solid #e6d4a3; border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-weight: 600; font-size: 0.85rem;">
+						Cream
+					</button>
+					
+					<button onclick="changeLogoColor('#8b1e1e')" style="padding: 0.75rem; background: #8b1e1e; color: white; border: 2px solid #5a1414; border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-weight: 600; font-size: 0.85rem;">
+						Tribal Red
+					</button>
+				</div>
+			</div>
+			
+			<div>
+				<h5 style="margin: 0 0 0.75rem 0; font-size: 0.95rem; font-weight: 600; color: var(--text-color);">2. Choose Background Color</h5>
+				<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.75rem;">
+					<button onclick="changeBackgroundColor('#ffffff')" style="padding: 0.75rem; background: #ffffff; color: var(--text-color); border: 2px solid var(--border-color); border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-weight: 600; font-size: 0.85rem;">
+						White
+					</button>
+					
+					<button onclick="changeBackgroundColor('#faf8f3')" style="padding: 0.75rem; background: #faf8f3; color: var(--text-color); border: 2px solid var(--border-color); border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-weight: 600; font-size: 0.85rem;">
+						Cream
+					</button>
+					
+					<button onclick="changeBackgroundColor('#f0f0f0')" style="padding: 0.75rem; background: #f0f0f0; color: var(--text-color); border: 2px solid var(--border-color); border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-weight: 600; font-size: 0.85rem;">
+						Light Grey
+					</button>
+					
+					<button onclick="changeBackgroundColor('#0033cc')" style="padding: 0.75rem; background: #0033cc; color: white; border: 2px solid #0028a3; border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-weight: 600; font-size: 0.85rem;">
+						Primary Blue
+					</button>
+					
+					<button onclick="changeBackgroundColor('#2a2a2a')" style="padding: 0.75rem; background: #2a2a2a; color: white; border: 2px solid #1a1a1a; border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-weight: 600; font-size: 0.85rem;">
+						Dark Grey
+					</button>
+					
+					<button onclick="changeBackgroundColor('#8b1e1e')" style="padding: 0.75rem; background: #8b1e1e; color: white; border: 2px solid #5a1414; border-radius: 6px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; font-weight: 600; font-size: 0.85rem;">
+						Tribal Red
+					</button>
+				</div>
+			</div>
+			
+		<!-- Zoom Control -->
+		<div style="margin-top: 1.5rem; padding: 1.5rem; background: var(--bg-secondary); border-radius: 8px;">
+			<div style="display: flex; align-items: center; gap: 1rem;">
+				<label for="logo-zoom" style="font-weight: 600; font-size: 0.95rem; color: var(--text-color); white-space: nowrap;">
+					Zoom:
+				</label>
+				<input 
+					type="range" 
+					id="logo-zoom" 
+					min="50" 
+					max="200" 
+					value="100" 
+					step="10"
+					oninput="zoomLogo(this.value)"
+					style="flex: 1; height: 6px; border-radius: 3px; outline: none; cursor: pointer;"
+				>
+				<span id="zoom-value" style="font-weight: 600; font-size: 0.95rem; color: var(--primary-color); min-width: 50px; text-align: right;">
+					100%
+				</span>
+			</div>
+			<div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-light);">
+				<span>50%</span>
+				<span>100%</span>
+				<span>200%</span>
+			</div>
+		</div>
+		
+		</div>
+
 		<h3 id="dark-background-test">Design Constraints & Use Cases<a href="#dark-background-test" class="heading-link">#</a></h3>
 		<div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; margin-bottom: 2rem;">
-			<p style="margin: 0 0 1.5rem 0; color: var(--text-light);"><strong>Important for Designers:</strong> The current logo has white elements that create visibility issues on certain backgrounds. Additionally, the PNG format includes transparent pixels that may appear inconsistent. Below are real-world use cases showing these limitations.</p>
+			<p style="margin: 0 0 1.5rem 0; color: var(--text-light);"><strong>SVG Advantage:</strong> The SVG format allows dynamic color adjustment for different backgrounds. Below are real-world use cases showing how the logo can adapt to various contexts.</p>
 			
 			<h4 style="margin: 1.5rem 0 1rem 0; font-size: 1.1rem; color: var(--text-color);">Background Color Tests</h4>
 			<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 2.5rem;">
 				<!-- Light Background -->
 				<div style="text-align: center;">
 					<div style="background: #ffffff; padding: 2rem; border-radius: 8px; border: 1px solid var(--border-color);">
-						<img src="/logos/classic/logo.png" alt="Logo on white background" width="120">
+						<img src="/logos/classic/logo.svg" alt="Logo on white background" width="240" style="filter: none;">
 					</div>
-					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✓ White background</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✓ White background (original)</div>
 				</div>
 				
-				<!-- Light Grey Background - Shows white pixels -->
+				<!-- Light Grey Background -->
 				<div style="text-align: center;">
 					<div style="background: #f0f0f0; padding: 2rem; border-radius: 8px; border: 1px solid var(--border-color);">
-						<img src="/logos/classic/logo.png" alt="Logo on light grey background" width="120">
+						<img src="/logos/classic/logo.svg" alt="Logo on light grey background" width="240" style="filter: none;">
 					</div>
-					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">⚠️ Light grey (shows white pixels)</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✓ Light grey (SVG clean)</div>
 				</div>
 				
 				<!-- Dark Background -->
 				<div style="text-align: center;">
 					<div style="background: #2a2a2a; padding: 2rem; border-radius: 8px; border: 1px solid #1a1a1a;">
-						<img src="/logos/classic/logo.png" alt="Logo on dark background" width="120">
+						<img src="/logos/classic/logo.svg" alt="Logo on dark background" width="240" style="filter: brightness(0) invert(1);">
 					</div>
-					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✗ Dark background</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✓ Dark background (inverted)</div>
 				</div>
 				
 				<!-- Primary Color Background -->
 				<div style="text-align: center;">
 					<div style="background: var(--primary-color); padding: 2rem; border-radius: 8px;">
-						<img src="/logos/classic/logo.png" alt="Logo on blue background" width="120">
+						<img src="/logos/classic/logo.svg" alt="Logo on blue background" width="240" style="filter: brightness(0) invert(1);">
 					</div>
-					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✗ Blue background</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✓ Blue background (white)</div>
 				</div>
 			</div>
 
 			<h4 style="margin: 1.5rem 0 1rem 0; font-size: 1.1rem; color: var(--text-color);">T-Shirt Application Examples</h4>
-			<p style="margin: 0 0 1rem 0; font-size: 0.9rem; color: var(--text-light);">The logo must work on various fabric colors for merchandise:</p>
+			<p style="margin: 0 0 1rem 0; font-size: 0.9rem; color: var(--text-light);">The SVG logo adapts to work on various fabric colors for merchandise:</p>
 			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
 				<!-- White T-Shirt -->
 				<div style="text-align: center;">
 					<div style="background: linear-gradient(135deg, #f8f8f8 0%, #e8e8e8 100%); padding: 2rem; border-radius: 8px; border: 1px solid var(--border-color);">
-						<img src="/logos/classic/logo.png" alt="Logo on white shirt" width="100">
+						<img src="/logos/classic/logo.svg" alt="Logo on white shirt" width="150" style="filter: none;">
 					</div>
-					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✓ White shirt</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✓ White shirt (original)</div>
 				</div>
 				
 				<!-- Navy T-Shirt -->
 				<div style="text-align: center;">
 					<div style="background: linear-gradient(135deg, #1a2332 0%, #0d1219 100%); padding: 2rem; border-radius: 8px; border: 1px solid #0a0e14;">
-						<img src="/logos/classic/logo.png" alt="Logo on navy shirt" width="100">
+						<img src="/logos/classic/logo.svg" alt="Logo on navy shirt" width="150" style="filter: brightness(0) invert(1);">
 					</div>
-					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✗ Navy shirt</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✓ Navy shirt (white)</div>
 				</div>
 				
 				<!-- Red T-Shirt -->
 				<div style="text-align: center;">
 					<div style="background: linear-gradient(135deg, #8b1e1e 0%, #5a1414 100%); padding: 2rem; border-radius: 8px; border: 1px solid #3d0e0e;">
-						<img src="/logos/classic/logo.png" alt="Logo on red shirt" width="100">
+						<img src="/logos/classic/logo.svg" alt="Logo on red shirt" width="150" style="filter: brightness(0) saturate(100%) invert(87%) sepia(16%) saturate(1207%) hue-rotate(358deg) brightness(104%) contrast(101%);">
 					</div>
-					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✗ Red shirt</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✓ Red shirt (gold/cream)</div>
 				</div>
 				
 				<!-- Heather Grey T-Shirt -->
 				<div style="text-align: center;">
 					<div style="background: linear-gradient(135deg, #b8b8b8 0%, #9a9a9a 100%); padding: 2rem; border-radius: 8px; border: 1px solid #888;">
-						<img src="/logos/classic/logo.png" alt="Logo on grey shirt" width="100">
+						<img src="/logos/classic/logo.svg" alt="Logo on grey shirt" width="150" style="filter: brightness(0.2) saturate(200%);">
 					</div>
-					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">⚠️ Heather grey</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">✓ Heather grey (darkened)</div>
 				</div>
 			</div>
 
@@ -282,7 +381,7 @@
 			<div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
 				<div style="text-align: center;">
 					<div style="width: 200px; height: 200px; border-radius: 50%; overflow: hidden; border: 3px solid var(--border-color); background: white;">
-						<img src="/logos/classic/logo.png" alt="Logo in circular frame" style="width: 100%; height: 100%; object-fit: cover;">
+						<img src="/logos/classic/logo.svg" alt="Logo in circular frame" style="width: 100%; height: 100%; object-fit: cover;">
 					</div>
 					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">Circular crop (200×200px)</div>
 					<div style="margin-top: 0.25rem; font-size: 0.8rem; color: #cc3333; font-weight: 600;">⚠️ Dreamcatcher elements cut off</div>
@@ -291,6 +390,40 @@
 				<div style="flex: 1; min-width: 250px; padding: 1.5rem; background: var(--bg-secondary); border-radius: 8px; border-left: 4px solid #cc3333;">
 					<p style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: var(--text-color);">Design Challenge</p>
 					<p style="margin: 0; font-size: 0.9rem; color: var(--text-light);">The dreamcatcher feathers extend beyond the circular boundary, causing them to be cropped on Facebook, Twitter/X, LinkedIn, and other platforms. A new logo should be designed to work within a circular constraint or include a circular variant.</p>
+				</div>
+			</div>
+			
+			<h5 style="margin: 2rem 0 1rem 0; font-size: 1rem; font-weight: 600; color: var(--text-color);">Current Avatar Solution</h5>
+			<p style="margin: 0 0 1.5rem 0; font-size: 0.9rem; color: var(--text-light);">We currently use a dedicated avatar version designed specifically for circular social media profiles:</p>
+			<div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+				<div style="text-align: center;">
+					<div style="width: 200px; height: 200px; border-radius: 50%; overflow: hidden; border: 3px solid var(--border-color); background: white;">
+						<img src="/logos/classic/avatar.png" alt="Waccamaw avatar for social media" style="width: 100%; height: 100%; object-fit: cover;">
+					</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">Avatar version (200×200px)</div>
+					<div style="margin-top: 0.25rem; font-size: 0.8rem; color: #28a745; font-weight: 600;">✓ Optimized for circular crop</div>
+				</div>
+				
+				<div style="flex: 1; min-width: 250px; padding: 1.5rem; background: #e8f5e9; border-radius: 8px; border-left: 4px solid #28a745;">
+					<p style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: var(--text-color);">Current Solution</p>
+					<p style="margin: 0; font-size: 0.9rem; color: var(--text-light);">This avatar version is specifically designed to work within circular constraints used by most social media platforms, ensuring the dreamcatcher and text remain visible when cropped to a circle.</p>
+				</div>
+			</div>
+			
+			<h5 style="margin: 2rem 0 1rem 0; font-size: 1rem; font-weight: 600; color: var(--text-color);">Square Variant</h5>
+			<p style="margin: 0 0 1.5rem 0; font-size: 0.9rem; color: var(--text-light);">The same avatar image also works well for square profile images and general use:</p>
+			<div style="display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;">
+				<div style="text-align: center;">
+					<div style="width: 200px; height: 200px; overflow: hidden; border: 3px solid var(--border-color); background: white; border-radius: 8px;">
+						<img src="/logos/classic/avatar.png" alt="Waccamaw avatar square variant" style="width: 100%; height: 100%; object-fit: cover;">
+					</div>
+					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light);">Square variant (200×200px)</div>
+					<div style="margin-top: 0.25rem; font-size: 0.8rem; color: #28a745; font-weight: 600;">✓ Full image visible</div>
+				</div>
+				
+				<div style="flex: 1; min-width: 250px; padding: 1.5rem; background: #e8f5e9; border-radius: 8px; border-left: 4px solid #28a745;">
+					<p style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: var(--text-color);">Versatile Format</p>
+					<p style="margin: 0; font-size: 0.9rem; color: var(--text-light);">The square format works for platforms like YouTube, Discord, GitHub, and any context where a square logo is needed. All elements remain visible without cropping.</p>
 				</div>
 			</div>
 		</div>
@@ -326,7 +459,7 @@
 			
 			<div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start; margin-bottom: 2rem;">
 				<div style="text-align: center;">
-					<img src="/logos/classic/logo.png" alt="Current logo showing circular text" width="200">
+					<img src="/logos/classic/logo.svg" alt="Current logo showing circular text" width="200">
 					<div style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-light); font-style: italic;">Current circular text reads:<br>"The People of The Waccamaw"</div>
 				</div>
 				
@@ -732,6 +865,107 @@
 		</div>
 	</section>
 </div>
+
+<script>
+	// Load SVG inline for color manipulation
+	async function loadInlineSVG() {
+		try {
+			const response = await fetch('/logos/classic/logo.svg');
+			const svgText = await response.text();
+			const parser = new DOMParser();
+			const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+			const svgElement = svgDoc.querySelector('svg');
+			
+			if (svgElement) {
+				svgElement.setAttribute('id', 'dynamic-logo');
+				svgElement.setAttribute('width', '400');
+				svgElement.setAttribute('height', '400');
+				svgElement.style.maxWidth = '100%';
+				svgElement.style.height = 'auto';
+				svgElement.style.transition = 'filter 0.3s ease';
+				
+				const container = document.getElementById('dynamic-logo');
+				if (container && container.parentNode) {
+					container.parentNode.replaceChild(svgElement, container);
+				}
+			}
+		} catch (error) {
+			console.error('Error loading SVG:', error);
+		}
+	}
+
+	// Change logo color (foreground)
+	function changeLogoColor(logoColor) {
+		const logo = document.getElementById('dynamic-logo');
+		
+		if (logo) {
+			// Get all path elements in the SVG
+			const paths = logo.querySelectorAll('path, circle, rect, polygon, polyline, ellipse, line');
+			
+			paths.forEach(path => {
+				const currentFill = path.getAttribute('fill');
+				const currentStroke = path.getAttribute('stroke');
+				
+				// Only change non-transparent fills
+				if (currentFill && currentFill !== 'none' && currentFill !== 'transparent') {
+					path.setAttribute('fill', logoColor);
+				}
+				
+				// Change strokes too if they exist
+				if (currentStroke && currentStroke !== 'none' && currentStroke !== 'transparent') {
+					path.setAttribute('stroke', logoColor);
+				}
+			});
+		}
+	}
+
+	// Change background color
+	function changeBackgroundColor(bgColor) {
+		const displayArea = document.getElementById('logo-display-area');
+		
+		if (displayArea) {
+			displayArea.style.backgroundColor = bgColor;
+		}
+	}
+
+	// Legacy function for backward compatibility
+	function changeLogoBackground(bgColor, logoColor) {
+		changeBackgroundColor(bgColor);
+		changeLogoColor(logoColor);
+	}
+
+	// Zoom logo
+	function zoomLogo(value) {
+		const logo = document.getElementById('dynamic-logo');
+		const zoomValue = document.getElementById('zoom-value');
+		
+		if (logo) {
+			const scale = value / 100;
+			logo.style.transform = `scale(${scale})`;
+		}
+		
+		if (zoomValue) {
+			zoomValue.textContent = value + '%';
+		}
+	}
+
+	// Add hover effects to buttons
+	document.addEventListener('DOMContentLoaded', function() {
+		loadInlineSVG();
+		
+		const buttons = document.querySelectorAll('#logo-variants button');
+		buttons.forEach(button => {
+			button.addEventListener('mouseenter', function() {
+				this.style.transform = 'scale(1.05)';
+				this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+			});
+			button.addEventListener('mouseleave', function() {
+				this.style.transform = 'scale(1)';
+				this.style.boxShadow = 'none';
+			});
+		});
+	});
+</script>
 
 <style>
 	details[open] summary span {
