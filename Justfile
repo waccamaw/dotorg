@@ -159,3 +159,75 @@ git-config:
 # Show available commands
 help:
     just --list
+
+# Logo Generation Recipes
+
+# Generate a colored logo variant with custom hex color
+# Usage: just logo-color my-color "#ff5733" 
+# Creates: static/logos/classic/colors/my-color.png
+logo-color NAME COLOR:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    
+    # Validate color format (should start with #)
+    if [[ ! "{{COLOR}}" =~ ^#[0-9a-fA-F]{6}$ ]]; then
+        echo "❌ Invalid hex color format. Use format: #RRGGBB (e.g., #ff5733)"
+        exit 1
+    fi
+    
+    OUTPUT_DIR="static/logos/classic/colors"
+    OUTPUT_FILE="${OUTPUT_DIR}/{{NAME}}.png"
+    TEMP_TRANS="/tmp/logo-trans-$$.png"
+    
+    # Ensure output directory exists
+    mkdir -p "$OUTPUT_DIR"
+    
+    echo "🎨 Generating logo in color {{COLOR}}..."
+    
+    # Step 1: Convert SVG to PNG with white made transparent
+    convert static/logos/classic/logo.svg \
+        -density 300 \
+        -background none \
+        -resize 4500x4500 \
+        -fuzz 10% \
+        -transparent white \
+        PNG32:"$TEMP_TRANS"
+    
+    # Step 2: Replace all non-transparent pixels with target color
+    convert "$TEMP_TRANS" \
+        \( +clone -alpha opaque -fill '{{COLOR}}' -colorize 100% \) \
+        -compose src_in \
+        -composite \
+        "$OUTPUT_FILE"
+    
+    # Cleanup
+    rm -f "$TEMP_TRANS"
+    
+    # Verify and report
+    SIZE=$(du -h "$OUTPUT_FILE" | cut -f1)
+    DIMENSIONS=$(identify -format "%wx%h" "$OUTPUT_FILE")
+    
+    echo "✅ Logo created successfully!"
+    echo "   📁 File: $OUTPUT_FILE"
+    echo "   📐 Size: $DIMENSIONS (300 DPI)"
+    echo "   💾 Disk: $SIZE"
+    echo "   🎨 Color: {{COLOR}}"
+    echo "   ✨ Transparent background: Yes"
+
+# Generate all standard color variants from style guide
+logo-all:
+    @echo "🎨 Generating all logo color variants from style guide..."
+    @just logo-color primary-color "#0033cc"
+    @just logo-color primary-hover "#0028a3"
+    @just logo-color text-color "#2a2a2a"
+    @just logo-color text-light "#6b6b6b"
+    @just logo-color text-white "#ffffff"
+    @just logo-color logo-primary "#004384"
+    @just logo-color logo-secondary "#002D5A"
+    @just logo-color original-blue "#092D70"
+    @just logo-color gold "#ffd700"
+    @just logo-color cream "#f4e4c1"
+    @just logo-color tribal-red "#8b1e1e"
+    @echo ""
+    @echo "✅ All 11 standard color variants generated!"
+    @echo "📁 Location: static/logos/classic/colors/"
