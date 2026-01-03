@@ -70,29 +70,65 @@ Three email templates can be previewed:
 
 Email templates are stored in two locations:
 
-1. **Source Templates** (for editing):
-   ```
-   apps/members-service/src/templates/
-   ├── reminder-inactive.html
-   ├── reminder-at-risk-critical.html
-   └── reminder-at-risk-warning.html
-   ```
-
-2. **Static Templates** (for preview):
+1. **Source Templates** (for editing and styling):
    ```
    static/members/email-templates/
    ├── reminder-inactive.html
+   ├── reminder-inactive.txt
    ├── reminder-at-risk-critical.html
-   └── reminder-at-risk-warning.html
+   ├── reminder-at-risk-critical.txt
+   ├── reminder-at-risk-warning.html
+   └── reminder-at-risk-warning.txt
+   ```
+
+2. **Deployment Templates** (synced from source):
+   ```
+   apps/members-service/src/templates/
+   ├── reminder-inactive.html
+   ├── reminder-inactive.txt
+   ├── reminder-at-risk-critical.html
+   ├── reminder-at-risk-critical.txt
+   ├── reminder-at-risk-warning.html
+   └── reminder-at-risk-warning.txt
    ```
 
 ## Updating Templates
 
-When you update the email templates in `apps/members-service/src/templates/`, you must also copy them to the static directory:
+### Source of Truth
+
+Email templates in `static/members/email-templates/` are the **source of truth** for styling and content. They are automatically synced to `apps/members-service/src/templates/` for deployment.
+
+### Automatic Sync
+
+Templates are automatically synced when you attach/reopen the dev container. A file watcher runs in the background and automatically syncs any changes you make.
+
+### Manual Sync
+
+To manually sync templates after editing:
 
 ```bash
-cp apps/members-service/src/templates/*.html static/members/email-templates/
+just email-templates
 ```
+
+Or from the apps directory:
+
+```bash
+cd apps && just sync-email-templates
+```
+
+### Watch Mode
+
+The watch mode is automatically started in the background when you attach to the dev container. To start it manually:
+
+```bash
+just watch-email-templates
+```
+
+This watches `static/members/email-templates/` and automatically syncs changes to `apps/members-service/src/templates/`.
+
+### Going Live
+
+**Important:** Changes to email templates must be committed to git and deployed to take effect in production. The sync only updates the local members-service copy for development/deployment.
 
 ## Technical Implementation
 

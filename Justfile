@@ -18,6 +18,14 @@ sync-meetings-dev:
 sync-meetings-prod:
     cd apps/meetings-service && just sync-kv-prod
 
+# Sync email templates from Hugo static to members-service
+email-templates:
+    cd apps && just sync-email-templates
+
+# Watch email templates and auto-sync on changes
+watch-email-templates:
+    cd apps && just watch-email-templates
+
 # Generate and view meetings index
 view-meetings-index:
     cd apps/meetings-service && just generate-index

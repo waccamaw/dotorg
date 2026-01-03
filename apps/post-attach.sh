@@ -39,6 +39,22 @@ else
     else
         echo "⚠️  KV sync skipped (wrangler not available or KV not configured)"
     fi
+    
+    # Sync email templates
+    echo ""
+    echo "📧 Syncing email templates..."
+    if just sync-email-templates 2>&1 | grep -E "(✅|📋|🔐|⚠️)"; then
+        : # Output already shown
+    else
+        echo "⚠️  Email template sync failed"
+    fi
+    
+    # Start email template watcher in background
+    echo ""
+    echo "👀 Starting email template watcher in background..."
+    nohup just watch-email-templates > /tmp/email-template-watch.log 2>&1 &
+    echo "   Log: /tmp/email-template-watch.log"
+    echo "   PID: $!"
 fi
 
 echo ""

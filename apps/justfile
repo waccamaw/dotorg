@@ -5,6 +5,71 @@
 default:
     @just --list
 
+# Sync email templates from Hugo static directory to members-service
+sync-email-templates:
+    #!/usr/bin/env bash
+    set -e
+    echo "📧 Syncing email templates..."
+    echo ""
+    
+    # Source and destination paths
+    SRC="../static/members/email-templates"
+    DEST="members-service/src/templates"
+    
+    # Copy HTML and TXT templates
+    cp "$SRC"/reminder-*.html "$DEST/"
+    cp "$SRC"/reminder-*.txt "$DEST/" 2>/dev/null || echo "⚠️  No .txt files found (OK if not using plain text)"
+    
+    # Count synced files
+    HTML_COUNT=$(ls "$DEST"/reminder-*.html 2>/dev/null | wc -l)
+    TXT_COUNT=$(ls "$DEST"/reminder-*.txt 2>/dev/null | wc -l)
+    
+    echo "✅ Synced $HTML_COUNT HTML template(s) and $TXT_COUNT TXT template(s)"
+    echo "   Source: static/members/email-templates/"
+    echo "   Destination: apps/members-service/src/templates/"
+    echo ""
+    echo "📋 Preview URLs (direct access - no login required):"
+    echo "   • http://localhost:1313/members/email-templates/reminder-inactive.html"
+    echo "   • http://localhost:1313/members/email-templates/reminder-at-risk-critical.html"
+    echo "   • http://localhost:1313/members/email-templates/reminder-at-risk-warning.html"
+    echo ""
+    echo "🔐 Dashboard Preview (requires executive login):"
+    echo "   • http://localhost:1313/members/"
+    echo ""
+    echo "⚠️  Note: Changes must be committed and deployed to go live in production!"
+    echo ""
+
+# Watch email templates and auto-sync on changes
+watch-email-templates:
+    #!/usr/bin/env bash
+    echo "👀 Watching static/members/email-templates/ for changes..."
+    echo "   Press Ctrl+C to stop"
+    echo ""
+    
+    # Use fswatch if available, otherwise fall back to polling
+    if command -v fswatch >/dev/null 2>&1; then
+        fswatch -o ../static/members/email-templates/reminder-*.{html,txt} | while read; do
+            just sync-email-templates
+        done
+    elif command -v inotifywait >/dev/null 2>&1; then
+        while inotifywait -e modify,create ../static/members/email-templates/reminder-*.{html,txt}; do
+            just sync-email-templates
+        done
+    else
+        # Fallback: polling every 2 seconds
+        echo "⚠️  No file watcher found (fswatch/inotifywait), using polling..."
+        LAST_HASH=""
+        while true; do
+            CURRENT_HASH=$(find ../static/members/email-templates/reminder-*.{html,txt} -type f -exec md5sum {} \; 2>/dev/null | md5sum)
+            if [ "$CURRENT_HASH" != "$LAST_HASH" ] && [ -n "$LAST_HASH" ]; then
+                echo "\n🔄 Change detected!"
+                just sync-email-templates
+            fi
+            LAST_HASH="$CURRENT_HASH"
+            sleep 2
+        done
+    fi
+
 # List all service directories
 _services:
     #!/usr/bin/env bash

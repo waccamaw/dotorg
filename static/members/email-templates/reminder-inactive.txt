@@ -1,0 +1,47 @@
+Dear {{firstName}} {{lastName}},
+
+WE MISS YOU IN OUR COMMUNITY
+
+We noticed your Waccamaw Indian People tribal membership has lapsed, and we wanted to reach out personally. You're an important part of our tribal family, and we'd love to welcome you back as an active member.
+
+Your membership is currently Inactive. Reactivating ensures you stay connected and included.
+
+WHY REACTIVATE?
+
+• Stay counted: Active members are included in our tribal roll and all official tribal matters
+• Stay connected: Receive updates about community events, meetings, and important news
+• Stay included: Maintain your voice in tribal decisions and access to any future benefits or opportunities
+• Strengthen our community: Each active member makes our tribe stronger and our voice louder
+
+HOW TO REACTIVATE
+
+If you're able to pay the membership fee ($50/year):
+You can quickly reactivate your membership online at {{membershipFeeUrl}}
+
+If you're unable to pay right now:
+Please don't let finances keep you from being part of our community. We understand that circumstances vary, and we want you active regardless of your ability to pay. Please contact {{contactName}} at {{contactEmail}} or reply to this email to discuss reactivating your membership.
+
+⚠️ BEFORE YOU REACTIVATE:
+
+- More than 1 month behind on fees? Please contact chell.hatcher@waccamaw.org to discuss payment arrangements
+- Renewing your ID card? Update your contact information in the members portal (https://waccamaw.org/members/) first
+- Turned 18 more than 3 months ago? You must submit a new application as an adult member or risk automatic removal
+
+YOUR PRESENCE MATTERS
+Whether you can contribute financially or not, being an active member ensures you're part of our tribe's future and any opportunities that may come to our people.
+
+For those who can contribute, the $50 annual membership fee helps support our tribal operations, maintain our records, and fund community programs. Every contribution helps, but your active participation is what we value most.
+
+We hope to welcome you back soon.
+
+In service to our people,
+Waccamaw Indian People
+Tribal Administration
+
+---
+Questions or Concerns?
+Email: {{contactEmail}}
+Website: https://waccamaw.org
+
+You're receiving this because you're a registered member of the Waccamaw Indian People with inactive status.
+If you believe this is in error or wish to be removed from future reminders, please contact {{contactEmail}}.

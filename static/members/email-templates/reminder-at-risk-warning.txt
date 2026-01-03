@@ -1,0 +1,40 @@
+Dear {{firstName}} {{lastName}},
+
+MEMBERSHIP RENEWAL REMINDER
+
+Your Waccamaw Indian People tribal membership renews in {{daysUntilExpiry}} days on {{expiresDate}}.
+
+We wanted to reach out early to give you time to renew your membership for the coming year. An active membership helps our tribe stay strong and ensures you remain counted and included in all tribal matters.
+
+RENEWAL OPTIONS
+
+If you're able to pay your membership fee ($50/year):
+You can easily renew online at {{membershipFeeUrl}}
+
+If finances are tight right now:
+Please don't let the fee prevent you from staying active. Your participation in our tribal community is what matters most. Reach out to {{contactName}} at {{contactEmail}} or reply to this email to discuss options for keeping your membership active.
+
+📋 IMPORTANT REMINDERS:
+
+- More than 1 month behind on fees? Please contact chell.hatcher@waccamaw.org first
+- Renewing your ID card? Update your contact information in the members portal (https://waccamaw.org/members/) first
+- Turned 18 in the last 3 months? You may need to submit a new application as an adult member
+
+YOUR MEMBERSHIP MATTERS
+Being an active member ensures you're included in tribal communications, voting rights, benefits, and any future opportunities that become available to our people.
+
+For those who can contribute, membership fees help support our tribal operations, community programs, and administrative costs. Every contribution helps strengthen our community.
+
+Thank you for being part of the Waccamaw Indian People family.
+
+In service to our people,
+Waccamaw Indian People
+Tribal Administration
+
+---
+Contact Us:
+Email: {{contactEmail}}
+Website: https://waccamaw.org
+
+You're receiving this because you're a registered member of the Waccamaw Indian People.
+If you believe this is in error, please contact {{contactEmail}}.
