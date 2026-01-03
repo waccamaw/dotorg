@@ -1,7 +1,8 @@
 {{/* Governing Body Data - embedded as Hugo dict since Micro.blog may not support data/ directory */}}
+{{/* Last updated: 2026-01-03 from SharePoint governing body report */}}
 {{ return (dict
   "chief" (dict
-    "name" "Chief Hatcher!"
+    "name" "Chief Harold Hatcher"
     "title" "Leader of the Waccamaw"
     "image" "/governing-body/chief-hatcher.jpg"
   )
@@ -11,10 +12,8 @@
       "section_id" "chiefs"
       "display_as" "grid"
       "members" (slice
-        (dict "name" "Cheryl Cail" "title" "Acting Chief" "image" "/governing-body/2nd-chief-internal-retired.jpg")
-        (dict "name" "Alan Faver" "title" "2nd Chief External" "image" "/governing-body/2nd-chief-external-alan-faver.png")
-        (dict "name" "Vacant" "title" "2nd Chief Internal" "image" "")
-        (dict "name" "John Turner" "title" "2nd Chief External" "image" "/governing-body/2nd-chief-external-john-turner.png")
+        (dict "name" "Cheryl Cail" "title" "Acting Chief & Genealogist" "image" "/governing-body/acting-chief-cheryl-cail.jpg")
+        (dict "name" "Alan Faver" "title" "Second Chief External" "image" "/governing-body/2nd-chief-external-alan-faver.png")
       )
     )
     (dict
@@ -22,17 +21,18 @@
       "section_id" "tribal-council"
       "display_as" "council"
       "chief_of_council" (dict
-        "name" "Susan Hayes-Hatcher"
-        "title" "Chief of Council"
+        "name" "Susan Hatcher"
+        "title" "Chief of Tribal Council & Genealogist"
         "image" "/governing-body/acting-chief-susan.jpg"
       )
       "seats" (slice
-        (dict "seat_number" 2 "name" "Glenn Cook" "image" "/governing-body/seat-2-glenn-cook.png")
-        (dict "seat_number" 3 "name" "Marion Craddock" "image" "/governing-body/seat-3-marion-craddock.jpg")
+        (dict "seat_number" 1 "name" "Christopher Hatcher" "image" "/governing-body/chief-of-council-chris-hatcher.jpg")
+        (dict "seat_number" 2 "name" "Rembert Cook" "image" "/governing-body/seat-2-glenn-cook.png")
+        (dict "seat_number" 3 "name" "Marion Craddock, Jr." "image" "/governing-body/seat-3-marion-craddock.jpg")
         (dict "seat_number" 4 "name" "Emily White" "image" "/governing-body/seat-4.jpg")
         (dict "seat_number" 5 "name" "Rebecca Fecher" "image" "/governing-body/seat-5.jpg")
         (dict "seat_number" 6 "name" "Robert Benton" "image" "/governing-body/seat-6.jpg")
-        (dict "seat_number" 7 "name" "To be Filled" "image" "")
+        (dict "seat_number" 7 "name" "Vacant" "image" "")
       )
     )
     (dict
@@ -41,13 +41,12 @@
       "list_class" "elders"
       "display_as" "list"
       "members" (slice
-        (dict "name" "Rebecca Smith" "title" "Chief of Elders")
-        (dict "name" "Larry Jernigan" "title" "Elder")
-        (dict "name" "Glenn Turner" "title" "Elder")
-        (dict "name" "Ronnie Hatcher" "title" "Elder")
-        (dict "name" "Charles Ray Hughes" "title" "Elder")
+        (dict "name" "Rebecca Smith" "title" "Elder")
+        (dict "name" "Phillip White Sr." "title" "Elder")
+        (dict "name" "Ronald Hatcher" "title" "Elder")
         (dict "name" "Scott Beaver" "title" "Elder")
-        (dict "name" "Phillip White" "title" "Elder")
+        (dict "name" "James Turner" "title" "Elder")
+        (dict "name" "Charles Ray Hughes" "title" "Elder")
       )
     )
     (dict
@@ -55,8 +54,8 @@
       "section_id" "judicial"
       "display_as" "list"
       "members" (slice
-        (dict "name" "Ronnie Floyd" "title" "Tribal Judge")
-        (dict "name" "David Charlie Blue Windburn Sr." "title" "Chief of Constables")
+        (dict "name" "John Floyd" "title" "Tribal Judge")
+        (dict "name" "David WindBurn Sr." "title" "Chief of Tribal Constables")
       )
     )
     (dict
@@ -64,18 +63,10 @@
       "section_id" "administrative"
       "display_as" "list"
       "members" (slice
-        (dict "name" "Randi Clark" "title" "Tribal Treasurer")
-        (dict "name" "Emily White" "title" "Tribal Files Committee Chairperson")
-        (dict "name" "Jennifer Michelle Hatcher" "title" "Tribal Operations & Communications")
-        (dict "name" "Doug Hatcher" "title" "Chief Technology Officer")
+        (dict "name" "Jennifer Hatcher" "title" "Tribal Operations & Communications Coordinator")
+        (dict "name" "Douglas Hatcher" "title" "Chief Technology Officer")
         (dict "name" "Austin Serio" "title" "Google Workspace Admin")
       )
-    )
-  )
-  "retired_leadership" (dict
-    "section_title" "Retired Leadership"
-    "members" (slice
-      (dict "name" "John Turner" "title" "2nd Chief Internal Retired")
     )
   )
 ) }}
