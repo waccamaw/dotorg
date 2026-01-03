@@ -21,6 +21,9 @@ You can quickly reactivate your membership online at {{membershipFeeUrl}}
 If you're unable to pay right now:
 Please don't let finances keep you from being part of our community. We understand that circumstances vary, and we want you active regardless of your ability to pay. Please contact {{contactName}} at {{contactEmail}} or reply to this email to discuss reactivating your membership.
 
+If you have proof of payment:
+If you have canceled checks, money order receipts, or other proof of payment, please send them to us at {{contactEmail}} so we can update your file.
+
 ⚠️ BEFORE YOU REACTIVATE:
 
 - More than 1 month behind on fees? Please contact chell.hatcher@waccamaw.org to discuss payment arrangements

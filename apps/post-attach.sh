@@ -42,12 +42,7 @@ else
     
     # Sync email templates
     echo ""
-    echo "📧 Syncing email templates..."
-    if just sync-email-templates 2>&1 | grep -E "(✅|📋|🔐|⚠️)"; then
-        : # Output already shown
-    else
-        echo "⚠️  Email template sync failed"
-    fi
+    just sync-email-templates
     
     # Start email template watcher in background
     echo ""

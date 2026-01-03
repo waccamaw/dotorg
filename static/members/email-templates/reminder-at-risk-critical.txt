@@ -14,6 +14,9 @@ Please visit {{membershipFeeUrl}} to renew your membership online.
 If you're unable to pay at this time:
 We understand that not everyone can pay membership fees, and that's okay. Your participation in our tribal community matters more than payment. Please reach out to {{contactName}} at {{contactEmail}} or reply to this email to discuss keeping your membership active.
 
+If you have proof of payment:
+If you have canceled checks, money order receipts, or other proof of payment, please send them to us at {{contactEmail}} so we can update your file.
+
 ⚠️ BEFORE YOU RENEW:
 
 - More than 1 month behind on fees? Please contact chell.hatcher@waccamaw.org first
