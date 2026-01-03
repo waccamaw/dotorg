@@ -1,0 +1,468 @@
+{{ define "main" }}
+
+<style>
+/* School Day Page - Modern SharePoint-inspired Layout */
+.school-day-page {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+/* Header Section */
+.school-day-header {
+	background: linear-gradient(135deg, #0033cc 0%, #002D5A 100%);
+	color: white;
+	padding: 3rem 2rem;
+	text-align: center;
+	border-radius: 8px;
+	margin-bottom: 2rem;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.school-day-header h1 {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin: 0 0 0.75rem 0;
+	color: white;
+}
+
+.school-day-header .subtitle {
+	font-size: 1.3rem;
+	margin: 0 0 0.5rem 0;
+	opacity: 0.95;
+}
+
+.school-day-header .event-info {
+	font-size: 1rem;
+	opacity: 0.9;
+	margin-top: 1rem;
+}
+
+/* Section Styles */
+.pauwau-section {
+	background: white;
+	border-radius: 8px;
+	padding: 2.5rem 2rem;
+	margin-bottom: 2rem;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.pauwau-section h2 {
+	font-size: 2rem;
+	margin: 0 0 1.5rem 0;
+	color: #0033cc;
+	border-bottom: 3px solid #d4a574;
+	padding-bottom: 0.5rem;
+	display: inline-block;
+}
+
+.pauwau-section h3 {
+	font-size: 1.3rem;
+	margin: 1.5rem 0 0.75rem 0;
+	color: #002D5A;
+}
+
+/* Card Grid */
+.card-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+	gap: 1.5rem;
+	margin-top: 2rem;
+}
+
+.info-card {
+	background: #faf8f3;
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	padding: 1.5rem;
+	transition: all 0.3s ease;
+	border-left: 4px solid #d4a574;
+}
+
+.info-card:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+	border-left-color: #0033cc;
+}
+
+.info-card h3 {
+	margin-top: 0;
+	font-size: 1.25rem;
+	color: #0033cc;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.info-card .icon {
+	font-size: 1.5rem;
+}
+
+.info-card p {
+	margin: 0.5rem 0 0 0;
+	color: var(--text-light);
+	line-height: 1.6;
+}
+
+.info-card ul {
+	margin: 1rem 0 0 1.25rem;
+	color: var(--text-color);
+}
+
+.info-card ul li {
+	margin: 0.5rem 0;
+}
+
+/* Call to Action */
+.cta-section {
+	background: linear-gradient(135deg, #d4a574 0%, #c4a57b 100%);
+	color: white;
+	padding: 2.5rem 2rem;
+	text-align: center;
+	border-radius: 8px;
+	margin: 2rem 0;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.cta-section h2 {
+	color: white;
+	border: none;
+	margin: 0 0 1rem 0;
+	font-size: 2rem;
+}
+
+.cta-section p {
+	font-size: 1.1rem;
+	margin: 0 0 1.5rem 0;
+	opacity: 0.95;
+}
+
+.cta-button {
+	display: inline-block;
+	background: white;
+	color: #0033cc;
+	padding: 1rem 2.5rem;
+	border-radius: 50px;
+	font-size: 1.1rem;
+	font-weight: 600;
+	text-decoration: none;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.cta-button:hover {
+	background: #0033cc;
+	color: white;
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+	text-decoration: none;
+}
+
+/* Info Grid - 2 Column Layout */
+.info-grid-2col {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 2rem;
+	margin-top: 1.5rem;
+}
+
+.info-section {
+	background: #f8f9fa;
+	padding: 1.5rem;
+	border-radius: 6px;
+	border-left: 3px solid #0033cc;
+}
+
+.info-section h4 {
+	margin: 0 0 0.75rem 0;
+	color: #002D5A;
+	font-size: 1.1rem;
+}
+
+.info-section p, .info-section ul {
+	margin: 0.5rem 0 0 0;
+	font-size: 0.95rem;
+	line-height: 1.6;
+}
+
+/* Special Note */
+.special-note {
+	background: #fff5eb;
+	border-left: 4px solid #d4a574;
+	padding: 1rem 1.5rem;
+	margin: 1.5rem 0;
+	border-radius: 4px;
+	font-style: italic;
+	color: var(--text-light);
+}
+
+/* Contact Section */
+.contact-section {
+	background: white;
+	border-radius: 8px;
+	padding: 2rem;
+	margin: 2rem 0;
+	text-align: center;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.contact-section h2 {
+	margin: 0 0 1rem 0;
+	color: #0033cc;
+	font-size: 2rem;
+}
+
+.contact-section p {
+	margin: 0.5rem 0 1.5rem 0;
+	color: var(--text-light);
+	font-size: 1.1rem;
+}
+
+.contact-button {
+	display: inline-block;
+	background: #0033cc;
+	color: white;
+	padding: 1rem 2.5rem;
+	border-radius: 50px;
+	font-size: 1.1rem;
+	font-weight: 600;
+	text-decoration: none;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 12px rgba(0, 51, 204, 0.3);
+}
+
+.contact-button:hover {
+	background: #002D5A;
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(0, 51, 204, 0.4);
+	text-decoration: none;
+}
+
+.back-link {
+	display: inline-block;
+	margin-top: 1rem;
+	color: var(--link-color);
+	font-size: 0.95rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.school-day-header h1 {
+		font-size: 2rem;
+	}
+	
+	.school-day-header .subtitle {
+		font-size: 1.1rem;
+	}
+	
+	.school-day-header .event-info {
+		font-size: 0.9rem;
+	}
+	
+	.card-grid {
+		grid-template-columns: 1fr;
+	}
+	
+	.info-grid-2col {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+	
+	.pauwau-section {
+		padding: 1.5rem 1rem;
+	}
+	
+	.pauwau-section h2 {
+		font-size: 1.5rem;
+	}
+}
+</style>
+
+<div class="school-day-page">
+	<!-- Header -->
+	{{- $currentYear := now.Year -}}
+	<div class="school-day-header">
+		<h1>🎓 School Day</h1>
+		<p class="subtitle">Educational Program for Students, Teachers & Parents</p>
+		<p class="event-info">Friday Before Pauwau Weekend • Waccamaw Tribal Grounds</p>
+	</div>
+
+	<!-- Overview Section -->
+	<div class="pauwau-section">
+		<h2>About School Day</h2>
+		<p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Each year, the <strong>Friday before our Pauwau & Cultural Arts Festival</strong> is dedicated to School Day—a special educational program welcoming students, teachers, and parents to experience indigenous culture, traditions, and history in an immersive learning environment at the Waccamaw Tribal Grounds.</p>
+		
+		<div class="special-note">
+			<strong>An Educational Experience:</strong> School Day provides hands-on learning opportunities aligned with South Carolina curriculum standards, bringing Native American history and culture to life for students of all ages.
+		</div>
+	</div>
+
+	<!-- Target Audiences -->
+	<div class="pauwau-section">
+		<h2>Who Should Attend</h2>
+		<div class="card-grid">
+			<div class="info-card">
+				<h3><span class="icon">🏫</span> Teachers & Schools</h3>
+				<p>Bring your class or entire school for a day of cultural education featuring:</p>
+				<ul>
+					<li>Traditional dance demonstrations</li>
+					<li>Indigenous arts and crafts workshops</li>
+					<li>Storytelling and oral history presentations</li>
+					<li>Educational materials aligned with SC standards</li>
+					<li>Q&A sessions with tribal members and educators</li>
+					<li>Cultural preservation and language programs</li>
+				</ul>
+			</div>
+			
+			<div class="info-card">
+				<h3><span class="icon">👨‍👩‍👧‍👦</span> Parents & Guardians</h3>
+				<p>Parents and guardians are welcome to attend School Day with their children. This is a wonderful opportunity to:</p>
+				<ul>
+					<li>Learn alongside your students</li>
+					<li>Experience hands-on cultural activities together</li>
+					<li>Meet tribal members and educators</li>
+					<li>Support indigenous cultural preservation</li>
+					<li>Create meaningful family memories</li>
+					<li>Deepen understanding of local Native American heritage</li>
+				</ul>
+			</div>
+			
+			<div class="info-card">
+				<h3><span class="icon">🎒</span> Students</h3>
+				<p>Students will engage in interactive learning experiences including:</p>
+				<ul>
+					<li>Hands-on traditional crafts and art projects</li>
+					<li>Indigenous games and activities</li>
+					<li>Cultural demonstrations and performances</li>
+					<li>Historical presentations about the Waccamaw people</li>
+					<li>Age-appropriate educational activities</li>
+					<li>Opportunities to ask questions and engage directly</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<!-- Registration Section -->
+	<div class="cta-section">
+		<h2>Registration Required</h2>
+		<p>School Day requires advance registration to ensure we can accommodate all visiting groups and provide the best educational experience possible.</p>
+		<a href="/pauwau/vendor-application/" class="cta-button">Register for School Day →</a>
+		<p style="margin-top: 1rem; font-size: 0.95rem; opacity: 0.9;">Registration opens March {{ $currentYear }} • Deadline: Two weeks before event</p>
+	</div>
+
+	<!-- Logistics -->
+	<div class="pauwau-section">
+		<h2>Event Details & Logistics</h2>
+		<div class="info-grid-2col">
+			<div class="info-section">
+				<h4>📅 Date & Time</h4>
+				<p><strong>When:</strong> Friday before Pauwau weekend<br>
+				<strong>Time:</strong> Details announced with registration<br>
+				<strong>Duration:</strong> Full-day program</p>
+			</div>
+			
+			<div class="info-section">
+				<h4>📍 Location</h4>
+				<p><strong>Waccamaw Tribal Grounds</strong><br>
+				591 Blue Water Rd<br>
+				Aynor, SC 29511<br>
+				<a href="https://maps.google.com/?q=591+Blue+Water+Rd,+Aynor,+SC+29511" target="_blank" rel="noopener" style="color: #0033cc; font-weight: 600;">Get Directions →</a></p>
+			</div>
+			
+			<div class="info-section">
+				<h4>🚌 Transportation & Parking</h4>
+				<p>School buses and parent vehicles welcome. Ample parking available on the Tribal Grounds. Bus drop-off and pick-up areas will be clearly marked.</p>
+			</div>
+			
+			<div class="info-section">
+				<h4>♿ Accessibility</h4>
+				<p>The Tribal Grounds are accessible. Please indicate any special needs or accommodations in your registration form.</p>
+			</div>
+			
+			<div class="info-section">
+				<h4>🍽️ Lunch & Refreshments</h4>
+				<p>Schools should plan for lunch arrangements. Water and light refreshments may be provided. Specific details will be included in your registration confirmation.</p>
+			</div>
+			
+			<div class="info-section">
+				<h4>👕 What to Wear</h4>
+				<p>Comfortable clothing and walking shoes recommended. Outdoor activities may be included, so dress appropriately for the weather.</p>
+			</div>
+			
+			<div class="info-section">
+				<h4>📋 Chaperone Requirements</h4>
+				<p>Schools must provide appropriate teacher and chaperone ratios according to district policies. All adults attending must be registered.</p>
+			</div>
+			
+			<div class="info-section">
+				<h4>💵 Admission</h4>
+				<p>Admission details will be provided during registration. Financial assistance may be available for qualifying schools.</p>
+			</div>
+		</div>
+	</div>
+
+	<!-- Educational Standards -->
+	<div class="pauwau-section" style="background: #f8f9fa; border-left: 4px solid #0033cc;">
+		<h2>Curriculum Alignment</h2>
+		<p style="margin-bottom: 1.5rem;">School Day programming is designed to support South Carolina social studies and cultural education standards, including:</p>
+		<div class="info-grid-2col">
+			<div>
+				<h4 style="color: #002D5A; margin-bottom: 0.75rem;">Elementary Standards</h4>
+				<ul style="margin: 0; padding-left: 1.25rem;">
+					<li>Native American cultures and traditions</li>
+					<li>South Carolina history and indigenous peoples</li>
+					<li>Cultural diversity and respect</li>
+					<li>Art, music, and storytelling traditions</li>
+				</ul>
+			</div>
+			<div>
+				<h4 style="color: #002D5A; margin-bottom: 0.75rem;">Middle & High School Standards</h4>
+				<ul style="margin: 0; padding-left: 1.25rem;">
+					<li>Indigenous history and sovereignty</li>
+					<li>Cultural preservation and modern tribal life</li>
+					<li>Anthropology and archaeology</li>
+					<li>Social justice and indigenous rights</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<!-- FAQ -->
+	<div class="pauwau-section">
+		<h2>Frequently Asked Questions</h2>
+		<div style="display: flex; flex-direction: column; gap: 1.5rem;">
+			<div style="background: #faf8f3; padding: 1.25rem; border-radius: 6px; border-left: 3px solid #d4a574;">
+				<h4 style="margin: 0 0 0.5rem 0; color: #002D5A;">How do I register my school or class?</h4>
+				<p style="margin: 0; line-height: 1.6;">Registration will open in March {{ $currentYear }} through our online portal. Teachers and administrators can register entire classes, grade levels, or schools.</p>
+			</div>
+			
+			<div style="background: #faf8f3; padding: 1.25rem; border-radius: 6px; border-left: 3px solid #d4a574;">
+				<h4 style="margin: 0 0 0.5rem 0; color: #002D5A;">Can homeschool families attend?</h4>
+				<p style="margin: 0; line-height: 1.6;">Yes! Homeschool families and co-ops are welcome. Register through the School Day portal and indicate your homeschool group information.</p>
+			</div>
+			
+			<div style="background: #faf8f3; padding: 1.25rem; border-radius: 6px; border-left: 3px solid #d4a574;">
+				<h4 style="margin: 0 0 0.5rem 0; color: #002D5A;">What if my school can't attend Friday School Day?</h4>
+				<p style="margin: 0; line-height: 1.6;">School Day is specifically Friday only. However, the full Pauwau & Cultural Arts Festival weekend is open to all visitors. See the <a href="/pauwau/" style="color: #0033cc; font-weight: 600;">main Pauwau page</a> for weekend details.</p>
+			</div>
+			
+			<div style="background: #faf8f3; padding: 1.25rem; border-radius: 6px; border-left: 3px solid #d4a574;">
+				<h4 style="margin: 0 0 0.5rem 0; color: #002D5A;">Are there age restrictions?</h4>
+				<p style="margin: 0; line-height: 1.6;">School Day is appropriate for all K-12 grade levels. Programming is designed to be engaging and age-appropriate for elementary through high school students.</p>
+			</div>
+		</div>
+	</div>
+
+	<!-- Contact Section -->
+	<div class="contact-section">
+		<h2>Questions About School Day?</h2>
+		<p>For questions about School Day, educational programming, or registration, please contact us.</p>
+		
+		<a href="/contact/" class="contact-button">Contact the Tribal Office</a>
+		<p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-light);">Select "Pauwau" as your inquiry category</p>
+		
+		<a href="/pauwau/" class="back-link">← Back to Pauwau & Cultural Arts Festival</a>
+	</div>
+</div>
+
+{{ end }}

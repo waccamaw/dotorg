@@ -1,0 +1,523 @@
+{{ define "main" }}
+
+<style>
+/* Vendor/Participant Registration Page - Modern SharePoint-inspired Layout */
+.registration-page {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+/* Header Section */
+.registration-header {
+	background: linear-gradient(135deg, #d4a574 0%, #c4a57b 100%);
+	color: white;
+	padding: 3rem 2rem;
+	text-align: center;
+	border-radius: 8px;
+	margin-bottom: 2rem;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.registration-header h1 {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin: 0 0 0.75rem 0;
+	color: white;
+}
+
+.registration-header p {
+	font-size: 1.2rem;
+	margin: 0;
+	opacity: 0.95;
+}
+
+/* Alert Section */
+.alert-box {
+	background: #fff5eb;
+	border-left: 4px solid #d4a574;
+	padding: 1.5rem 2rem;
+	margin-bottom: 2rem;
+	border-radius: 4px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.alert-box h3 {
+	margin: 0 0 0.5rem 0;
+	color: #c4a57b;
+	font-size: 1.3rem;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.alert-box p {
+	margin: 0.5rem 0 0 0;
+	color: var(--text-color);
+	line-height: 1.6;
+}
+
+/* Registration Options Grid */
+.options-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+	gap: 2rem;
+	margin: 2rem 0;
+}
+
+.registration-option {
+	background: white;
+	border: 2px solid var(--border-color);
+	border-radius: 8px;
+	padding: 0;
+	overflow: hidden;
+	transition: all 0.3s ease;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.registration-option:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+	border-color: #0033cc;
+}
+
+.option-header {
+	background: linear-gradient(135deg, #0033cc 0%, #002D5A 100%);
+	color: white;
+	padding: 1.5rem;
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.option-icon {
+	font-size: 2.5rem;
+	opacity: 0.9;
+}
+
+.option-header h3 {
+	margin: 0;
+	font-size: 1.5rem;
+	color: white;
+}
+
+.option-body {
+	padding: 1.5rem;
+}
+
+.option-body p {
+	margin: 0 0 1rem 0;
+	color: var(--text-light);
+	line-height: 1.6;
+}
+
+.option-body h4 {
+	margin: 1.5rem 0 0.75rem 0;
+	color: #002D5A;
+	font-size: 1.1rem;
+}
+
+.option-body ul {
+	margin: 0.5rem 0 0 1.25rem;
+	color: var(--text-color);
+}
+
+.option-body ul li {
+	margin: 0.5rem 0;
+	line-height: 1.5;
+}
+
+.option-status {
+	display: inline-block;
+	background: #f8f9fa;
+	color: #6b6b6b;
+	padding: 0.5rem 1rem;
+	border-radius: 20px;
+	font-size: 0.9rem;
+	font-weight: 600;
+	margin-top: 1rem;
+}
+
+/* Timeline Section */
+.timeline-section {
+	background: white;
+	border-radius: 8px;
+	padding: 2rem;
+	margin: 2rem 0;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.timeline-section h2 {
+	margin: 0 0 1.5rem 0;
+	color: #0033cc;
+	font-size: 2rem;
+	border-bottom: 3px solid #d4a574;
+	padding-bottom: 0.5rem;
+	display: inline-block;
+}
+
+.timeline {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+.timeline-item {
+	background: #faf8f3;
+	padding: 1.5rem;
+	border-radius: 6px;
+	border-left: 4px solid #0033cc;
+	transition: all 0.3s ease;
+}
+
+.timeline-item:hover {
+	transform: translateX(4px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-date {
+	font-weight: 700;
+	color: #0033cc;
+	font-size: 1.1rem;
+	margin-bottom: 0.5rem;
+}
+
+.timeline-desc {
+	color: var(--text-color);
+	margin: 0;
+	line-height: 1.5;
+}
+
+/* Process Section */
+.process-section {
+	background: #f8f9fa;
+	border-radius: 8px;
+	padding: 2rem;
+	margin: 2rem 0;
+	border-left: 4px solid #d4a574;
+}
+
+.process-section h2 {
+	margin: 0 0 1.5rem 0;
+	color: #002D5A;
+	font-size: 1.8rem;
+}
+
+.process-steps {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.process-step {
+	display: flex;
+	align-items: start;
+	gap: 1rem;
+	background: white;
+	padding: 1rem 1.5rem;
+	border-radius: 6px;
+	border: 1px solid var(--border-color);
+}
+
+.step-number {
+	background: #0033cc;
+	color: white;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	flex-shrink: 0;
+}
+
+.step-content p {
+	margin: 0;
+	color: var(--text-color);
+	line-height: 1.6;
+}
+
+/* Contact Section */
+.contact-section {
+	background: white;
+	border-radius: 8px;
+	padding: 2rem;
+	margin: 2rem 0;
+	text-align: center;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.contact-section h2 {
+	margin: 0 0 1rem 0;
+	color: #0033cc;
+	font-size: 2rem;
+}
+
+.contact-section p {
+	margin: 0.5rem 0 1.5rem 0;
+	color: var(--text-light);
+	font-size: 1.1rem;
+}
+
+.contact-button {
+	display: inline-block;
+	background: #0033cc;
+	color: white;
+	padding: 1rem 2.5rem;
+	border-radius: 50px;
+	font-size: 1.1rem;
+	font-weight: 600;
+	text-decoration: none;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 12px rgba(0, 51, 204, 0.3);
+}
+
+.contact-button:hover {
+	background: #002D5A;
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(0, 51, 204, 0.4);
+	text-decoration: none;
+}
+
+.back-link {
+	display: inline-block;
+	margin-top: 1rem;
+	color: var(--link-color);
+	font-size: 0.95rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+	.registration-header h1 {
+		font-size: 2rem;
+	}
+	
+	.registration-header p {
+		font-size: 1rem;
+	}
+	
+	.options-grid {
+		grid-template-columns: 1fr;
+	}
+	
+	.timeline {
+		grid-template-columns: 1fr;
+	}
+	
+	.option-header {
+		padding: 1rem;
+	}
+	
+	.option-icon {
+		font-size: 2rem;
+	}
+	
+	.option-header h3 {
+		font-size: 1.25rem;
+	}
+}
+</style>
+
+<div class="registration-page">
+	<!-- Header -->
+	{{- $currentYear := now.Year -}}
+	{{- $firstPauwauYear := 1992 -}}
+	{{- $anniversaryNumber := sub $currentYear $firstPauwauYear -}}
+	<div class="registration-header">
+		<h1>Vendor & Participant Registration</h1>
+		<p>Pauwau & Cultural Arts Festival {{ $currentYear }} • {{ $anniversaryNumber }}{{ if eq (mod $anniversaryNumber 10) 1 }}st{{ else if eq (mod $anniversaryNumber 10) 2 }}nd{{ else if eq (mod $anniversaryNumber 10) 3 }}rd{{ else }}th{{ end }} Annual</p>
+		<p style="font-size: 0.95rem; opacity: 0.9; margin-top: 0.5rem;">Waccamaw Tribal Grounds • 591 Blue Water Rd, Aynor, SC</p>
+	</div>
+
+	<!-- Alert Box -->
+	<div class="alert-box">
+		<h3>📅 Registration Opens March {{ $currentYear }}</h3>
+		<p>Thank you for your interest in participating in the Waccamaw Indian People's annual Pauwau and Cultural Arts Festival, held during the <strong>first week of November {{ $currentYear }}</strong> at the <strong>Waccamaw Tribal Grounds</strong> in Aynor, SC. Registration forms and applications for all participation opportunities will be available starting in <strong>March {{ $currentYear }}</strong>. We encourage early registration to secure your preferred booth location or participation option.</p>
+	</div>
+
+	<!-- Registration Options -->
+	<div class="options-grid">
+		<!-- Vendor Booths -->
+		<div class="registration-option">
+			<div class="option-header">
+				<div class="option-icon">🏪</div>
+				<h3>Vendor Booths</h3>
+			</div>
+			<div class="option-body">
+				<p>Set up a booth to sell handmade crafts, indigenous arts, traditional items, food, or other appropriate merchandise.</p>
+				
+				<h4>Includes:</h4>
+				<ul>
+					<li>Booth space dimensions and location preferences</li>
+					<li>Required insurance and licensing documentation</li>
+					<li>Product descriptions and pricing guidelines</li>
+					<li>Setup and teardown instructions</li>
+				</ul>
+				
+				<div class="option-status">Available March {{ $currentYear }}</div>
+			</div>
+		</div>
+
+		<!-- Dance Raffles -->
+		<div class="registration-option">
+			<div class="option-header">
+				<div class="option-icon">🪶</div>
+				<h3>Dance Raffles</h3>
+			</div>
+			<div class="option-body">
+				<p>Participate in traditional dance raffles and cultural performances during the Pauwau.</p>
+				
+				<h4>Includes:</h4>
+				<ul>
+					<li>Dance style and regalia information</li>
+					<li>Performance schedule preferences</li>
+					<li>Raffle entry requirements</li>
+					<li>Prize and award details</li>
+				</ul>
+				
+				<div class="option-status">Available March {{ $currentYear }}</div>
+			</div>
+		</div>
+
+		<!-- RV Parking -->
+		<div class="registration-option">
+			<div class="option-header">
+				<div class="option-icon">🚐</div>
+				<h3>RV Parking & Camping</h3>
+			</div>
+			<div class="option-body">
+				<p>Reserve RV parking or camping space for multi-day attendance at the Pauwau.</p>
+				
+				<h4>Includes:</h4>
+				<ul>
+					<li>Space reservation and hookup options</li>
+					<li>Duration of stay (overnight/multi-day)</li>
+					<li>Facility access and amenities</li>
+					<li>Parking fees and payment schedules</li>
+				</ul>
+				
+				<div class="option-status">Available March {{ $currentYear }}</div>
+			</div>
+		</div>
+
+		<!-- School Day -->
+		<div class="registration-option">
+			<div class="option-header" style="background: linear-gradient(135deg, #d4a574 0%, #c4a57b 100%);">
+				<div class="option-icon">🏫</div>
+				<h3>School Day Registration</h3>
+			</div>
+			<div class="option-body">
+				<p>Register your school, class, or group for <strong>School Day</strong>—held the Friday before Pauwau weekend. A special educational program for students, teachers, and parents.</p>
+				
+				<h4>Includes:</h4>
+				<ul>
+					<li>Group size and grade level information</li>
+					<li>Teacher and chaperone contact details</li>
+					<li>Parent/guardian participation options</li>
+					<li>Educational materials and resources</li>
+					<li>Accessibility and special needs accommodations</li>
+				</ul>
+				
+				<div class="option-status">Available March {{ $currentYear }}</div>
+			</div>
+		</div>
+
+		<!-- Additional Opportunities -->
+		<div class="registration-option">
+			<div class="option-header">
+				<div class="option-icon">🎯</div>
+				<h3>Additional Opportunities</h3>
+			</div>
+			<div class="option-body">
+				<p>Other ways to participate and support the Pauwau & Cultural Arts Festival.</p>
+				
+				<h4>May Include:</h4>
+				<ul>
+					<li>Food vendor permits</li>
+					<li>Demonstration and workshop spaces</li>
+					<li>Sponsorship opportunities</li>
+					<li>Volunteer positions</li>
+				</ul>
+				
+				<div class="option-status">Details Coming Soon</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Timeline -->
+	<div class="timeline-section">
+		<h2>Important Dates</h2>
+		<div class="timeline">
+			<div class="timeline-item">
+				<div class="timeline-date">March {{ $currentYear }}</div>
+				<p class="timeline-desc">Registration opens for all participation options</p>
+			</div>
+			
+			<div class="timeline-item">
+				<div class="timeline-date">July {{ $currentYear }}</div>
+				<p class="timeline-desc">Early registration deadline (recommended)</p>
+			</div>
+			
+			<div class="timeline-item">
+				<div class="timeline-date">October {{ $currentYear }}</div>
+				<p class="timeline-desc">Final registration deadline</p>
+			</div>
+			
+			<div class="timeline-item">
+				<div class="timeline-date">November {{ $currentYear }}</div>
+				<p class="timeline-desc">Pauwau celebration (first week)</p>
+			</div>
+		</div>
+	</div>
+
+	<!-- Application Process -->
+	<div class="process-section">
+		<h2>Application Process</h2>
+		<p style="margin-bottom: 1.5rem;">When registration opens in March {{ $currentYear }}, each participation option will have a dedicated online application form powered by Zeffy (a zero-fee fundraising platform).</p>
+		
+		<div class="process-steps">
+			<div class="process-step">
+				<div class="step-number">1</div>
+				<div class="step-content">
+					<p><strong>Complete your application online</strong> using our secure Zeffy forms</p>
+				</div>
+			</div>
+			
+			<div class="process-step">
+				<div class="step-number">2</div>
+				<div class="step-content">
+					<p><strong>Upload required documentation</strong> (DoI forms, insurance certificates, etc.)</p>
+				</div>
+			</div>
+			
+			<div class="process-step">
+				<div class="step-number">3</div>
+				<div class="step-content">
+					<p><strong>Pay applicable fees securely</strong> through the Zeffy platform</p>
+				</div>
+			</div>
+			
+			<div class="process-step">
+				<div class="step-number">4</div>
+				<div class="step-content">
+					<p><strong>Receive confirmation and additional details</strong> via email</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Contact Section -->
+	<div class="contact-section">
+		<h2>Questions?</h2>
+		<p>For questions about vendor applications, participation opportunities, or general Pauwau information, please contact us.</p>
+		
+		<a href="/contact/" class="contact-button">Contact the Tribal Office</a>
+		<p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-light);">Select "Pauwau" as your inquiry category</p>
+		
+		<a href="/pauwau/" class="back-link">← Back to Pauwau Information</a>
+	</div>
+</div>
+
+{{ end }}

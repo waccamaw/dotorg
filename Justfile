@@ -26,6 +26,21 @@ email-templates:
 watch-email-templates:
     cd apps && just watch-email-templates
 
+# Show production email template URLs for sharing
+email-urls:
+    #!/usr/bin/env bash
+    echo ""
+    echo "📧 Email Template Preview URLs (waccamaw.org)"
+    echo ""
+    echo "📋 Direct Access (no login required):"
+    echo "   • https://waccamaw.org/members/email-templates/reminder-inactive.html"
+    echo "   • https://waccamaw.org/members/email-templates/reminder-at-risk-critical.html"
+    echo "   • https://waccamaw.org/members/email-templates/reminder-at-risk-warning.html"
+    echo ""
+    echo "🔐 Dashboard Preview (requires executive login):"
+    echo "   • https://waccamaw.org/members/"
+    echo ""
+
 # Generate and view meetings index
 view-meetings-index:
     cd apps/meetings-service && just generate-index
