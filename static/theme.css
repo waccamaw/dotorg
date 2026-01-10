@@ -429,10 +429,18 @@ main {
 .post-content {
 	line-height: 1.8;
 	font-size: 1.05rem;
+	display: flex;
+	flex-direction: column;
 }
 
 .post-content.with-title {
 	margin-top: 1.5rem;
+}
+
+/* Move images to the top of content */
+.post-content img,
+.post-content p:has(img) {
+	order: -1;
 }
 
 .post-content h1,
@@ -478,11 +486,38 @@ main {
 }
 
 .post-content img {
-	margin: 2rem 0;
+	display: block;
+	margin: 2.5rem auto;
 	border-radius: 8px;
 	max-width: 100%;
 	height: auto;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Multiple images in content - create a gallery */
+.post-content p:has(img + img),
+.post-content > img + img {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: 1rem;
+	margin: 2.5rem 0;
+}
+
+.post-content p:has(img + img) img {
+	margin: 0;
+	width: 100%;
+	height: 300px;
+	object-fit: cover;
+}
+
+/* Single image caption support */
+.post-content p:has(img:only-child) {
+	text-align: center;
+	margin: 2.5rem 0;
+}
+
+.post-content p:has(img:only-child) img {
+	margin: 0 auto 0.5rem;
 }
 
 .post-content a {
