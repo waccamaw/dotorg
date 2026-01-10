@@ -1,0 +1,119 @@
+name: Sync Zoom Recording (Webhook Triggered)
+
+# This workflow is triggered when Zoom sends a recording.completed webhook
+# to the Cloudflare Worker, which then dispatches this workflow via repository_dispatch
+
+on:
+  repository_dispatch:
+    types: [zoom-recording-ready]
+
+jobs:
+  sync-recording:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: |
+          cd apps/meetings-service
+          npm ci
+          
+      - name: Sync specific recording
+        env:
+          ZOOM_ACCOUNT_ID: ${{ secrets.ZOOM_ACCOUNT_ID }}
+          ZOOM_CLIENT_ID: ${{ secrets.ZOOM_CLIENT_ID }}
+          ZOOM_CLIENT_SECRET: ${{ secrets.ZOOM_CLIENT_SECRET }}
+        run: |
+          cd apps/meetings-service
+          
+          MEETING_ID="${{ github.event.client_payload.meeting_id }}"
+          MEETING_TOPIC="${{ github.event.client_payload.topic }}"
+          
+          echo "📥 Syncing recording for meeting ID: $MEETING_ID"
+          echo "📋 Topic: $MEETING_TOPIC"
+          echo "📅 Start time: ${{ github.event.client_payload.start_time }}"
+          echo "🎥 Recording count: ${{ github.event.client_payload.recording_count }}"
+          echo ""
+          
+          # Run sync script for this specific meeting
+          # The --meeting-id flag will sync only this meeting
+          node sync-zoom-meetings.js --mode recorded --meeting-id "$MEETING_ID"
+          
+      - name: Generate meetings index
+        run: |
+          cd apps/meetings-service
+          echo "🔄 Regenerating meetings index..."
+          node lib/index-generator.js
+          
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Check if there are changes
+          if [[ -n $(git status -s) ]]; then
+            echo "📝 Changes detected, committing..."
+            
+            git add apps/meetings-service/content/
+            git add apps/meetings-service/meetings-index.json
+            
+            COMMIT_MSG="Auto-sync: Recording ready for meeting ${{ github.event.client_payload.meeting_id }}
+
+Topic: ${{ github.event.client_payload.topic }}
+Start time: ${{ github.event.client_payload.start_time }}
+Recording count: ${{ github.event.client_payload.recording_count }}
+
+Triggered by Zoom webhook at ${{ github.event.client_payload.webhook_timestamp }}"
+            
+            git commit -m "$COMMIT_MSG"
+            git push
+            
+            echo "✅ Changes committed and pushed"
+          else
+            echo "ℹ️  No changes to commit"
+          fi
+          
+      - name: Sync to Cloudflare KV
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          cd apps/meetings-service
+          echo "📤 Uploading updated index to Cloudflare KV..."
+          
+          # Install wrangler if not available
+          if ! command -v wrangler &> /dev/null; then
+            npm install -g wrangler
+          fi
+          
+          # Upload just the index (quick operation)
+          # IMPORTANT: --remote flag ensures we write to Cloudflare KV, not local storage
+          wrangler kv key put "meetings:index" \
+            --path=meetings-index.json \
+            --binding=MEETINGS_KV \
+            --env production \
+            --remote
+          
+          echo "✅ Cloudflare KV updated"
+          
+      - name: Summary
+        run: |
+          echo "## Zoom Recording Sync Complete 🎉" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Meeting ID:** ${{ github.event.client_payload.meeting_id }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Topic:** ${{ github.event.client_payload.topic }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Start Time:** ${{ github.event.client_payload.start_time }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Recordings:** ${{ github.event.client_payload.recording_count }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The meeting content has been synced, indexed, and published to production." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 View at: https://waccamaw.org/meetings/" >> $GITHUB_STEP_SUMMARY
