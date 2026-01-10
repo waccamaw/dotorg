@@ -10,12 +10,32 @@
     {{ if templates.Exists "partials/microhook-post-byline.html" }}
     {{ partial "microhook-post-byline.html" . }}
     {{ else }}
-    <div class="post-date-wrapper">
-    <time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-07:00" }}">{{ partial "dateformat/long" . }}</time>
-    </div>
-    {{ end }}
     {{ if .Title }}
-    <h2 class="p-name post-title">{{ .Title }}</h2>
+    <h1 class="p-name post-title">{{ .Title }}</h1>
+    {{ end }}
+    
+    <div class="post-meta-line">
+        <time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-07:00" }}">{{ partial "dateformat/long" . }}</time>
+        {{ with .Params.author }}
+            <span class="meta-separator">•</span>
+            {{ if reflect.IsMap . }}
+                {{ if .full_name }}
+                    <span class="p-author h-card author-info">
+                        {{ if .avatar }}
+                        <img src="{{ .avatar }}" alt="{{ trim .full_name "'" }}" class="author-avatar">
+                        {{ end }}
+                        <span class="author-name">{{ trim .full_name "'" }}</span>
+                    </span>
+                {{ end }}
+            {{ else }}
+                <span class="p-author h-card author-info">
+                    <span class="author-name">{{ trim . "'" }}</span>
+                </span>
+            {{ end }}
+        {{ end }}
+        <span class="meta-separator">•</span>
+        <span class="reading-time">{{ math.Round (div (countwords .Content) 200.0) }} min read</span>
+    </div>
     {{ end }}
   </header>
 
