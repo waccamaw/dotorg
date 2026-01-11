@@ -17,10 +17,48 @@ class MeetingsAPIClient {
     }
 
     /**
-     * Check if user is authenticated
+     * Clear all session data from local storage
+     */
+    clearSession() {
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.SESSION_TOKEN);
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.MEMBER_DATA);
+        localStorage.removeItem(CONFIG.STORAGE_KEYS.MEMBER_EMAIL);
+    }
+
+    /**
+     * Check if JWT token is expired
+     * @returns {boolean} True if token exists but is expired
+     */
+    isTokenExpired() {
+        const token = this.getSessionToken();
+        if (!token) return false;
+
+        try {
+            // Decode JWT payload (middle part of token)
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            const expiration = payload.exp * 1000; // Convert to milliseconds
+            const now = Date.now();
+            return now >= expiration;
+        } catch (error) {
+            console.error('[Meetings API] Error decoding JWT:', error);
+            // If we can't decode the token, treat it as invalid/expired
+            return true;
+        }
+    }
+
+    /**
+     * Check if user is authenticated with valid session
      */
     isAuthenticated() {
-        return !!this.getSessionToken();
+        const hasToken = !!this.getSessionToken();
+        if (!hasToken) return false;
+        
+        // Check if token is expired
+        if (this.isTokenExpired()) {
+            return false;
+        }
+        
+        return true;
     }
 
     /**

@@ -22,6 +22,13 @@ class MeetingsApp {
 
     async init() {
         console.log('[Meetings] Initializing app...');
+        
+        // Check for expired session before loading anything
+        if (this.api.isTokenExpired()) {
+            console.log('[Meetings] Session expired, clearing stale session data');
+            this.api.clearSession();
+        }
+        
         this.renderLoadingState();
         await this.loadMeetings();
         this.setupEventListeners();
@@ -42,6 +49,13 @@ class MeetingsApp {
             if (response.success) {
                 let allMeetings = response.meetings || [];
                 this.isAuthenticated = response.authenticated;
+                
+                // Detect stale session: we have a token but API says not authenticated
+                const hasToken = !!this.api.getSessionToken();
+                if (hasToken && !response.authenticated) {
+                    console.log('[Meetings] Stale session detected (have token but not authenticated)');
+                    this.api.clearSession();
+                }
                 
                 // Store original unfiltered meetings for dev table
                 this.originalMeetings = [...allMeetings];
