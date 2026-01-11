@@ -89,6 +89,16 @@ jobs:
           echo "🚀 Deploying to Micro.blog..."
           python3 .github/deploy/microblog_deploy.py --all --timeout 120
       
+      - name: Enable Cloudflare Development Mode
+        run: |
+          echo "🔧 Enabling Cloudflare Development Mode (bypasses cache for 3 hours)..."
+          curl -X PATCH "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/settings/development_mode" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{"value":"on"}' \
+            --silent --show-error
+          echo "✅ Development mode enabled - changes will be visible immediately"
+      
       - name: Create deployment summary
         if: always()
         run: |
