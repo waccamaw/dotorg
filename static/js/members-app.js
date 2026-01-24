@@ -1153,6 +1153,7 @@ class MemberPortalApp {
             critical30: 0,
             warning60: 0,
             retiredDeceased: 0,
+            doNotContact: 0,
             atRiskMembers: []
         };
         
@@ -1160,6 +1161,12 @@ class MemberPortalApp {
             const fields = member.fields || {};
             const status = fields.Status || 'Active';
             const statusLower = status.toLowerCase();
+            
+            // Check Do Not Contact preference
+            const doNotContact = (fields.DoNotContact || '').toString().trim().toUpperCase() === 'YES';
+            if (doNotContact) {
+                metrics.doNotContact++;
+            }
             
             // Count retired, deceased, resigned, and revoked (excluded from engagement outreach)
             if (statusLower === 'deceased' || statusLower === 'retired' || 
@@ -1205,7 +1212,8 @@ class MemberPortalApp {
                         expires: fields.Expires,
                         daysUntil: daysUntil,
                         riskLevel: riskLevel,
-                        lastUpdated: fields.Status_x0020_Updated || fields.Modified || '-'
+                        lastUpdated: fields.Status_x0020_Updated || fields.Modified || '-',
+                        doNotContact: doNotContact
                     });
                 }
             }
@@ -1222,7 +1230,8 @@ class MemberPortalApp {
                     expires: fields.Expires,
                     daysUntil: fields.Expires ? Math.ceil((new Date(fields.Expires) - now) / (1000 * 60 * 60 * 24)) : -9999,
                     riskLevel: 'expired',
-                    lastUpdated: fields.Status_x0020_Updated || fields.Modified || '-'
+                    lastUpdated: fields.Status_x0020_Updated || fields.Modified || '-',
+                    doNotContact: doNotContact
                 });
             }
         });
@@ -1251,10 +1260,11 @@ class MemberPortalApp {
         const totalMembers = metrics.active + metrics.inactive + metrics.critical30 + metrics.warning60 + metrics.retiredDeceased;
         const percentage = totalMembers > 0 ? Math.round((outreachList / totalMembers) * 100) : 0;
 
-        // Calculate how many in outreach list have email addresses
+        // Calculate how many in outreach list have email addresses AND are not Do Not Contact
         const outreachWithEmail = metrics.atRiskMembers.filter(m => {
             const email = m.email || '';
-            return email && email.trim() !== '' && email !== '-';
+            const hasEmail = email && email.trim() !== '' && email !== '-';
+            return hasEmail && !m.doNotContact;
         }).length;
         const emailReachPercentage = outreachList > 0 ? Math.round((outreachWithEmail / outreachList) * 100) : 0;
 
@@ -1267,6 +1277,8 @@ class MemberPortalApp {
         const emailReachPercentageEl = document.getElementById('emailReachPercentage');
         const emailReachMessageEl = document.getElementById('emailReachMessage');
         const potentialRevenueEl = document.getElementById('potentialRevenue');
+        const doNotContactEl = document.getElementById('doNotContactCount');
+        const doNotContactMessageEl = document.getElementById('doNotContactMessage');
         
         if (isHealthy) {
             // Green for healthy state
@@ -1303,7 +1315,20 @@ class MemberPortalApp {
         
         emailReachPercentageEl.textContent = `${emailReachPercentage}%`;
         emailReachMessageEl.textContent = 
-            `of outreach list can be reached via email (${outreachWithEmail} of ${outreachList} have email addresses)`;
+            `of outreach list can be reached via email (${outreachWithEmail} of ${outreachList} have email & allow contact)`;
+        
+        // Update Do Not Contact stats (only shown if > 0)
+        if (doNotContactEl && doNotContactMessageEl) {
+            doNotContactEl.textContent = metrics.doNotContact;
+            doNotContactMessageEl.textContent = 
+                `${metrics.doNotContact === 1 ? 'member has' : 'members have'} requested no email contact`;
+            
+            // Show/hide DNC section based on count
+            const dncSection = document.getElementById('doNotContactSection');
+            if (dncSection) {
+                dncSection.style.display = metrics.doNotContact > 0 ? 'block' : 'none';
+            }
+        }
 
         // Create chart with financial info in labels
         const inactiveRevenue = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(metrics.inactive * membershipFee);

@@ -51,6 +51,18 @@ class APIClient {
 
         try {
             const response = await fetch(url, config);
+            
+            // Handle 401 Unauthorized - token expired or invalid
+            if (response.status === 401) {
+                console.warn('Session expired or invalid. Redirecting to login...');
+                this.clearSession();
+                // Redirect to login screen
+                if (window.app && typeof window.app.showRequestForm === 'function') {
+                    window.app.showRequestForm();
+                }
+                throw new Error('Session expired. Please log in again.');
+            }
+            
             const data = await response.json();
 
             if (!response.ok) {
@@ -175,6 +187,18 @@ class APIClient {
 
         try {
             const response = await fetch(url, config);
+            
+            // Handle 401 Unauthorized - token expired or invalid
+            if (response.status === 401) {
+                console.warn('Session expired or invalid. Redirecting to login...');
+                this.clearSession();
+                // Redirect to login screen
+                if (window.app && typeof window.app.showRequestForm === 'function') {
+                    window.app.showRequestForm();
+                }
+                throw new Error('Session expired. Please log in again.');
+            }
+            
             const data = await response.json();
 
             if (!response.ok) {
