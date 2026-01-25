@@ -105,16 +105,20 @@ jobs:
           echo "## Micro.blog Deployment" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
+          # Session cache status with monitoring info
           if [ "${{ steps.cache-session.outputs.cache-hit }}" = "true" ]; then
-            echo "- 🔐 **Authentication:** Used cached session" >> $GITHUB_STEP_SUMMARY
+            echo "- 🔐 **Authentication:** Used cached session ✅" >> $GITHUB_STEP_SUMMARY
+            echo "  - Cache key: \`microblog-session-${{ github.repository }}-${{ steps.cache-key.outputs.date_prefix }}\`" >> $GITHUB_STEP_SUMMARY
           else
-            echo "- 🔐 **Authentication:** Fresh login via email" >> $GITHUB_STEP_SUMMARY
+            echo "- 🔐 **Authentication:** Fresh login via email 📧" >> $GITHUB_STEP_SUMMARY
+            echo "  - ⚠️ Email polling may take up to 15 minutes if Micro.blog is slow" >> $GITHUB_STEP_SUMMARY
           fi
           
           if [ "${{ job.status }}" = "success" ]; then
             echo "- ✅ **Deployment Status:** Successful" >> $GITHUB_STEP_SUMMARY
           else
             echo "- ❌ **Deployment Status:** Failed" >> $GITHUB_STEP_SUMMARY
+            echo "  - If auth failed, retry manually - email may already be waiting" >> $GITHUB_STEP_SUMMARY
           fi
           
           echo "- 🎨 **Theme ID:** ${{ inputs.theme_id || vars.MICROBLOG_THEME_ID }}" >> $GITHUB_STEP_SUMMARY

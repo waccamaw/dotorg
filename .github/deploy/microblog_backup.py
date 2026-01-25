@@ -126,13 +126,17 @@ class MicroblogBackup:
             print(f"❌ Error connecting to Gmail: {e}")
             return None
     
-    def poll_email_for_export(self, export_time, max_retries=25, retry_interval=30):
-        """Poll Gmail for export ready notification and extract download link"""
+    def poll_email_for_export(self, export_time, max_retries=50, retry_interval=24):
+        """Poll Gmail for export ready notification and extract download link
+        
+        Default timeout: 50 retries × 24s = 20 minutes
+        This handles slow Micro.blog export processing during high load.
+        """
         print(f"📧 Polling Gmail for export notification (up to {max_retries} retries, {retry_interval}s apart)...")
         print(f"   Total timeout: {max_retries * retry_interval // 60} minutes")
         
-        # Search emails from 1 minute before export request
-        search_start = export_time - timedelta(minutes=1)
+        # Search emails from 10 minutes before export request (in case of clock skew)
+        search_start = export_time - timedelta(minutes=10)
         
         mail = self.connect_to_gmail()
         if not mail:
@@ -167,8 +171,8 @@ class MicroblogBackup:
                         print(f"   ℹ️  Attempt {attempt}/{max_retries}: No export emails found yet")
                         continue
                     
-                    # Get last 20 emails (most recent first)
-                    email_ids = email_ids[-20:][::-1]
+                    # Get last 50 emails (most recent first) to handle busy inboxes
+                    email_ids = email_ids[-50:][::-1]
                     
                     print(f"   📬 Found {len(email_ids)} export emails, checking recent ones...")
                     
