@@ -785,19 +785,62 @@ const CALENDAR_SOURCES = [
 	// Add more calendars here as needed
 ];
 
+// CORS proxy configurations - multiple proxies for fallback and load distribution
+const CORS_PROXIES = [
+	{
+		name: 'corsproxy.io',
+		buildUrl: (url) => 'https://corsproxy.io/?' + encodeURIComponent(url)
+	},
+	{
+		name: 'allorigins',
+		buildUrl: (url) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
+	},
+	{
+		name: 'codetabs',
+		buildUrl: (url) => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url)
+	}
+];
+
+// Fisher-Yates shuffle to randomize proxy order for load distribution
+function shuffleArray(array) {
+	const shuffled = [...array];
+	for (let i = shuffled.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+	}
+	return shuffled;
+}
+
+// Fetch with proxy fallback - tries each proxy in randomized order until one succeeds
+async function fetchWithProxyFallback(targetUrl) {
+	const proxies = shuffleArray(CORS_PROXIES);
+	
+	for (const proxy of proxies) {
+		const proxyUrl = proxy.buildUrl(targetUrl);
+		try {
+			console.log(`[CORS] Trying ${proxy.name} for:`, targetUrl);
+			const response = await fetch(proxyUrl);
+			
+			if (response.ok) {
+				console.log(`[CORS] Success with ${proxy.name}`);
+				return await response.text();
+			}
+			
+			console.warn(`[CORS] ${proxy.name} returned HTTP ${response.status}, trying next...`);
+		} catch (error) {
+			console.warn(`[CORS] ${proxy.name} failed: ${error.message}, trying next...`);
+		}
+	}
+	
+	throw new Error('All CORS proxies failed');
+}
+
 // Fetch events from a single calendar
 async function fetchCalendarEvents(calendar) {
-	const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(calendar.url);
-	
 	try {
 		console.log(`[${calendar.name}] Fetching events from:`, calendar.url);
-		const response = await fetch(proxyUrl);
+		const icalData = await fetchWithProxyFallback(calendar.url);
 		
-		if (!response.ok) {
-			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-		}
-		
-		const icalData = await response.text();
 		console.log(`[${calendar.name}] Raw iCal data received:`, icalData.substring(0, 200));
 		const events = parseICalEvents(icalData);
 		
