@@ -415,11 +415,16 @@ newsletterForm.addEventListener('submit', async function(e) {
 		font-weight: 600;
 		margin-bottom: 0.25rem;
 		color: var(--text-color);
+		word-wrap: break-word;
+		overflow-wrap: break-word;
 	}
 	
 	.meeting-list-item .meeting-type {
 		font-size: 0.875rem;
 		color: var(--text-light);
+		word-wrap: break-word;
+		overflow-wrap: break-word;
+		word-break: break-all;
 	}
 	
 	.recent-meetings-list {
@@ -785,41 +790,40 @@ const CALENDAR_SOURCES = [
 	// Add more calendars here as needed
 ];
 
-// CORS proxy configurations - multiple proxies for fallback and load distribution
+// CORS proxy configurations - multiple proxies for fallback
 const CORS_PROXIES = [
+
 	{
-		name: 'corsproxy.io',
-		buildUrl: (url) => 'https://corsproxy.io/?' + encodeURIComponent(url)
+		name: 'codetabs',
+		buildUrl: (url) => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url)
 	},
 	{
 		name: 'allorigins',
 		buildUrl: (url) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
 	},
 	{
-		name: 'codetabs',
-		buildUrl: (url) => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url)
+		name: 'thingproxy',
+		buildUrl: (url) => 'https://thingproxy.freeboard.io/fetch/' + encodeURIComponent(url)
+	},
+	{
+		name: 'corsproxy',
+		buildUrl: (url) => 'https://corsproxy.io/?' + encodeURIComponent(url)
 	}
 ];
 
-// Fisher-Yates shuffle to randomize proxy order for load distribution
-function shuffleArray(array) {
-	const shuffled = [...array];
-	for (let i = shuffled.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-	}
-	return shuffled;
-}
-
-// Fetch with proxy fallback - tries each proxy in randomized order until one succeeds
+// Fetch with proxy fallback - tries each proxy until one succeeds
 async function fetchWithProxyFallback(targetUrl) {
-	const proxies = shuffleArray(CORS_PROXIES);
-	
-	for (const proxy of proxies) {
+	for (const proxy of CORS_PROXIES) {
 		const proxyUrl = proxy.buildUrl(targetUrl);
 		try {
 			console.log(`[CORS] Trying ${proxy.name} for:`, targetUrl);
-			const response = await fetch(proxyUrl);
+			
+			// Set 2-second timeout
+			const controller = new AbortController();
+			const timeoutId = setTimeout(() => controller.abort(), 2000);
+			
+			const response = await fetch(proxyUrl, { signal: controller.signal });
+			clearTimeout(timeoutId);
 			
 			if (response.ok) {
 				console.log(`[CORS] Success with ${proxy.name}`);
