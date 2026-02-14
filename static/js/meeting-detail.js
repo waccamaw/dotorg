@@ -170,18 +170,34 @@ class MeetingDetailApp {
     renderRecordingEmbed() {
         if (!this.meeting.hasRecording) return '';
         
-        // Extract video URL from README frontmatter
-        const readme = this.meeting.content?.readme || '';
-        const videoUrlMatch = readme.match(/video_url:\s*"([^"]+)"/);
-        const videoUrl = videoUrlMatch ? videoUrlMatch[1] : null;
+        // Prefer YouTube embed (permanent) over Zoom play URL (expires)
+        const youtubeId = this.meeting.youtube_video_id;
         
-        if (!videoUrl) return '';
+        if (youtubeId) {
+            const embedUrl = `https://www.youtube.com/embed/${youtubeId}`;
+            return `
+                <div style="margin: 2rem 0; background: white; padding: 24px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px;">
+                        <iframe 
+                            src="${embedUrl}" 
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Fallback to Zoom share URL
+        const shareUrl = this.meeting.share_url;
+        if (!shareUrl) return '';
         
         return `
             <div style="margin: 2rem 0; background: white; padding: 24px; border-radius: 8px; border: 1px solid var(--border-color);">
                 <div style="position: relative; padding-bottom: 62%; height: 0; overflow: hidden; border-radius: 8px;">
                     <iframe 
-                        src="${videoUrl}" 
+                        src="${shareUrl}" 
                         style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"
                         scrolling="no"
                         allow="autoplay; fullscreen; picture-in-picture"
