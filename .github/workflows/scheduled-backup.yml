@@ -59,7 +59,7 @@ jobs:
           MICROBLOG_SITE_ID: ${{ inputs.site_id || vars.MICROBLOG_SITE_ID }}
         run: |
           echo "🔐 No cached session found - authenticating..."
-          python3 .github/deploy/microblog_auth.py --output .session-cookie
+          python3 .github/deploy/microblog_auth.py --output .session-cookie --max-retries 80 --retry-interval 15
       
       - name: Validate session cookie
         env:

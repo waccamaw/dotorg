@@ -119,8 +119,23 @@ class MicroblogAuthenticator:
                     print(f"   ⏳ Waiting {retry_interval}s before retry {attempt}/{max_retries}...")
                     time.sleep(retry_interval)
                 else:
-                    # Small delay on first attempt to give email time to arrive
-                    time.sleep(5)
+                    # Longer initial delay to give email time to arrive
+                    # Micro.blog can be slow during high load periods
+                    print(f"   ⏳ Waiting 30s for initial email delivery...")
+                    time.sleep(30)
+                
+                # Reconnect to IMAP every 10 attempts to prevent timeouts
+                if attempt > 1 and attempt % 10 == 1:
+                    print(f"   🔄 Refreshing IMAP connection (attempt {attempt})...")
+                    try:
+                        mail.close()
+                        mail.logout()
+                    except:
+                        pass
+                    mail = self.connect_to_gmail()
+                    if not mail:
+                        print(f"   ⚠️  Failed to reconnect to Gmail")
+                        continue
                 
                 # Select inbox
                 mail.select('INBOX')
@@ -282,7 +297,7 @@ class MicroblogAuthenticator:
             # Non-fatal - cookie might still work
             return True
     
-    def authenticate(self, output_file=None):
+    def authenticate(self, output_file=None, max_retries=60, retry_interval=15):
         """Complete authentication flow"""
         print("🚀 Micro.blog Email Authentication")
         print("=" * 60)
@@ -298,7 +313,7 @@ class MicroblogAuthenticator:
             return None
         
         # Step 3: Search for sign-in email
-        magic_link = self.search_for_signin_email(mail, request_time)
+        magic_link = self.search_for_signin_email(mail, request_time, max_retries=max_retries, retry_interval=retry_interval)
         
         # Close IMAP connection
         try:
@@ -340,6 +355,10 @@ def main():
     parser.add_argument('--output', '-o', help='Output file for session cookie (default: .session-cookie)', 
                        default='.session-cookie')
     parser.add_argument('--stdout', action='store_true', help='Output cookie to stdout instead of file')
+    parser.add_argument('--max-retries', type=int, default=60, 
+                       help='Maximum number of email polling attempts (default: 60)')
+    parser.add_argument('--retry-interval', type=int, default=15,
+                       help='Seconds to wait between polling attempts (default: 15)')
     
     args = parser.parse_args()
     
@@ -347,7 +366,9 @@ def main():
         authenticator = MicroblogAuthenticator()
         
         output_file = None if args.stdout else args.output
-        cookie = authenticator.authenticate(output_file=output_file)
+        cookie = authenticator.authenticate(output_file=output_file, 
+                                           max_retries=args.max_retries,
+                                           retry_interval=args.retry_interval)
         
         if cookie:
             if args.stdout:
