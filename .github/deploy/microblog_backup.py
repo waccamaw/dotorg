@@ -88,30 +88,13 @@ class MicroblogBackup:
         """Trigger theme export from Micro.blog"""
         print(f"📦 Triggering theme export (site ID: {self.site_id})...")
         
-        # POST to /account/export/{site_id}/theme to trigger the export
+        # GET request to /account/export/{site_id}/theme to trigger the export
         url = f'https://micro.blog/account/export/{self.site_id}/theme'
-        headers = {
-            **self.base_headers,
-            'Accept': '*/*',
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache',
-            'Origin': 'https://micro.blog',
-            'Referer': f'https://micro.blog/account/export/{self.site_id}',
-            'Sec-Fetch-Dest': 'empty',
-            'Sec-Fetch-Mode': 'cors',
-            'Sec-Fetch-Site': 'same-origin',
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-        
-        # Send site_id as form data (matching the reload_theme pattern)
-        form_data = {
-            'site_id': self.site_id
-        }
+        headers = {**self.base_headers}
         
         try:
-            # POST to trigger export (similar to theme reload pattern)
-            response = requests.post(url, headers=headers, timeout=30, data=form_data, allow_redirects=True)
+            # GET request to trigger export
+            response = requests.get(url, headers=headers, timeout=30, allow_redirects=True)
             
             if response.status_code in [200, 302]:
                 export_time = datetime.utcnow()
