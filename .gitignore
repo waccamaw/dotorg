@@ -20,3 +20,8 @@ content.zip
 content/
 data/
 .session-cookie
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
