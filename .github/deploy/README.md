@@ -11,6 +11,7 @@ Micro.blog doesn't provide traditional API tokens or CI/CD integration for templ
 3. **Theme Reload**: POSTs to `/account/themes/reload` to sync theme files from GitHub
 4. **Build Automation**: Visits `/account/logs` to trigger site rebuild
 5. **Build Monitoring**: Polls `/posts/check` to monitor build completion
+6. **Backup Automation**: POSTs to `/account/export/{site_id}/theme` to trigger weekly backups
 
 For complete documentation, see the main [DEPLOYMENT.md](../../DEPLOYMENT.md) file.
 
@@ -52,6 +53,7 @@ Required GitHub secrets and variables:
 
 - `microblog_auth.py` - Email authentication and session cookie capture
 - `microblog_deploy.py` - Template reload, rebuild trigger, and build monitoring
+- `microblog_backup.py` - Automated theme export and backup to GitHub releases
 - `requirements.txt` - Python dependencies
 - `README.md` - This file
 
