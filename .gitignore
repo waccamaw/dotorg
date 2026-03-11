@@ -1,4 +1,5 @@
 .DS_Store
+._*
 .hugo_build.lock
 public/
 .env
@@ -25,3 +26,9 @@ data/
 __pycache__/
 *.pyc
 *.pyo
+
+# Node
+node_modules/
+
+# Backups
+backups/
