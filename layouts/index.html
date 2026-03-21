@@ -790,60 +790,31 @@ const CALENDAR_SOURCES = [
 	// Add more calendars here as needed
 ];
 
-// CORS proxy configurations - multiple proxies for fallback
-const CORS_PROXIES = [
-
-	{
-		name: 'codetabs',
-		buildUrl: (url) => 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(url)
-	},
-	{
-		name: 'allorigins',
-		buildUrl: (url) => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url)
-	},
-	{
-		name: 'thingproxy',
-		buildUrl: (url) => 'https://thingproxy.freeboard.io/fetch/' + encodeURIComponent(url)
-	},
-	{
-		name: 'corsproxy',
-		buildUrl: (url) => 'https://corsproxy.io/?' + encodeURIComponent(url)
-	}
-];
-
-// Fetch with proxy fallback - tries each proxy until one succeeds
-async function fetchWithProxyFallback(targetUrl) {
-	for (const proxy of CORS_PROXIES) {
-		const proxyUrl = proxy.buildUrl(targetUrl);
-		try {
-			console.log(`[CORS] Trying ${proxy.name} for:`, targetUrl);
-			
-			// Set 2-second timeout
-			const controller = new AbortController();
-			const timeoutId = setTimeout(() => controller.abort(), 2000);
-			
-			const response = await fetch(proxyUrl, { signal: controller.signal });
-			clearTimeout(timeoutId);
-			
-			if (response.ok) {
-				console.log(`[CORS] Success with ${proxy.name}`);
-				return await response.text();
-			}
-			
-			console.warn(`[CORS] ${proxy.name} returned HTTP ${response.status}, trying next...`);
-		} catch (error) {
-			console.warn(`[CORS] ${proxy.name} failed: ${error.message}, trying next...`);
-		}
+// Fetch iCal data via meetings-service calendar proxy (no third-party CORS proxies needed)
+async function fetchCalendarIcal(calendarId) {
+	const baseUrl = CONFIG?.MEETINGS_API_BASE_URL || 'https://meetings.waccamaw.org';
+	const proxyUrl = `${baseUrl}/api/calendar/${encodeURIComponent(calendarId)}`;
+	
+	console.log(`[Calendar] Fetching via proxy:`, proxyUrl);
+	
+	const controller = new AbortController();
+	const timeoutId = setTimeout(() => controller.abort(), 10000);
+	
+	const response = await fetch(proxyUrl, { signal: controller.signal });
+	clearTimeout(timeoutId);
+	
+	if (!response.ok) {
+		throw new Error(`Calendar proxy returned HTTP ${response.status}`);
 	}
 	
-	throw new Error('All CORS proxies failed');
+	return await response.text();
 }
 
 // Fetch events from a single calendar
 async function fetchCalendarEvents(calendar) {
 	try {
-		console.log(`[${calendar.name}] Fetching events from:`, calendar.url);
-		const icalData = await fetchWithProxyFallback(calendar.url);
+		console.log(`[${calendar.name}] Fetching events via proxy for:`, calendar.id);
+		const icalData = await fetchCalendarIcal(calendar.id);
 		
 		console.log(`[${calendar.name}] Raw iCal data received:`, icalData.substring(0, 200));
 		const events = parseICalEvents(icalData);
