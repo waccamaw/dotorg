@@ -1,13 +1,11 @@
 {{/* Micro.blog conversation embed.
      conversation.js renders any cross-posted/Mastodon replies for the given
-     URL. Only shows content when the page's permalink matches a Micro.blog
-     post; renders nothing otherwise, so it's safe to include on every page. */}}
-<section class="post-conversation" aria-label="Conversation">
-	<h2 class="post-conversation-title">Conversation</h2>
-	<div class="post-conversation-body">
-		<script type="text/javascript" src="https://micro.blog/conversation.js?url={{ .Permalink }}"></script>
-		<noscript>
-			<p class="post-conversation-noscript">Replies are loaded from Micro.blog and require JavaScript. <a href="https://micro.blog/conversation?url={{ .Permalink | urlquery }}" target="_blank" rel="noopener">View the conversation on Micro.blog</a>.</p>
-		</noscript>
-	</div>
+     URL. Only shows content when the page's permalink matches a real Micro.blog
+     post; renders nothing otherwise. The widget renders its own heading when
+     there are replies — no static heading here. */}}
+<section class="post-conversation">
+	<script type="text/javascript" src="https://micro.blog/conversation.js?url={{ .Permalink }}"></script>
+	<noscript>
+		<p class="post-conversation-noscript">Replies are loaded from Micro.blog and require JavaScript. <a href="https://micro.blog/conversation?url={{ .Permalink | urlquery }}" target="_blank" rel="noopener">View the conversation on Micro.blog</a>.</p>
+	</noscript>
 </section>
