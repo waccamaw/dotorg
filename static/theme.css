@@ -5301,13 +5301,3 @@ margin: 0.5rem;
 	.post-share-name { display: none; }
 	.post-share-btn { padding: 0.55rem; }
 }
-
-/* Micro.blog conversation embed (partials/conversation.html) */
-.post-conversation {
-	margin-top: 1.5rem;
-}
-
-.post-conversation-noscript {
-	color: var(--text-secondary, #555);
-	font-style: italic;
-}
