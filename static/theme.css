@@ -5239,3 +5239,65 @@ border-radius: 12px;
 margin: 0.5rem;
 }
 }
+
+/* Post share buttons — sits below the post footer on single posts */
+.post-share {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+	margin: 1.5rem 0 0;
+	padding: 1rem 1.25rem;
+	background: var(--bg-secondary);
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+}
+
+.post-share-label {
+	font-weight: 600;
+	color: var(--text-color);
+	margin-right: 0.25rem;
+	font-size: 0.9rem;
+}
+
+.post-share-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.5rem 0.85rem;
+	background: var(--bg-white);
+	color: var(--text-color);
+	text-decoration: none;
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+	font: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.post-share-btn svg {
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+}
+
+.post-share-btn:hover {
+	color: var(--primary-color);
+	border-color: var(--primary-color);
+	background: var(--bg-white);
+	text-decoration: none;
+}
+
+.post-share-facebook:hover { background: #1877f2; border-color: #1877f2; color: #fff; }
+.post-share-x:hover        { background: #000;     border-color: #000;     color: #fff; }
+.post-share-bluesky:hover  { background: #1185fe; border-color: #1185fe; color: #fff; }
+.post-share-email:hover    { background: var(--primary-color); border-color: var(--primary-color); color: #fff; }
+.post-share-copy:hover     { background: var(--primary-color); border-color: var(--primary-color); color: #fff; }
+
+@media (max-width: 600px) {
+	.post-share { padding: 0.75rem; gap: 0.4rem; }
+	.post-share-name { display: none; }
+	.post-share-btn { padding: 0.55rem; }
+}

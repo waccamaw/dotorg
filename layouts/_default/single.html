@@ -40,6 +40,8 @@
 			· <a href="https://micro.blog/{{ .Site.Params.microblog_user }}/{{ path.Base .RelPermalink | strings.TrimSuffix ".html" }}">View on Micro.blog</a>
 		{{ end }}
 	</footer>
+
+	{{ partial "share.html" . }}
 </article>
 
 <nav class="post-navigation">
