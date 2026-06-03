@@ -5301,3 +5301,31 @@ margin: 0.5rem;
 	.post-share-name { display: none; }
 	.post-share-btn { padding: 0.55rem; }
 }
+
+/* Micro.blog conversation embed (partials/conversation.html) */
+.post-conversation {
+	margin-top: 2rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--border-color);
+}
+
+.post-conversation-title {
+	font-size: 1.25rem;
+	margin-bottom: 0.75rem;
+	color: var(--text-primary, inherit);
+}
+
+.post-conversation-body {
+	font-size: 0.95rem;
+}
+
+.post-conversation-body :is(ul, ol) {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.post-conversation-noscript {
+	color: var(--text-secondary, #555);
+	font-style: italic;
+}
