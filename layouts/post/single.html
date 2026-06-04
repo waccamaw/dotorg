@@ -85,6 +85,8 @@
   {{ end }}
 </div>
 
+{{ partial "share.html" . }}
+
 {{ if templates.Exists "partials/microhook-before-comments.html" }}
 {{ partial "microhook-before-comments.html" . }}
 {{ end }}

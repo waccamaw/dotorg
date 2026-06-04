@@ -5239,3 +5239,163 @@ border-radius: 12px;
 margin: 0.5rem;
 }
 }
+
+/* Post share buttons — sits immediately below the post content card,
+   reading as a continuation of the post rather than a detached panel. */
+.post-share {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+	max-width: 700px;
+	margin: 1.25rem auto 0;
+	padding: 0;
+	background: none;
+	border: none;
+}
+
+.post-share-label {
+	font-weight: 600;
+	color: var(--text-color);
+	margin-right: 0.25rem;
+	font-size: 0.9rem;
+}
+
+.post-share-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.5rem 0.85rem;
+	background: var(--bg-white);
+	color: var(--text-color);
+	text-decoration: none;
+	border: 1px solid var(--border-color);
+	border-radius: 6px;
+	font: inherit;
+	font-size: 0.875rem;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.15s ease;
+}
+
+.post-share-btn svg {
+	width: 16px;
+	height: 16px;
+	flex-shrink: 0;
+}
+
+.post-share-btn:hover {
+	color: var(--primary-color);
+	border-color: var(--primary-color);
+	background: var(--bg-white);
+	text-decoration: none;
+}
+
+.post-share-facebook:hover { background: #1877f2; border-color: #1877f2; color: #fff; }
+.post-share-x:hover        { background: #000;     border-color: #000;     color: #fff; }
+.post-share-bluesky:hover  { background: #1185fe; border-color: #1185fe; color: #fff; }
+.post-share-email:hover    { background: var(--primary-color); border-color: var(--primary-color); color: #fff; }
+.post-share-copy:hover     { background: var(--primary-color); border-color: var(--primary-color); color: #fff; }
+
+@media (max-width: 600px) {
+	.post-share { gap: 0.4rem; }
+	.post-share-name { display: none; }
+	.post-share-btn { padding: 0.55rem; }
+}
+
+/* Comments / replies — micro.blog's conversation.js injects this markup:
+     .comments > .microblog_conversation > .microblog_reply_form
+       > p.microblog_reply_signin   (intro + sign-in links)
+       > p.microblog_reply_textarea > textarea
+       > p.microblog_reply_button   > input[type=submit]
+   Styled here to match the post column and theme instead of raw browser UI. */
+.comments {
+	max-width: 700px;
+	margin: 2rem auto 0;
+}
+
+.microblog_conversation {
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--border-color);
+}
+
+.microblog_conversation::before {
+	content: "Replies";
+	display: block;
+	font-size: 1.15rem;
+	font-weight: 700;
+	color: var(--text-color);
+	margin-bottom: 1rem;
+}
+
+.microblog_reply_form {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.microblog_reply_signin {
+	margin: 0;
+	font-size: 0.9rem;
+	color: var(--text-light);
+}
+
+.microblog_reply_signin a {
+	color: var(--primary-color);
+	font-weight: 600;
+}
+
+.microblog_reply_textarea {
+	margin: 0;
+}
+
+.microblog_reply_textarea textarea {
+	width: 100%;
+	box-sizing: border-box;
+	min-height: 110px;
+	padding: 0.75rem;
+	font: inherit;
+	font-size: 0.95rem;
+	line-height: 1.5;
+	color: var(--text-color);
+	background: var(--bg-white);
+	border: 1px solid var(--border-color);
+	border-radius: 8px;
+	resize: vertical;
+}
+
+.microblog_reply_textarea textarea:focus {
+	outline: none;
+	border-color: var(--primary-color);
+}
+
+.microblog_reply_textarea textarea:disabled {
+	background: var(--bg-secondary);
+	cursor: not-allowed;
+}
+
+.microblog_reply_button {
+	margin: 0;
+}
+
+.microblog_reply_button input[type="submit"] {
+	padding: 0.6rem 1.5rem;
+	font: inherit;
+	font-size: 0.9rem;
+	font-weight: 600;
+	color: #fff;
+	background: var(--primary-color);
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	transition: background 0.15s ease;
+}
+
+.microblog_reply_button input[type="submit"]:hover:not(:disabled) {
+	background: var(--primary-hover);
+}
+
+.microblog_reply_button input[type="submit"]:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+}

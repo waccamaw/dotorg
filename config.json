@@ -106,6 +106,7 @@
     "paginate_home": false,
     "paginate_categories": false,
     "paginate_replies": false,
+    "include_conversation": true,
     "theme_seconds": "0",
     "plugins_css": [],
     "plugins_js": [],
