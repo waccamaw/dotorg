@@ -93,6 +93,24 @@
 
 <div class="comments">
 {{ if .Site.Params.include_conversation }}
+{{/* micro.blog's conversation.js writes the reply form *after* calling
+     history.pushState(). On Safari that call can throw a rate-limit
+     SecurityError once the page's other scripts (Zeffy donation iframe,
+     donation modal, tracking pixels) exhaust the per-30s pushState quota —
+     which aborts conversation.js before the form is written, leaving the
+     "Replies" heading with an empty body. Make pushState/replaceState
+     non-throwing so the widget always reaches the form write. */}}
+<script>
+(function () {
+  ['pushState', 'replaceState'].forEach(function (m) {
+    var orig = history[m];
+    if (typeof orig !== 'function') return;
+    history[m] = function () {
+      try { return orig.apply(history, arguments); } catch (e) { return undefined; }
+    };
+  });
+})();
+</script>
 <script type="text/javascript" src="https://micro.blog/conversation.js?url={{ .Permalink }}"></script>
 {{ end }}
 </div>
