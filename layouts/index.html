@@ -46,6 +46,143 @@
 	</div>
 {{ end }}
 
+<!--
+	Seasonal Pauwau Promo — auto-cycling states, hidden Dec–Feb.
+	  Mar–Apr  → "open"     : subtle strip, "Registration is open"
+	  May–Sep  → "register" : full image banner, "Plan your visit & register"
+	  Oct–Nov  → "stay"     : full image banner, registration closed, "Plan Your Stay"
+	Year / anniversary number update automatically (first Pauwau: 1992).
+	Background photo: drop a wide lifestyle/grounds shot at
+	static/images/pauwau/grounds-aerial.jpg — until it exists, the gradient shows alone.
+-->
+<style>
+	/* Subtle "open" strip */
+	.pauwau-strip {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem 0.85rem;
+		flex-wrap: wrap;
+		margin: 0 0 2.5rem;
+		padding: 0.85rem 1.25rem;
+		background: var(--bg-secondary, #fff5eb);
+		border: 1px solid var(--border-color, #d4c5b9);
+		border-left: 4px solid #d4a574;
+		border-radius: 8px;
+		font-size: 0.95rem;
+		color: var(--text-color, #5c4a3a);
+		text-decoration: none;
+		transition: border-color 0.2s ease, background 0.2s ease;
+	}
+	.pauwau-strip:hover {
+		border-left-color: #0033cc;
+		background: #fffaf3;
+		text-decoration: none;
+	}
+	.pauwau-strip strong { color: #0033cc; }
+	.pauwau-strip .pauwau-strip-cta { color: #0033cc; font-weight: 600; white-space: nowrap; }
+
+	/* Full image banner (register + stay states) */
+	.pauwau-promo {
+		display: block;
+		text-decoration: none;
+		margin: 0 0 2.5rem;
+		border-radius: 12px;
+		overflow: hidden;
+		background: linear-gradient(135deg, rgba(0, 51, 204, 0.58) 0%, rgba(0, 45, 90, 0.72) 100%), url('/images/pauwau/grounds-aerial.jpg');
+		background-size: cover;
+		background-position: center;
+		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+		transition: transform 0.25s ease, box-shadow 0.25s ease;
+	}
+	.pauwau-promo:hover {
+		transform: translateY(-3px);
+		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+		text-decoration: none;
+	}
+	.pauwau-promo-inner {
+		padding: 2.75rem 2.25rem;
+		color: #fff;
+		text-align: center;
+		text-shadow: 0 2px 6px rgba(0, 0, 0, 0.55);
+	}
+	.pauwau-promo-badge {
+		display: inline-block;
+		background: rgba(212, 165, 116, 0.35);
+		border: 2px solid rgba(212, 165, 116, 0.6);
+		color: #fff;
+		padding: 0.35rem 1.1rem;
+		border-radius: 50px;
+		font-size: 0.85rem;
+		font-weight: 600;
+		letter-spacing: 0.3px;
+		margin-bottom: 0.75rem;
+		text-shadow: none;
+	}
+	.pauwau-promo-title {
+		color: #fff;
+		font-size: 1.7rem;
+		margin: 0 0 0.4rem;
+		font-weight: 700;
+	}
+	.pauwau-promo-meta {
+		color: rgba(255, 255, 255, 0.92);
+		margin: 0 0 1.1rem;
+		font-size: 1rem;
+	}
+	.pauwau-promo-cta {
+		display: inline-block;
+		background: #fff;
+		color: #0033cc;
+		padding: 0.6rem 1.6rem;
+		border-radius: 50px;
+		font-weight: 600;
+		font-size: 0.95rem;
+		text-shadow: none;
+	}
+	@media (max-width: 640px) {
+		.pauwau-promo-title { font-size: 1.35rem; }
+		.pauwau-promo-inner { padding: 2rem 1.25rem; }
+	}
+</style>
+{{- $month := int (now.Format "1") -}}
+{{- $year := now.Year -}}
+{{- $anniv := sub $year 1992 -}}
+{{- $ones := mod $anniv 10 -}}
+{{- $ord := "th" -}}
+{{- if eq $ones 1 }}{{ $ord = "st" }}{{ else if eq $ones 2 }}{{ $ord = "nd" }}{{ else if eq $ones 3 }}{{ $ord = "rd" }}{{ end -}}
+{{/* Resolve the festival date from data/pauwau.toml; fall back if the
+     data file's year doesn't match the current year (i.e. not yet updated). */}}
+{{- $when := printf "First full weekend of November %d" $year -}}
+{{- with .Site.Data.pauwau }}{{ if eq .year $year }}{{ $when = .dates }}{{ end }}{{ end -}}
+{{- if and (ge $month 3) (le $month 4) }}
+	<!-- OPEN: subtle -->
+	<a href="/pauwau/applications/" class="pauwau-strip">
+		<span>🪶 <strong>Registration is open</strong> for the {{ $anniv }}{{ $ord }} Annual Waccamaw Pauwau — {{ $when }}.</span>
+		<span class="pauwau-strip-cta">Register →</span>
+	</a>
+{{- else if and (ge $month 5) (le $month 9) }}
+	<!-- REGISTER: full promo -->
+	<a href="/pauwau/" class="pauwau-promo">
+		<div class="pauwau-promo-inner">
+			<span class="pauwau-promo-badge">{{ $anniv }}{{ $ord }} Annual</span>
+			<h2 class="pauwau-promo-title">Waccamaw Pauwau &amp; Cultural Arts Festival</h2>
+			<p class="pauwau-promo-meta">{{ $when }} • Waccamaw Tribal Grounds, Aynor SC</p>
+			<span class="pauwau-promo-cta">Plan your visit &amp; register →</span>
+		</div>
+	</a>
+{{- else if and (ge $month 10) (le $month 11) }}
+	<!-- STAY: registration closed, attend mode -->
+	<a href="/pauwau/" class="pauwau-promo">
+		<div class="pauwau-promo-inner">
+			<span class="pauwau-promo-badge">{{ $anniv }}{{ $ord }} Annual · {{ $year }}</span>
+			<h2 class="pauwau-promo-title">Join Us at the Waccamaw Pauwau</h2>
+			<p class="pauwau-promo-meta">{{ $when }} • 591 Blue Water Rd, Aynor SC • Free parking, RV &amp; camping on-site</p>
+			<span class="pauwau-promo-cta">Plan Your Stay →</span>
+		</div>
+	</a>
+{{- end }}
+
 <!-- Last 3 Blog Posts -->
 <div class="recent-updates">
 	<div class="updates-list">

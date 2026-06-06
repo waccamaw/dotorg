@@ -19,7 +19,10 @@ content.zip
 *.zip
 
 content/
-data/
+# Micro.blog syncs data/ (blogrolls, bookshelves, …) — ignore those,
+# but keep hand-authored config like the Pauwau date in the repo.
+data/*
+!data/pauwau.toml
 .session-cookie
 
 # Python cache

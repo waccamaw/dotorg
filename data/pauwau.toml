@@ -1,0 +1,17 @@
+# Pauwau event details — single source of truth for the festival date.
+#
+# TO UPDATE EACH YEAR: once the next Pauwau date is confirmed, change BOTH
+# fields below. The homepage banner (and anything else reading this file) will
+# pick it up automatically on the next deploy.
+#
+#   year  = the year these dates apply to. MUST match the festival year, or the
+#           date is ignored and the site falls back to a generic
+#           "First full weekend of November <year>" — this prevents a stale date
+#           from a previous year ever showing.
+#   dates = human-readable date string shown to visitors (use an en dash "–").
+#
+# The anniversary number ("34th Annual") is computed automatically from the
+# current year and the first Pauwau (1992) — no need to touch it here.
+
+year  = 2026
+dates = "November 7–8, 2026"
