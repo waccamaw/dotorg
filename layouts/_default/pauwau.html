@@ -1,393 +1,332 @@
 {{ define "main" }}
+{{- /* Festival date: single source of truth in data/pauwau.toml.
+       Falls back to a generic phrase if the data year is stale. */ -}}
+{{- $year := now.Year -}}
+{{- $anniv := sub $year 1992 -}}
+{{- $ones := mod $anniv 10 -}}
+{{- $ord := "th" -}}
+{{- if eq $ones 1 }}{{ $ord = "st" }}{{ else if eq $ones 2 }}{{ $ord = "nd" }}{{ else if eq $ones 3 }}{{ $ord = "rd" }}{{ end -}}
+{{- $when := printf "First full weekend of November %d" $year -}}
+{{- with .Site.Data.pauwau }}{{ if eq .year $year }}{{ $when = .dates }}{{ end }}{{ end -}}
 
 <style>
-/* Pauwau Landing Page - Modern SharePoint-inspired Layout */
-.pauwau-page {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 0;
-}
-
-/* Hero Section */
-.pauwau-hero {
-	background: linear-gradient(135deg, #0033cc 0%, #002D5A 100%);
-	color: white;
-	padding: 4rem 2rem;
-	text-align: center;
-	border-radius: 8px;
-	margin-bottom: 3rem;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.pauwau-hero h1 {
-	font-size: 3rem;
-	font-weight: 700;
-	margin: 0 0 1rem 0;
-	color: white;
-}
-
-.pauwau-hero .tagline {
-	font-size: 1.5rem;
-	font-weight: 300;
-	margin: 0 0 1.5rem 0;
-	opacity: 0.95;
-}
-
-.pauwau-hero .event-date {
-	display: inline-block;
-	background: rgba(255, 255, 255, 0.2);
-	padding: 0.75rem 2rem;
-	border-radius: 50px;
-	font-size: 1.2rem;
-	font-weight: 600;
-	margin-top: 1rem;
-	backdrop-filter: blur(10px);
-}
-
-.pauwau-hero .anniversary-badge {
-	display: inline-block;
-	background: rgba(212, 165, 116, 0.3);
-	padding: 0.5rem 1.5rem;
-	border-radius: 50px;
-	font-size: 1rem;
-	font-weight: 500;
-	margin-bottom: 0.5rem;
-	border: 2px solid rgba(212, 165, 116, 0.5);
-}
-
-/* Section Headers */
-.pauwau-section {
-	background: white;
-	border-radius: 8px;
-	padding: 2.5rem 2rem;
-	margin-bottom: 2rem;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-.pauwau-section h2 {
-	font-size: 2rem;
-	margin: 0 0 1.5rem 0;
-	color: #0033cc;
-	border-bottom: 3px solid #d4a574;
-	padding-bottom: 0.5rem;
-	display: inline-block;
-}
-
-.pauwau-section h3 {
-	font-size: 1.3rem;
-	margin: 1.5rem 0 0.75rem 0;
-	color: #002D5A;
-}
-
-/* Card Grid */
-.card-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-	gap: 1.5rem;
-	margin-top: 2rem;
-}
-
-.info-card {
-	background: #faf8f3;
-	border: 1px solid var(--border-color);
-	border-radius: 8px;
-	padding: 1.5rem;
-	transition: all 0.3s ease;
-	border-left: 4px solid #d4a574;
-}
-
-.info-card:hover {
-	transform: translateY(-4px);
-	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
-	border-left-color: #0033cc;
-}
-
-.info-card h3 {
-	margin-top: 0;
-	font-size: 1.25rem;
-	color: #0033cc;
-	display: flex;
-	align-items: center;
-	gap: 0.5rem;
-}
-
-.info-card .icon {
-	font-size: 1.5rem;
-}
-
-.info-card p {
-	margin: 0.5rem 0 0 0;
-	color: var(--text-light);
-	line-height: 1.6;
-}
-
-.info-card ul {
-	margin: 1rem 0 0 1.25rem;
-	color: var(--text-color);
-}
-
-.info-card ul li {
-	margin: 0.5rem 0;
-}
-
-/* Call to Action */
-.cta-section {
-	background: linear-gradient(135deg, #d4a574 0%, #c4a57b 100%);
-	color: white;
-	padding: 2.5rem 2rem;
-	text-align: center;
-	border-radius: 8px;
-	margin: 2rem 0;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.cta-section h2 {
-	color: white;
-	border: none;
-	margin: 0 0 1rem 0;
-	font-size: 2rem;
-}
-
-.cta-section p {
-	font-size: 1.1rem;
-	margin: 0 0 1.5rem 0;
-	opacity: 0.95;
-}
-
-.cta-button {
-	display: inline-block;
-	background: white;
-	color: #0033cc;
-	padding: 1rem 2.5rem;
-	border-radius: 50px;
-	font-size: 1.1rem;
-	font-weight: 600;
-	text-decoration: none;
-	transition: all 0.3s ease;
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-}
-
-.cta-button:hover {
-	background: #0033cc;
-	color: white;
-	transform: translateY(-2px);
-	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-	text-decoration: none;
-}
-
-/* Info Grid - 2 Column Layout */
-.info-grid-2col {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 2rem;
-	margin-top: 1.5rem;
-}
-
-.info-section {
-	background: #f8f9fa;
-	padding: 1.5rem;
-	border-radius: 6px;
-	border-left: 3px solid #0033cc;
-}
-
-.info-section h4 {
-	margin: 0 0 0.75rem 0;
-	color: #002D5A;
-	font-size: 1.1rem;
-}
-
-.info-section p, .info-section ul {
-	margin: 0.5rem 0 0 0;
-	font-size: 0.95rem;
-	line-height: 1.6;
-}
-
-/* COVID Note */
-.special-note {
-	background: #fff5eb;
-	border-left: 4px solid #d4a574;
-	padding: 1rem 1.5rem;
-	margin: 1.5rem 0;
-	border-radius: 4px;
-	font-style: italic;
-	color: var(--text-light);
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-	.pauwau-hero h1 {
-		font-size: 2rem;
+	.pw {
+		--pw-ink: #1f2430;
+		--pw-muted: #5c6473;
+		--pw-cream: #f5f7fb;
+		--pw-blue: #0033cc;
+		--pw-blue-dark: #00207a;
+		--pw-line: #dfe4ee;
+		--pw-serif: var(--font_transitional, Charter, Georgia, 'Times New Roman', serif);
+		max-width: 1120px;
+		margin: 0 auto;
+		padding: 0 1.1rem 1rem;
+		color: var(--pw-ink);
 	}
-	
-	.pauwau-hero .tagline {
-		font-size: 1.2rem;
+	.pw *, .pw *::before, .pw *::after { box-sizing: border-box; }
+
+	/* Eyebrow */
+	.pw-eyebrow {
+		display: inline-block;
+		font-size: 0.78rem;
+		font-weight: 700;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--pw-blue);
+		margin: 0 0 0.9rem;
 	}
-	
-	.pauwau-hero .event-date {
-		font-size: 1rem;
-		padding: 0.5rem 1.5rem;
+
+	/* Headings */
+	.pw h1, .pw h2, .pw h3 { font-family: var(--pw-serif); color: var(--pw-ink); line-height: 1.14; font-weight: 600; }
+	.pw h2 { font-size: clamp(1.7rem, 3.4vw, 2.45rem); margin: 0 0 1.1rem; letter-spacing: -0.01em; }
+	.pw h3 { font-size: 1.18rem; margin: 0 0 0.45rem; }
+	.pw p { color: var(--pw-muted); line-height: 1.72; font-size: 1.03rem; margin: 0 0 1.1rem; }
+	.pw a { color: var(--pw-blue); }
+	.pw-lead { font-size: 1.22rem; line-height: 1.62; color: var(--pw-ink); }
+
+	/* Buttons — blue primary, white secondary */
+	.pw a.pw-btn {
+		display: inline-block;
+		padding: 0.82rem 1.7rem;
+		border-radius: 8px;
+		font-weight: 600;
+		font-size: 0.98rem;
+		text-decoration: none;
+		transition: transform 0.15s ease, background 0.15s ease;
+		background: var(--pw-blue);
+		color: #fff;
+		border: 1px solid transparent;
 	}
-	
-	.card-grid {
-		grid-template-columns: 1fr;
+	.pw a.pw-btn:hover { background: var(--pw-blue-dark); color: #fff; text-decoration: none; transform: translateY(-1px); }
+	.pw a.pw-btn--white { background: #fff; color: var(--pw-blue); border-color: #fff; }
+	.pw a.pw-btn--white:hover { background: #eef2ff; color: var(--pw-blue); }
+
+	/* Hero */
+	.pw-hero {
+		position: relative;
+		border-radius: 16px;
+		overflow: hidden;
+		margin: 0 0 3.25rem;
+		display: flex;
+		align-items: flex-end;
+		min-height: clamp(380px, 58vh, 560px);
+		background-image:
+			linear-gradient(to top, rgba(7, 14, 35, 0.85) 0%, rgba(7, 14, 35, 0.4) 42%, rgba(7, 14, 35, 0.1) 100%),
+			url('/images/pauwau/fancy-dancer.jpg');
+		background-size: cover;
+		background-position: center 28%;
 	}
-	
-	.info-grid-2col {
-		grid-template-columns: 1fr;
-		gap: 1rem;
+	.pw-hero-inner { position: relative; padding: clamp(1.6rem, 4vw, 3rem); max-width: 780px; color: #fff; }
+	.pw-hero .pw-eyebrow { color: rgba(255, 255, 255, 0.92); }
+	.pw-hero h1 { color: #fff; font-size: clamp(2rem, 5.4vw, 3.5rem); margin: 0 0 1rem; text-shadow: 0 2px 16px rgba(0, 0, 0, 0.5); }
+	.pw-hero-sub { font-size: clamp(1rem, 1.6vw, 1.22rem); color: rgba(255, 255, 255, 0.95); line-height: 1.5; margin: 0 0 1.8rem; max-width: 580px; text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55); }
+	.pw-hero-actions { display: flex; gap: 0.85rem; flex-wrap: wrap; }
+
+	/* Sections */
+	.pw-section { padding: clamp(2.4rem, 5.5vw, 4rem) 0; }
+	.pw-section--narrow { max-width: 760px; margin: 0 auto; }
+	.pw-band { background: var(--pw-cream); border-radius: 16px; padding: clamp(2rem, 5vw, 3.5rem); margin: clamp(2.4rem, 5.5vw, 4rem) 0; }
+
+	/* Experience grid */
+	.pw-exp { display: grid; grid-template-columns: repeat(auto-fit, minmax(248px, 1fr)); gap: 1.6rem 2.2rem; margin-top: 2rem; }
+	.pw-exp-item { padding-top: 1.1rem; border-top: 2px solid var(--pw-blue); }
+	.pw-exp-item p { font-size: 0.98rem; margin: 0; }
+
+	/* Editorial image rows */
+	.pw-row { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
+	.pw-row + .pw-row { margin-top: clamp(2rem, 4vw, 3rem); }
+	.pw-row--flip .pw-figure { order: 2; }
+	.pw-figure { margin: 0; }
+	.pw-figure img { width: 100%; height: 100%; max-height: 420px; object-fit: cover; border-radius: 12px; display: block; box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12); }
+	.pw-figure figcaption { font-size: 0.85rem; color: var(--pw-muted); margin-top: 0.55rem; font-style: italic; }
+
+	/* Full-width photo band with caption */
+	.pw-banner { position: relative; border-radius: 16px; overflow: hidden; margin: clamp(2.4rem, 5vw, 3.5rem) 0; min-height: clamp(260px, 38vh, 380px); display: flex; align-items: flex-end;
+		background: linear-gradient(to top, rgba(7, 14, 35, 0.72) 0%, rgba(7, 14, 35, 0.05) 60%), url('/images/pauwau/grounds-aerial.jpg'); background-size: cover; background-position: center; }
+	.pw-banner-text { position: relative; padding: clamp(1.4rem, 3vw, 2.2rem); color: #fff; max-width: 640px; }
+	.pw-banner-text h3 { color: #fff; font-size: clamp(1.3rem, 2.6vw, 1.8rem); margin: 0 0 0.4rem; text-shadow: 0 2px 12px rgba(0,0,0,0.5); }
+	.pw-banner-text p { color: rgba(255,255,255,0.93); margin: 0; text-shadow: 0 1px 8px rgba(0,0,0,0.5); }
+
+	/* Pull quote (land history from the historical marker) */
+	.pw-quote { border-left: 3px solid var(--pw-blue); padding: 0.4rem 0 0.4rem 1.4rem; margin: 1.6rem 0; font-family: var(--pw-serif); font-size: 1.18rem; line-height: 1.55; color: var(--pw-ink); }
+	.pw-quote cite { display: block; font-family: var(--font_system_ui); font-size: 0.82rem; font-style: normal; color: var(--pw-muted); margin-top: 0.7rem; letter-spacing: 0.02em; }
+
+	/* Info grid (directions, visitor info) */
+	.pw-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 1.8rem; }
+	.pw-info-card { background: #fff; border: 1px solid var(--pw-line); border-radius: 10px; padding: 1.4rem 1.5rem; }
+	.pw-info-card h3 { font-size: 1.05rem; }
+	.pw-info-card p, .pw-info-card ul { font-size: 0.96rem; margin: 0.35rem 0 0; }
+	.pw-info-card ul { padding-left: 1.1rem; color: var(--pw-muted); line-height: 1.6; }
+
+	/* Admission */
+	.pw-fees { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin: 1.8rem 0 1rem; }
+	.pw-fee { background: #fff; border: 1px solid var(--pw-line); border-radius: 12px; padding: 1.4rem 1.25rem; text-align: center; }
+	.pw-fee .pw-fee-amt { font-family: var(--pw-serif); font-size: 2rem; color: var(--pw-blue); line-height: 1; margin: 0.2rem 0 0.4rem; }
+	.pw-fee .pw-fee-label { font-size: 0.9rem; color: var(--pw-muted); }
+	.pw-note { font-size: 0.92rem; color: var(--pw-muted); font-style: italic; }
+
+	/* School day callout */
+	.pw-callout { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: space-between; background: var(--pw-cream); border: 1px solid var(--pw-line); border-left: 4px solid var(--pw-blue); border-radius: 12px; padding: 1.25rem 1.6rem; margin: clamp(2rem,4vw,3rem) 0; }
+	.pw-callout p { margin: 0; color: var(--pw-ink); font-size: 1rem; }
+
+	/* CTA */
+	.pw-cta { text-align: center; background: linear-gradient(135deg, var(--pw-blue-dark) 0%, var(--pw-blue) 100%); color: #fff; border-radius: 16px; padding: clamp(2.4rem, 5vw, 3.5rem) 1.5rem; margin: clamp(2.4rem,5vw,3.5rem) 0; }
+	.pw-cta .pw-eyebrow { color: rgba(255, 255, 255, 0.85); }
+	.pw-cta h2 { color: #fff; }
+	.pw-cta p { color: rgba(255, 255, 255, 0.9); max-width: 560px; margin: 0 auto 1.6rem; }
+
+	@media (max-width: 720px) {
+		.pw-row { grid-template-columns: 1fr; }
+		.pw-row--flip .pw-figure { order: 0; }
+		.pw-figure img { max-height: 300px; }
 	}
-	
-	.pauwau-section {
-		padding: 1.5rem 1rem;
-	}
-	
-	.pauwau-section h2 {
-		font-size: 1.5rem;
-	}
-}
 </style>
 
-<div class="pauwau-page">
-	<!-- Hero Section -->
-	{{- $currentYear := now.Year -}}
-	{{- $firstPauwauYear := 1992 -}}
-	{{- $anniversaryNumber := sub $currentYear $firstPauwauYear -}}
-	<div class="pauwau-hero">
-		<div class="anniversary-badge">{{ $anniversaryNumber }}{{ if eq (mod $anniversaryNumber 10) 1 }}st{{ else if eq (mod $anniversaryNumber 10) 2 }}nd{{ else if eq (mod $anniversaryNumber 10) 3 }}rd{{ else }}th{{ end }} Annual</div>
-		<h1>Waccamaw Pauwau & Cultural Arts Festival</h1>
-		<p class="tagline">Celebrating Culture, Community & Tradition</p>
-		<div class="event-date">First Week of November • Waccamaw Tribal Grounds</div>
-		<p style="margin-top: 0.75rem; font-size: 1rem; opacity: 0.9;">591 Blue Water Rd, Aynor, SC 29511</p>
-	</div>
+<div class="pw">
 
-	<!-- About Section -->
-	<div class="pauwau-section">
-		<h2>About Our Pauwau & Cultural Arts Festival</h2>
-		<p style="font-size: 1.1rem; margin-bottom: 1.5rem;">The Waccamaw Indian People host our annual Pauwau and Cultural Arts Festival during the <strong>first full weekend of November</strong> each year at the <strong>Waccamaw Tribal Grounds</strong> in Aynor, SC. This celebration welcomes visitors to experience authentic indigenous traditions in the heart of South Carolina's Lowcountry.</p>
-		
-		<div class="special-note">
-			<strong>{{ $anniversaryNumber }} Years of Tradition:</strong> The {{ $currentYear }} Pauwau marks our {{ $anniversaryNumber }}{{ if eq (mod $anniversaryNumber 10) 1 }}st{{ else if eq (mod $anniversaryNumber 10) 2 }}nd{{ else if eq (mod $anniversaryNumber 10) 3 }}rd{{ else }}th{{ end }} annual celebration, bringing together indigenous communities, families, and visitors for a celebration of culture and tradition. Throughout our history, we've only missed one year due to the COVID-19 pandemic—a testament to our commitment to preserving and sharing our heritage.
-		</div>
-		
-		<p>A Pauwau (also commonly spelled "powwow") is a vibrant gathering that celebrates Native American culture through traditional dancing, drumming, storytelling, and community fellowship. Our annual event showcases the rich heritage of the Waccamaw people while honoring intertribal connections and welcoming all who wish to learn about and respect indigenous traditions.</p>
-	</div>
-
-	<!-- What to Experience Section -->
-	<div class="pauwau-section">
-		<h2>What to Experience</h2>
-		<div class="card-grid">
-			<div class="info-card">
-				<h3><span class="icon">💃</span> Traditional Dancing</h3>
-				<p>Witness authentic indigenous dance styles passed down through generations, performed by dancers in traditional regalia representing various tribal nations.</p>
-			</div>
-			
-			<div class="info-card">
-				<h3><span class="icon">🥁</span> Drum Circles</h3>
-				<p>Experience the heartbeat of our culture through powerful drumming traditions that unite dancers, singers, and the community in rhythm and song.</p>
-			</div>
-			
-			<div class="info-card">
-				<h3><span class="icon">🎨</span> Artisan Vendors</h3>
-				<p>Browse and purchase handmade indigenous arts, crafts, jewelry, and traditional items directly from Native American artisans and craftspeople.</p>
-			</div>
-			
-			<div class="info-card">
-				<h3><span class="icon">🍲</span> Traditional Foods</h3>
-				<p>Sample authentic Native American cuisine and regional specialties prepared by indigenous food vendors and community members.</p>
-			</div>
-			
-			<div class="info-card">
-				<h3><span class="icon">📚</span> Cultural Education</h3>
-				<p>Learn about Waccamaw history, traditions, language preservation, and contemporary tribal life through demonstrations and educational displays.</p>
-			</div>
-			
-			<div class="info-card">
-				<h3><span class="icon">🤝</span> Community Gathering</h3>
-				<p>Connect with tribal members, indigenous families, and visitors from across the region in a welcoming celebration of culture and friendship.</p>
+	<!-- HERO -->
+	<header class="pw-hero">
+		<div class="pw-hero-inner">
+			<span class="pw-eyebrow">{{ $anniv }}{{ $ord }} Annual &middot; {{ $when }}</span>
+			<h1>Waccamaw Pauwau &amp; Cultural Arts Festival</h1>
+			<p class="pw-hero-sub">A celebration of dance, drum, and community — hosted by the Waccamaw Indian People on our tribal grounds in Aynor, South Carolina.</p>
+			<div class="pw-hero-actions">
+				<a class="pw-btn" href="/pauwau/applications/">Register to participate</a>
+				<a class="pw-btn pw-btn--white" href="#visit">Plan your visit</a>
 			</div>
 		</div>
-	</div>
+	</header>
 
-	<!-- School Day Callout -->
-	<div style="background: linear-gradient(135deg, #fff5eb 0%, #faf8f3 100%); border-left: 4px solid #d4a574; padding: 1.25rem 2rem; margin: 2rem 0; border-radius: 8px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);">
-		<p style="margin: 0; font-size: 0.95rem; line-height: 1.6;"><strong>🎓 School Day:</strong> The Friday before Pauwau weekend is dedicated to students, teachers, and parents. <a href="/pauwau/school-day/" style="color: #0033cc; font-weight: 600;">Learn more about School Day →</a></p>
-	</div>
+	<!-- ABOUT -->
+	<section class="pw-section pw-section--narrow">
+		<span class="pw-eyebrow">About the gathering</span>
+		<h2>Where our heritage lives out loud</h2>
+		<p class="pw-lead">Each year on the first full weekend of November, the Waccamaw Indian People open our tribal grounds for the Pauwau &amp; Cultural Arts Festival — a gathering of traditional dancing, drumming, storytelling, and fellowship in the heart of the South Carolina Lowcountry.</p>
+		<p>A Pauwau (also spelled “powwow”) is a vibrant celebration of Native American culture. Ours honors the heritage of the Waccamaw people while welcoming intertribal connections and all visitors who wish to learn about and respect indigenous traditions. In more than three decades, we have missed only one year — during the COVID-19 pandemic — a testament to our commitment to preserving and sharing who we are.</p>
+	</section>
 
-	<!-- Directions and Parking Section -->
-	<div class="pauwau-section">
-		<h2>Directions & Parking Information</h2>
-		<div class="info-grid-2col">
-			<div class="info-section">
-				<h4>📍 Location</h4>
-				<p><strong>Waccamaw Tribal Grounds</strong><br>
-				591 Blue Water Rd<br>
-				Aynor, SC 29511</p>
-				<p style="margin-top: 1rem;"><a href="https://maps.google.com/?q=591+Blue+Water+Rd,+Aynor,+SC+29511" target="_blank" rel="noopener" style="color: #0033cc; font-weight: 600;">Get Directions →</a></p>
+	<!-- EXPERIENCE -->
+	<section class="pw-band">
+		<span class="pw-eyebrow">What you’ll experience</span>
+		<h2>Inside the celebration</h2>
+		<div class="pw-exp">
+			<div class="pw-exp-item">
+				<h3>Traditional Dancing</h3>
+				<p>Authentic indigenous dance styles passed down through generations, performed in traditional regalia representing many tribal nations.</p>
 			</div>
-			
-			<div class="info-section">
-				<h4>🚗 Parking</h4>
-				<p>Free parking available on the Tribal Grounds. Additional overflow parking areas will be clearly marked during the event.</p>
-				<p style="margin-top: 0.75rem;"><strong>RV & Camping:</strong> Multi-day parking and camping spaces available with advance registration.</p>
+			<div class="pw-exp-item">
+				<h3>Drum Circles</h3>
+				<p>The heartbeat of our culture — powerful drumming and song that unite dancers, singers, and the whole community in rhythm.</p>
 			</div>
-			
-			<div class="info-section">
-				<h4>🚌 From Highway 501</h4>
-				<p>Traveling on US-501, turn onto Blue Water Rd. The Tribal Grounds are clearly marked with signage. Follow event directional signs as you approach.</p>
+			<div class="pw-exp-item">
+				<h3>Artisan Vendors</h3>
+				<p>Handmade arts, crafts, jewelry, and traditional goods, purchased directly from Native American artisans and craftspeople.</p>
 			</div>
-			
-			<div class="info-section">
-				<h4>♿ Accessibility</h4>
-				<p>Accessible parking spaces available near the event entrance. Please notify event staff if you require additional assistance.</p>
+			<div class="pw-exp-item">
+				<h3>Traditional Foods</h3>
+				<p>Authentic Native American cuisine and regional specialties prepared by indigenous food vendors and community members.</p>
+			</div>
+			<div class="pw-exp-item">
+				<h3>Cultural Education</h3>
+				<p>Waccamaw history, language preservation, and contemporary tribal life shared through demonstrations and on-grounds exhibits.</p>
+			</div>
+			<div class="pw-exp-item">
+				<h3>Community Gathering</h3>
+				<p>Connect with tribal members, indigenous families, and visitors from across the region in a welcoming celebration of friendship.</p>
 			</div>
 		</div>
-	</div>
+	</section>
 
-	<!-- Participate Section (CTA) -->
-	<div class="cta-section">
-		<h2>Get Involved in Pauwau {{ $currentYear }}</h2>
-		<p>Whether you're interested in setting up a vendor booth, participating in traditional dance raffles, or reserving RV parking, we welcome your involvement in making this year's Pauwau a memorable celebration.</p>
-		<a href="/pauwau/applications/" class="cta-button">View Registration Options →</a>
-		<p style="margin-top: 1rem; font-size: 0.95rem; opacity: 0.9;">Vendor registration now open • Other options open March {{ $currentYear }}</p>
-	</div>
+	<!-- OUR LAND -->
+	<section class="pw-section">
+		<span class="pw-eyebrow">Our land</span>
+		<h2>The Waccamaw Tribal Grounds</h2>
+		<div class="pw-row">
+			<figure class="pw-figure">
+				<img src="/images/pauwau/grounds-marker-sign.jpg" alt="South Carolina historical marker for the Waccamaw Tribal Grounds" loading="lazy">
+				<figcaption>S.C. historical marker at the entrance to the Tribal Grounds.</figcaption>
+			</figure>
+			<div>
+				<p>Our home sits on Blue Water Road in Aynor, in the Dog Bluff community of Horry County — land with deep and continuous roots for the Waccamaw people.</p>
+				<blockquote class="pw-quote">
+					In 2004 the Waccamaw Indian People of S.C. purchased this site for their tribal headquarters, becoming a state-recognized Indian tribe in 2005. The tribe traces historical ties to the Dimery Settlement, a community of Native families founded in the early 1800s in Dog Bluff Township.
+					<cite>— South Carolina Historical Marker, Waccamaw Tribal Grounds</cite>
+				</blockquote>
+				<p>Today the grounds are headquarters, gathering place, and ceremonial home — and each November they become the stage for our Pauwau.</p>
+			</div>
+		</div>
 
-	<!-- Visitor Information Section -->
-	<div class="pauwau-section">
-		<h2>Visitor Information</h2>
-		<div class="info-grid-2col">
-			<div class="info-section">
-				<h4>🎟️ Attendance</h4>
-				<p>All are welcome to attend the Waccamaw Pauwau and experience our cultural traditions. Admission details and event location will be announced closer to the event date.</p>
+		<div class="pw-banner">
+			<div class="pw-banner-text">
+				<h3>A circle that gathers the people</h3>
+				<p>The dance arena at the heart of the grounds, ringed by vendors, camps, and family — seen from above during Pauwau weekend.</p>
 			</div>
-			
-			<div class="info-section">
-				<h4>📅 Event Details</h4>
-				<p><strong>When:</strong> First full weekend of November {{ $currentYear }}<br>
-				<strong>Where:</strong> Location announced soon<br>
-				<strong>Duration:</strong> Multi-day celebration</p>
+		</div>
+
+		<div class="pw-row pw-row--flip">
+			<figure class="pw-figure">
+				<img src="/images/pauwau/tribal-office-entrance.jpg" alt="Waccamaw Indian People entrance sign and tribal office" loading="lazy">
+				<figcaption>The entrance sign and tribal office welcome visitors to the grounds.</figcaption>
+			</figure>
+			<div>
+				<h3>Visiting the grounds</h3>
+				<p>The Tribal Office greets you at the entrance off Blue Water Road. On-grounds interpretive exhibits share the history of the Waccamaw people and the Dog Bluff community for visitors year-round.</p>
+				<p><a href="/learn/">Learn more about the Waccamaw Indian People →</a></p>
 			</div>
-			
-			<div class="info-section">
-				<h4>🙏 Cultural Respect</h4>
-				<ul style="margin-left: 1.25rem;">
-					<li>Photography may be restricted during certain sacred ceremonies</li>
-					<li>Support indigenous vendors by purchasing directly from Native artisans</li>
-					<li>Ask questions and engage respectfully with an open heart</li>
-					<li>Listen to announcements and respect ceremonial protocols</li>
+		</div>
+	</section>
+
+	<!-- SCHOOL DAY -->
+	<aside class="pw-callout">
+		<p><strong>School Day &mdash;</strong> the Thursday &amp; Friday before Pauwau weekend are dedicated to students, teachers, and families for an immersive cultural program.</p>
+		<a class="pw-btn" href="/pauwau/school-day/">About School Day</a>
+	</aside>
+
+	<!-- ADMISSION -->
+	<section class="pw-section pw-section--narrow">
+		<span class="pw-eyebrow">Plan ahead</span>
+		<h2>Admission</h2>
+		<p>Your admission directly supports the Waccamaw Indian People and the continuation of our cultural programs and traditions.</p>
+		<!-- TODO: confirm {{ $year }} admission pricing with Doug, then replace the $— amounts below. -->
+		<div class="pw-fees">
+			<div class="pw-fee">
+				<div class="pw-fee-amt">$&mdash;</div>
+				<div class="pw-fee-label">General Admission</div>
+			</div>
+			<div class="pw-fee">
+				<div class="pw-fee-amt">$&mdash;</div>
+				<div class="pw-fee-label">Children (12 &amp; under)</div>
+			</div>
+			<div class="pw-fee">
+				<div class="pw-fee-amt">$&mdash;</div>
+				<div class="pw-fee-label">Elders &amp; Veterans</div>
+			</div>
+		</div>
+		<p class="pw-note">Admission pricing for the {{ $year }} Pauwau will be confirmed soon. Cash and card accepted at the gate.</p>
+	</section>
+
+	<!-- VISIT: DIRECTIONS & PARKING -->
+	<section class="pw-band" id="visit">
+		<span class="pw-eyebrow">Plan your visit</span>
+		<h2>Directions &amp; parking</h2>
+		<div class="pw-info">
+			<div class="pw-info-card">
+				<h3>Location</h3>
+				<p><strong>Waccamaw Tribal Grounds</strong><br>591 Blue Water Rd<br>Aynor, SC 29511</p>
+				<p style="margin-top: 0.8rem;"><a href="https://maps.google.com/?q=591+Blue+Water+Rd,+Aynor,+SC+29511" target="_blank" rel="noopener">Get directions →</a></p>
+			</div>
+			<div class="pw-info-card">
+				<h3>Parking</h3>
+				<p>Free parking on the Tribal Grounds, with marked overflow areas during the event.</p>
+				<p style="margin-top: 0.6rem;"><strong>RV &amp; camping:</strong> multi-day parking and camping spaces available with advance registration.</p>
+			</div>
+			<div class="pw-info-card">
+				<h3>From Highway 501</h3>
+				<p>Travelling US-501, turn onto Blue Water Rd. The Tribal Grounds are clearly signed — follow event directional signs as you approach.</p>
+			</div>
+			<div class="pw-info-card">
+				<h3>Accessibility</h3>
+				<p>Accessible parking is available near the event entrance. Please let event staff know if you need additional assistance.</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- CTA -->
+	<section class="pw-cta">
+		<span class="pw-eyebrow">Get involved</span>
+		<h2>Be part of Pauwau {{ $year }}</h2>
+		<p>Whether you’d like a vendor booth, to take part in dance, to reserve RV parking, or to register for School Day, we welcome your involvement in this year’s celebration.</p>
+		<a class="pw-btn pw-btn--white" href="/pauwau/applications/">View registration options</a>
+		<p style="margin-top: 1.1rem; font-size: 0.9rem;">Vendor registration open now &bull; other options open March {{ $year }}</p>
+	</section>
+
+	<!-- VISITOR INFO -->
+	<section class="pw-section">
+		<span class="pw-eyebrow">Good to know</span>
+		<h2>Visitor information</h2>
+		<div class="pw-info">
+			<div class="pw-info-card">
+				<h3>Cultural respect</h3>
+				<ul>
+					<li>Photography may be restricted during certain sacred ceremonies — listen for announcements.</li>
+					<li>Support indigenous vendors by buying directly from Native artisans.</li>
+					<li>Ask questions and engage respectfully, with an open heart.</li>
+					<li>Honor ceremonial protocols and the direction of event staff.</li>
 				</ul>
 			</div>
-			
-			<div class="info-section">
-				<h4>📧 Contact Us</h4>
-				<p>For questions about the Pauwau, vendor applications, or participation opportunities, please use our <a href="/contact/">contact form</a> and select "Pauwau" as your inquiry category.</p>
+			<div class="pw-info-card">
+				<h3>Event details</h3>
+				<p><strong>When:</strong> {{ $when }}<br>
+				<strong>Where:</strong> Waccamaw Tribal Grounds, Aynor, SC<br>
+				<strong>Duration:</strong> multi-day celebration</p>
+			</div>
+			<div class="pw-info-card">
+				<h3>Contact us</h3>
+				<p>Questions about the Pauwau, vendor applications, or participation? Use our <a href="/contact/">contact form</a> and select “Pauwau” as your inquiry category.</p>
 			</div>
 		</div>
-	</div>
+	</section>
 
-	<!-- Footer Note -->
-	<div class="pauwau-section" style="background: #f8f9fa; border-left: 4px solid #0033cc;">
-		<p style="margin: 0; font-size: 0.95rem; line-height: 1.7;"><em>The Waccamaw Indian People are South Carolina's first state-recognized tribe (2005), with over 300 years of continuous presence in the Dog Bluff community near Aynor, SC. We preserve our cultural heritage, maintain tribal sovereignty, and support our community through educational programs, cultural events, and traditional practices.</em></p>
-	</div>
 </div>
 
 {{ end }}
