@@ -4,10 +4,13 @@
 <style>
   /* This page is a wide data table — break out of the theme's 900px content cap. */
   main { max-width: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; }
-  /* Tactical full-height layout: the content fills the viewport and the grid
-     grows to the bottom of the page (footer is hidden on this view). */
-  .roll-wrap { max-width: none; margin: 0; padding: 1rem 1.5rem; display: flex; flex-direction: column; min-height: 100dvh; box-sizing: border-box; }
-  #roll-content { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+  /* Tactical layout: the title + description scroll away; the content frame
+     below them is a viewport-tall app frame where the grid fills the rest.
+     (footer is hidden on this view.) */
+  .roll-wrap { max-width: none; margin: 0; padding: 1rem 1.5rem; box-sizing: border-box; }
+  .roll-back { display: inline-block; font-size: .85rem; color: #7a5c2e; text-decoration: none; margin-bottom: .15rem; }
+  .roll-back:hover { text-decoration: underline; }
+  #roll-content { height: 100dvh; min-height: 0; display: flex; flex-direction: column; box-sizing: border-box; padding-top: 10px; }
   #roll-content .roll-summary, #roll-content .roll-controls { flex: 0 0 auto; }
   #roll-grid { flex: 1 1 auto; min-height: 0; }
   .roll-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: .5rem; }
@@ -17,6 +20,22 @@
   .roll-stat.warn { background: #fdf3e7; border-color: #f0d9b5; }
   .roll-stat-n { font-size: 1.6rem; font-weight: 700; line-height: 1; }
   .roll-stat-l { font-size: .8rem; color: #666; text-transform: uppercase; letter-spacing: .03em; }
+  /* clickable quick-filter cards */
+  .roll-stat { cursor: pointer; user-select: none; transition: background .12s, border-color .12s; }
+  .roll-stat:hover { border-color: #c9a96a; }
+  .roll-stat.sel { background: #7a5c2e; border-color: #7a5c2e; }
+  .roll-stat.sel .roll-stat-n, .roll-stat.sel .roll-stat-l { color: #fff; }
+  .roll-stat.warn.sel { background: #b9791b; border-color: #b9791b; }
+  /* facet builder */
+  .roll-facetbar { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+  .roll-facet-chips { display: inline-flex; gap: .35rem; flex-wrap: wrap; }
+  .roll-chip { background: #ece5d6; border: 1px solid #d8cdb5; border-radius: 12px; padding: .12rem .55rem; font-size: .8rem; white-space: nowrap; }
+  .roll-chip b { font-weight: 600; }
+  .roll-chip-x { cursor: pointer; color: #9b3030; margin-left: .25rem; }
+  .roll-facet-add-wrap { position: relative; }
+  .roll-facet-editor { position: absolute; top: 115%; left: 0; z-index: 50; background: #fff; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.18); padding: .5rem; display: flex; gap: .35rem; align-items: center; }
+  .roll-facet-editor select, .roll-facet-editor input { padding: .35rem .45rem; border: 1px solid #ccc; border-radius: 6px; font-size: .85rem; }
+  .roll-facet-x { border: 0; background: none; cursor: pointer; color: #888; font-size: 1rem; }
   .roll-controls { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin: 1rem 0; }
   .roll-controls input[type=text], .roll-controls select { padding: .45rem .6rem; border: 1px solid #ccc; border-radius: 6px; font-size: .95rem; }
   .roll-controls input[type=text] { min-width: 240px; }
@@ -40,8 +59,6 @@
   .roll-edit-btn:hover { background: #f5f3ee; }
   .roll-btn { padding: .45rem .8rem; border: 0; border-radius: 6px; background: #7a5c2e; color: #fff; cursor: pointer; }
   .roll-btn-secondary { padding: .45rem .8rem; border: 1px solid #ccc; border-radius: 6px; background: #fff; cursor: pointer; }
-  .roll-dev { margin-top: 1rem; padding: 1rem; background: #f5f3ee; border: 1px dashed #c9c1b0; border-radius: 8px; }
-  .roll-dev input { padding: .45rem .6rem; border: 1px solid #ccc; border-radius: 6px; }
   /* top actions */
   .roll-actions { display: flex; align-items: center; gap: .5rem; }
   /* SQL console drawer (slides up from the bottom) */
@@ -91,28 +108,12 @@
 </style>
 
 <div class="roll-wrap">
+  <a href="/members/" class="roll-back">← Back to Member Portal</a>
   <div class="roll-head">
     <h1>Tribal Roll</h1>
-    <div class="roll-actions" id="roll-actions" style="display:none;">
-      <button class="roll-btn-secondary" id="roll-download">⬇ Download CSV</button>
-      <button class="roll-btn-secondary" id="roll-sql-toggle">⌨ SQL console</button>
-      <a href="#" id="roll-logout" style="font-size:.85rem; margin-left:.25rem;">Sign out</a>
-    </div>
+    <a href="#" id="roll-logout" style="font-size:.85rem;">Sign out</a>
   </div>
   <p class="roll-note">Executive leadership / recordkeeper view. Records reflect the reconstructed roster; entries marked <strong>review</strong> carry a status that predates the SharePoint era and should be confirmed against current records.</p>
-
-  <!-- Auth prompt -->
-  <section id="roll-auth" style="display:none;">
-    <p>You need to be signed in as executive leadership to view the tribal roll.</p>
-    <p><a class="roll-btn" id="roll-login-link" href="/members/" style="display:inline-block;text-decoration:none;">Sign in via the Member Portal</a></p>
-    <p id="roll-auth-msg" style="color:#9b3030;"></p>
-    <div class="roll-dev" id="roll-dev" style="display:none;">
-      <strong>Local dev sign-in</strong>
-      <p class="roll-note">Pointed at a local members-service. Enter an executive email to mint a test session.</p>
-      <input type="email" id="roll-dev-email" placeholder="you@example.com" value="superterran@gmail.com" />
-      <button class="roll-btn" id="roll-dev-go">Dev sign in</button>
-    </div>
-  </section>
 
   <section id="roll-loading" style="display:none;"><p>Loading the tribal roll…</p></section>
   <section id="roll-error" style="display:none;"><p id="roll-error-msg" style="color:#9b3030;"></p></section>
@@ -123,9 +124,21 @@
 
     <div class="roll-controls">
       <input type="text" id="roll-search" placeholder="Search name, email, ID, city…" />
-      <select id="roll-filter-status"></select>
-      <select id="roll-filter-type"></select>
-      <label><input type="checkbox" id="roll-filter-review" /> needs review only</label>
+      <div class="roll-facetbar">
+        <span class="roll-facet-chips" id="roll-facet-chips"></span>
+        <div class="roll-facet-add-wrap">
+          <button class="roll-btn-secondary" id="roll-facet-add">+ Filter</button>
+          <div id="roll-facet-editor" class="roll-facet-editor" style="display:none;">
+            <select id="rf-field"></select>
+            <select id="rf-op"></select>
+            <span id="rf-value-wrap"></span>
+            <button class="roll-btn" id="rf-add">Add</button>
+            <button class="roll-facet-x" id="rf-cancel" aria-label="Cancel">&times;</button>
+          </div>
+        </div>
+      </div>
+      <button class="roll-btn-secondary" id="roll-download">⬇ Download CSV</button>
+      <button class="roll-btn-secondary" id="roll-sql-toggle">⌨ SQL console</button>
       <span id="roll-count"></span>
     </div>
 

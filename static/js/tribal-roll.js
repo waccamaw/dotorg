@@ -16,6 +16,38 @@
   let EDIT_ID = null;
   let table = null;
   let mode = "roster"; // "roster" | "query"
+  let quickFilter = null; // null(total) | "active" | "voting" | "review"
+  let facets = []; // {field,type,label,op,opLabel,value,valueLabel}
+  let SUMMARY = null;
+
+  // Facet builder: filterable fields + operators by type.
+  const FACET_FIELDS = [
+    { k: "last_name", l: "Last name", t: "text" },
+    { k: "first_name", l: "First name", t: "text" },
+    { k: "trb_id", l: "TRB ID", t: "text" },
+    { k: "status", l: "Status", t: "enum" },
+    { k: "member_type", l: "Type", t: "enum" },
+    { k: "portal_acl_tier", l: "Portal tier", t: "enum" },
+    { k: "position", l: "Position", t: "text" },
+    { k: "city", l: "City", t: "text" },
+    { k: "state", l: "State", t: "text" },
+    { k: "county", l: "County", t: "text" },
+    { k: "email", l: "Email", t: "text" },
+    { k: "phone", l: "Phone", t: "text" },
+    { k: "enrollment_date", l: "Enrolled", t: "date" },
+    { k: "expiration_date", l: "Expires", t: "date" },
+    { k: "voter", l: "Voter", t: "bool" },
+    { k: "at_risk", l: "At risk", t: "bool" },
+    { k: "needs_status_review", l: "Needs review", t: "bool" },
+    { k: "voting_eligible", l: "Voting eligible", t: "bool" },
+  ];
+  const FACET_OPS = {
+    text: [["contains", "contains"], ["is", "is"], ["is_not", "is not"], ["empty", "is empty"], ["not_empty", "is not empty"]],
+    enum: [["is", "is"], ["is_not", "is not"]],
+    date: [["is", "on"], ["after", "after"], ["before", "before"], ["empty", "is empty"], ["not_empty", "is not empty"]],
+    bool: [["is", "is"]],
+  };
+  const NO_VALUE_OPS = ["empty", "not_empty"];
 
   const MEMBER_TYPES = ["regular", "honorary", "spousal", "associate", "minor", "hunka"];
   const STATUSES = ["active", "inactive", "resigned", "retired", "deceased", "revoked", "void", "unknown"];
@@ -53,7 +85,7 @@
   }
 
   function show(view) {
-    ["roll-auth", "roll-loading", "roll-content", "roll-error"].forEach((id) => {
+    ["roll-loading", "roll-content", "roll-error"].forEach((id) => {
       const el = $(id);
       if (el) el.style.display = id === view ? "" : "none";
     });
@@ -65,37 +97,25 @@
     );
   }
 
-  async function devLogin() {
-    const email = $("roll-dev-email").value.trim();
-    if (!email) return;
-    const { res, data } = await api(`/api/dev-login?email=${encodeURIComponent(email)}`);
-    if (res.ok && data.sessionToken) {
-      localStorage.setItem(TOKEN_KEY, data.sessionToken);
-      load();
-    } else {
-      $("roll-auth-msg").textContent = data.error || "Dev login unavailable.";
-    }
-  }
-
   function renderSummary(s) {
     if (!s) return;
-    const card = (label, val, cls) =>
-      `<div class="roll-stat ${cls || ""}"><div class="roll-stat-n">${val}</div><div class="roll-stat-l">${label}</div></div>`;
+    SUMMARY = s;
     const active = (s.by_status.find((x) => x.status === "active") || {}).n || 0;
+    const cur = quickFilter || "total";
+    const card = (key, label, val, cls) =>
+      `<div class="roll-stat ${cls || ""} ${cur === key ? "sel" : ""}" data-quick="${key}"><div class="roll-stat-n">${val}</div><div class="roll-stat-l">${label}</div></div>`;
     $("roll-summary").innerHTML =
-      card("Total", s.total) + card("Active", active) +
-      card("Voting eligible", s.voting_eligible) +
-      card("Needs review", s.needs_review, "warn");
+      card("total", "Total", s.total) +
+      card("active", "Active", active) +
+      card("voting", "Voting eligible", s.voting_eligible) +
+      card("review", "Needs review", s.needs_review, "warn");
   }
 
-  function fillFilterOptions(s) {
-    if (!s) return;
-    $("roll-filter-status").innerHTML =
-      '<option value="">All statuses</option>' +
-      s.by_status.map((x) => `<option value="${esc(x.status)}">${esc(x.status)} (${x.n})</option>`).join("");
-    $("roll-filter-type").innerHTML =
-      '<option value="">All types</option>' +
-      s.by_type.map((x) => `<option value="${esc(x.member_type)}">${esc(x.member_type)} (${x.n})</option>`).join("");
+  function facetOpts(field) {
+    if (field === "status") return (SUMMARY ? SUMMARY.by_status : []).map((x) => x.status);
+    if (field === "member_type") return (SUMMARY ? SUMMARY.by_type : []).map((x) => x.member_type);
+    if (field === "portal_acl_tier") return TIERS;
+    return null;
   }
 
   // ---- Tabulator grid --------------------------------------------------------
@@ -158,35 +178,107 @@
     if (h > 120) table.setHeight(h);
   }
 
+  function matchFacet(row, f) {
+    const raw = row[f.field];
+    const sv = (raw == null ? "" : String(raw)).toLowerCase();
+    const val = (f.value == null ? "" : String(f.value)).toLowerCase();
+    switch (f.op) {
+      case "contains": return sv.includes(val);
+      case "is":
+        if (f.type === "bool") return (raw ? 1 : 0) === (f.value === "yes" ? 1 : 0);
+        return sv === val;
+      case "is_not": return sv !== val;
+      case "empty": return sv === "";
+      case "not_empty": return sv !== "";
+      case "after": return sv !== "" && sv > val;
+      case "before": return sv !== "" && sv < val;
+      default: return true;
+    }
+  }
+
   function applyFilters() {
     if (!table || mode !== "roster") return;
     const q = $("roll-search").value.trim().toLowerCase();
-    const status = $("roll-filter-status").value;
-    const type = $("roll-filter-type").value;
-    const review = $("roll-filter-review").checked;
     table.setFilter((data) => {
-      if (status && data.status !== status) return false;
-      if (type && data.member_type !== type) return false;
-      if (review && !data.needs_status_review) return false;
+      if (quickFilter === "active" && data.status !== "active") return false;
+      if (quickFilter === "voting" && !data.voting_eligible) return false;
+      if (quickFilter === "review" && !data.needs_status_review) return false;
       if (q) {
-        const hay = `${data.first_name || ""} ${data.last_name || ""} ${data.email || ""} ${data.trb_id || ""} ${data.city || ""}`.toLowerCase();
+        const hay = `${data.first_name || ""} ${data.last_name || ""} ${data.email || ""} ${data.trb_id || ""} ${data.city || ""} ${data.state || ""} ${data.position || ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
       }
+      for (const f of facets) if (!matchFacet(data, f)) return false;
       return true;
     });
   }
 
+  // ---- facet builder UI ------------------------------------------------------
+  function renderChips() {
+    $("roll-facet-chips").innerHTML = facets
+      .map((f, i) => {
+        const val = NO_VALUE_OPS.includes(f.op) ? "" : ` <b>${esc(f.valueLabel)}</b>`;
+        return `<span class="roll-chip">${esc(f.label)} ${esc(f.opLabel)}${val} <span class="roll-chip-x" data-facet="${i}">✕</span></span>`;
+      })
+      .join("");
+  }
+
+  function populateOps() {
+    const f = FACET_FIELDS.find((x) => x.k === $("rf-field").value);
+    $("rf-op").innerHTML = FACET_OPS[f.t].map(([k, l]) => `<option value="${k}">${l}</option>`).join("");
+  }
+
+  function renderFacetValue() {
+    const f = FACET_FIELDS.find((x) => x.k === $("rf-field").value);
+    const op = $("rf-op").value;
+    const wrap = $("rf-value-wrap");
+    if (NO_VALUE_OPS.includes(op)) { wrap.innerHTML = ""; return; }
+    if (f.t === "bool") {
+      wrap.innerHTML = '<select id="rf-value"><option value="yes">yes</option><option value="no">no</option></select>';
+    } else if (f.t === "enum") {
+      const opts = facetOpts(f.k) || [];
+      wrap.innerHTML = `<select id="rf-value">${opts.map((o) => `<option value="${esc(o)}">${esc(o)}</option>`).join("")}</select>`;
+    } else if (f.t === "date") {
+      wrap.innerHTML = '<input type="date" id="rf-value">';
+    } else {
+      wrap.innerHTML = '<input type="text" id="rf-value" placeholder="value">';
+    }
+  }
+
+  function openFacetEditor() {
+    const ed = $("roll-facet-editor");
+    if (ed.style.display !== "none") { ed.style.display = "none"; return; }
+    $("rf-field").innerHTML = FACET_FIELDS.map((f) => `<option value="${f.k}">${f.l}</option>`).join("");
+    populateOps();
+    renderFacetValue();
+    ed.style.display = "";
+  }
+
+  function addFacet() {
+    const f = FACET_FIELDS.find((x) => x.k === $("rf-field").value);
+    const op = $("rf-op").value;
+    const opLabel = (FACET_OPS[f.t].find((o) => o[0] === op) || [])[1] || op;
+    let value = "", valueLabel = "";
+    if (!NO_VALUE_OPS.includes(op)) {
+      const ve = $("rf-value");
+      value = ve ? ve.value : "";
+      valueLabel = value;
+      if (value === "") return; // require a value
+    }
+    facets.push({ field: f.k, type: f.t, label: f.l, op, opLabel, value, valueLabel });
+    $("roll-facet-editor").style.display = "none";
+    renderChips();
+    applyFilters();
+  }
+
   async function loadRoster() {
     const { res, data } = await api("/api/admin/member-list");
-    if (res.status === 401) { localStorage.removeItem(TOKEN_KEY); show("roll-auth"); return; }
+    if (res.status === 401) { localStorage.removeItem(TOKEN_KEY); window.location.href = "/members/"; return; }
     if (res.status === 403) { $("roll-error-msg").textContent = "Access denied — the tribal roll is restricted to executive leadership / the recordkeeper."; show("roll-error"); return; }
     if (!res.ok || !data.success) { $("roll-error-msg").textContent = data.error || "Failed to load the roll."; show("roll-error"); return; }
     ALL = data.members || [];
     IS_RK = !!data.isRecordkeeper;
     renderSummary(data.summary);
-    fillFilterOptions(data.summary);
     show("roll-content");
-    $("roll-actions").style.display = "";
     if (!table) await initGrid();
     mode = "roster";
     $("roll-sql-roster").style.display = "none";
@@ -414,10 +506,7 @@
   // ---- bootstrap -------------------------------------------------------------
   async function load() {
     if (!token()) {
-      show("roll-auth");
-      $("roll-actions").style.display = "none";
-      const isProd = /members\.waccamaw\.org/.test(CONFIG.API_BASE_URL);
-      $("roll-dev").style.display = isProd ? "none" : "";
+      window.location.href = "/members/";
       return;
     }
     show("roll-loading");
@@ -425,12 +514,33 @@
   }
 
   function init() {
-    ["roll-search", "roll-filter-status", "roll-filter-type", "roll-filter-review"].forEach((id) => {
-      const el = $(id);
-      el.addEventListener(id === "roll-search" ? "input" : "change", applyFilters);
+    $("roll-search").addEventListener("input", applyFilters);
+
+    // quick-filter cards (delegated)
+    $("roll-summary").addEventListener("click", (e) => {
+      const card = e.target.closest("[data-quick]");
+      if (!card) return;
+      const k = card.getAttribute("data-quick");
+      quickFilter = k === "total" ? null : k;
+      document.querySelectorAll("#roll-summary [data-quick]").forEach((c) =>
+        c.classList.toggle("sel", c.getAttribute("data-quick") === (quickFilter || "total"))
+      );
+      applyFilters();
     });
-    $("roll-dev-go").addEventListener("click", devLogin);
-    $("roll-dev-email").addEventListener("keydown", (e) => { if (e.key === "Enter") devLogin(); });
+
+    // facet builder
+    $("roll-facet-add").addEventListener("click", openFacetEditor);
+    $("rf-field").addEventListener("change", () => { populateOps(); renderFacetValue(); });
+    $("rf-op").addEventListener("change", renderFacetValue);
+    $("rf-add").addEventListener("click", addFacet);
+    $("rf-cancel").addEventListener("click", () => { $("roll-facet-editor").style.display = "none"; });
+    $("roll-facet-chips").addEventListener("click", (e) => {
+      const x = e.target.closest("[data-facet]");
+      if (!x) return;
+      facets.splice(Number(x.getAttribute("data-facet")), 1);
+      renderChips();
+      applyFilters();
+    });
     const logout = $("roll-logout");
     if (logout) logout.addEventListener("click", () => { localStorage.removeItem(TOKEN_KEY); load(); });
 
