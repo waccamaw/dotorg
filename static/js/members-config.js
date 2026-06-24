@@ -1,10 +1,22 @@
 // Configuration for Member Portal
+// API base resolution order:
+//   1. ?api=<url> query param (persisted to localStorage) — lets the site be
+//      served through a tunnel while still hitting a local/alternate Worker.
+//   2. previously-persisted override in localStorage.
+//   3. localhost:8787 when running on localhost, else the production Worker.
+const _isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const _apiOverride = (() => {
+    try {
+        const q = new URLSearchParams(window.location.search).get('api');
+        if (q) { localStorage.setItem('waccamaw_api_base', q); return q; }
+        return localStorage.getItem('waccamaw_api_base');
+    } catch (e) { return null; }
+})();
 const CONFIG = {
-    // API Base URL - Auto-detect environment
-    // Use localhost:8787 in dev container, production URL otherwise
-    API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    // API Base URL - override > localhost > production
+    API_BASE_URL: _apiOverride || (_isLocalHost
         ? 'http://localhost:8787'
-        : 'https://members.waccamaw.org',
+        : 'https://members.waccamaw.org'),
     
     // Meetings API Base URL - Standalone meetings service
     MEETINGS_API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'

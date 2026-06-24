@@ -1,0 +1,136 @@
+{{ define "main" }}
+<link rel="stylesheet" href="/theme.css?v={{ now.Unix }}">
+<style>
+  /* This page is a wide data table — break out of the theme's 900px content cap. */
+  main { max-width: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; }
+  .roll-wrap { max-width: none; margin: 0; padding: 1rem 1.5rem; }
+  .roll-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: .5rem; }
+  .roll-note { color: #666; font-size: .9rem; margin: .25rem 0 1rem; }
+  .roll-summary { display: flex; gap: .75rem; flex-wrap: wrap; margin: 1rem 0; }
+  .roll-stat { background: #f5f3ee; border: 1px solid #e2ddd2; border-radius: 8px; padding: .6rem 1rem; min-width: 110px; }
+  .roll-stat.warn { background: #fdf3e7; border-color: #f0d9b5; }
+  .roll-stat-n { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+  .roll-stat-l { font-size: .8rem; color: #666; text-transform: uppercase; letter-spacing: .03em; }
+  .roll-controls { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin: 1rem 0; }
+  .roll-controls input[type=text], .roll-controls select { padding: .45rem .6rem; border: 1px solid #ccc; border-radius: 6px; font-size: .95rem; }
+  .roll-controls input[type=text] { min-width: 240px; }
+  .roll-controls label { font-size: .9rem; color: #444; display: inline-flex; align-items: center; gap: .35rem; }
+  #roll-count { color: #666; font-size: .85rem; margin-left: auto; }
+  table.roll-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  table.roll-table th, table.roll-table td { text-align: left; padding: .4rem .45rem; border-bottom: 1px solid #eee; vertical-align: top; }
+  table.roll-table td.emailcell { max-width: 13rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  table.roll-table th { position: sticky; top: 0; background: #fff; cursor: default; border-bottom: 2px solid #ddd; }
+  table.roll-table tbody tr:hover { background: #faf8f3; }
+  .roll-table .mono { font-family: ui-monospace, Menlo, monospace; color: #555; }
+  /* keep name/phone/expires on one line; cap the ID column so long synthesized
+     IDs (D1:/TRB:/SS…) can't inflate it — truncate with ellipsis, full value on hover */
+  table.roll-table td:nth-child(1), table.roll-table td:nth-child(8), table.roll-table td:nth-child(9) { white-space: nowrap; }
+  table.roll-table td.idcell { max-width: 5.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .roll-status { font-size: .78rem; padding: .1rem .45rem; border-radius: 10px; background: #eee; text-transform: capitalize; }
+  .roll-status.s-active { background: #dff0d8; color: #2e6b2e; }
+  .roll-status.s-deceased, .roll-status.s-void { background: #eee; color: #888; }
+  .roll-status.s-resigned, .roll-status.s-revoked { background: #f6dada; color: #9b3030; }
+  .roll-status.s-retired { background: #e6ecf5; color: #3a567f; }
+  .roll-pill { font-size: .7rem; padding: .05rem .4rem; border-radius: 8px; margin-right: .25rem; }
+  .roll-pill.vote { background: #e6ecf5; color: #3a567f; }
+  .roll-pill.warn { background: #fdecd2; color: #8a5a12; }
+  .roll-dev { margin-top: 1rem; padding: 1rem; background: #f5f3ee; border: 1px dashed #c9c1b0; border-radius: 8px; }
+  .roll-dev input { padding: .45rem .6rem; border: 1px solid #ccc; border-radius: 6px; }
+  .roll-btn { padding: .45rem .8rem; border: 0; border-radius: 6px; background: #7a5c2e; color: #fff; cursor: pointer; }
+  .roll-table-scroll { max-height: 70vh; overflow: auto; border: 1px solid #eee; border-radius: 8px; }
+  .roll-edit-btn { font-size: .75rem; padding: .15rem .5rem; border: 1px solid #c9c1b0; border-radius: 6px; background: #fff; cursor: pointer; }
+  .roll-edit-btn:hover { background: #f5f3ee; }
+  /* edit modal */
+  .roll-modal { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: flex-start; justify-content: center; padding: 3vh 1rem; z-index: 1000; overflow: auto; }
+  .roll-modal-card { background: #fff; border-radius: 10px; width: 100%; max-width: 640px; box-shadow: 0 10px 40px rgba(0,0,0,.3); }
+  .roll-modal-head { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid #eee; }
+  .roll-modal-head h3 { margin: 0; }
+  .roll-modal-x { border: 0; background: none; font-size: 1.4rem; cursor: pointer; color: #888; }
+  .roll-modal-body { padding: 1rem 1.25rem; display: grid; grid-template-columns: 1fr 1fr; gap: .6rem 1rem; }
+  .roll-field { display: flex; flex-direction: column; gap: .2rem; }
+  .roll-field.full { grid-column: 1 / -1; }
+  .roll-field label { font-size: .75rem; color: #555; text-transform: uppercase; letter-spacing: .03em; }
+  .roll-field input[type=text], .roll-field input[type=date], .roll-field select, .roll-field textarea { padding: .4rem .5rem; border: 1px solid #ccc; border-radius: 6px; font-size: .9rem; }
+  .roll-field.check { flex-direction: row; align-items: center; gap: .4rem; }
+  .roll-field.check label { text-transform: none; font-size: .85rem; color: #333; }
+  .roll-modal-foot { display: flex; align-items: center; gap: .75rem; padding: .9rem 1.25rem; border-top: 1px solid #eee; }
+  .roll-modal-foot #roll-modal-msg { margin-right: auto; font-size: .85rem; }
+  .roll-btn-secondary { padding: .45rem .8rem; border: 1px solid #ccc; border-radius: 6px; background: #fff; cursor: pointer; }
+</style>
+
+<div class="roll-wrap">
+  <div class="roll-head">
+    <h1>Tribal Roll</h1>
+    <a href="#" id="roll-logout" style="font-size:.85rem;">Sign out</a>
+  </div>
+  <p class="roll-note">Executive leadership / recordkeeper view. Records reflect the reconstructed roster; entries marked <strong>review</strong> carry a status that predates the SharePoint era and should be confirmed against current records.</p>
+
+  <!-- Auth prompt -->
+  <section id="roll-auth" style="display:none;">
+    <p>You need to be signed in as executive leadership to view the tribal roll.</p>
+    <p><a class="roll-btn" id="roll-login-link" href="/members/" style="display:inline-block;text-decoration:none;">Sign in via the Member Portal</a></p>
+    <p id="roll-auth-msg" style="color:#9b3030;"></p>
+    <div class="roll-dev" id="roll-dev" style="display:none;">
+      <strong>Local dev sign-in</strong>
+      <p class="roll-note">Pointed at a local members-service. Enter an executive email to mint a test session.</p>
+      <input type="email" id="roll-dev-email" placeholder="you@example.com" value="superterran@gmail.com" />
+      <button class="roll-btn" id="roll-dev-go">Dev sign in</button>
+    </div>
+  </section>
+
+  <!-- Loading -->
+  <section id="roll-loading" style="display:none;">
+    <p>Loading the tribal roll…</p>
+  </section>
+
+  <!-- Error -->
+  <section id="roll-error" style="display:none;">
+    <p id="roll-error-msg" style="color:#9b3030;"></p>
+  </section>
+
+  <!-- Content -->
+  <section id="roll-content" style="display:none;">
+    <div class="roll-summary" id="roll-summary"></div>
+
+    <div class="roll-controls">
+      <input type="text" id="roll-search" placeholder="Search name, email, ID, city…" />
+      <select id="roll-filter-status"></select>
+      <select id="roll-filter-type"></select>
+      <label><input type="checkbox" id="roll-filter-review" /> needs review only</label>
+      <span id="roll-count"></span>
+    </div>
+
+    <div class="roll-table-scroll">
+      <table class="roll-table">
+        <thead>
+          <tr>
+            <th>Name</th><th>TRB ID</th><th>Type</th><th>Status</th>
+            <th>Position</th><th>Location</th><th>Email</th><th>Phone</th>
+            <th>Expires</th><th>Flags</th><th id="roll-th-edit" style="display:none;">Edit</th>
+          </tr>
+        </thead>
+        <tbody id="roll-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- Recordkeeper edit modal -->
+<div id="roll-modal" class="roll-modal" style="display:none;">
+  <div class="roll-modal-card">
+    <div class="roll-modal-head">
+      <h3 id="roll-modal-title">Edit member</h3>
+      <button id="roll-modal-x" class="roll-modal-x" aria-label="Close">&times;</button>
+    </div>
+    <div id="roll-modal-body" class="roll-modal-body"></div>
+    <div class="roll-modal-foot">
+      <span id="roll-modal-msg"></span>
+      <button id="roll-modal-cancel" class="roll-btn-secondary">Cancel</button>
+      <button id="roll-modal-save" class="roll-btn">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/members-config.js?v={{ now.Unix }}"></script>
+<script src="/js/tribal-roll.js?v={{ now.Unix }}"></script>
+{{ end }}
