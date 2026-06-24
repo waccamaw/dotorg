@@ -8,7 +8,7 @@
             {{ block "main" . }}{{ end }}
         </main>
         {{ if not .Params.hide_donate }}{{ partial "donate.html" . }}{{ end }}
-        {{ partial "footer.html" . }}
-		{{ partial "custom_footer.html" . }}
+        {{ if not .Params.hide_footer }}{{ partial "footer.html" . }}{{ end }}
+		{{ if not .Params.hide_footer }}{{ partial "custom_footer.html" . }}{{ end }}
     </body>
 </html>
