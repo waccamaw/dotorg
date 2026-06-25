@@ -83,7 +83,9 @@
     <div class="dir-controls">
       <input type="text" id="dir-search" placeholder="Search name, org, or email…" style="min-width:240px;">
       <button type="button" id="dir-new" class="dir-btn">+ New contact</button>
+      <button type="button" id="dir-access-btn" class="dir-btn ghost" style="display:none;">Access</button>
       <span class="dir-active-list" id="dir-active-list"></span>
+      <span class="dir-role-badge" id="dir-role-badge"></span>
     </div>
   </div>
 
@@ -163,6 +165,27 @@
       <button type="button" class="dir-btn danger" id="l-delete" style="visibility:hidden;">Delete list</button>
       <span><button type="button" class="dir-btn ghost" id="l-cancel">Cancel</button> <button type="button" class="dir-btn" id="l-save">Save</button></span>
     </div>
+  </div>
+</div>
+
+<!-- Access management modal (admins only) -->
+<div class="dir-modal-bg" id="access-modal-bg">
+  <div class="dir-modal">
+    <div class="dir-modal-head"><h2>Directory access</h2><button type="button" class="dir-modal-x" id="access-modal-x">&times;</button></div>
+    <div class="dir-modal-body">
+      <p style="font-size:.85rem;color:#666;margin:0 0 .75rem;">Doug and Chell are always admins. Add others as <b>viewer</b> (can see contacts, read-only) or <b>counts-only</b> (totals &amp; list sizes, no people).</p>
+      <div class="dir-addlist" style="margin-bottom:.8rem;">
+        <input type="email" id="acc-email" placeholder="email@example.com" style="flex:2;padding:.45rem .6rem;border:1px solid #ccc;border-radius:6px;">
+        <select id="acc-role" style="flex:1;padding:.45rem .6rem;border:1px solid #ccc;border-radius:6px;">
+          <option value="viewer">Viewer</option>
+          <option value="counts">Counts-only</option>
+        </select>
+        <button type="button" class="dir-btn" id="acc-add">Grant</button>
+      </div>
+      <div id="acc-list"></div>
+      <div class="dir-msg" id="acc-msg"></div>
+    </div>
+    <div class="dir-modal-foot"><span></span><button type="button" class="dir-btn ghost" id="access-modal-close">Done</button></div>
   </div>
 </div>
 

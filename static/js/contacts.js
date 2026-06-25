@@ -16,6 +16,7 @@
   let table = null, allLists = [], activeList = '', searchTerm = '', pillFilter = '', searchTimer = null;
   let current = null;     // contact being edited
   let lastSummary = null;
+  let myRole = 'admin';   // admin | viewer | counts (from the API)
 
   const $ = id => document.getElementById(id);
   function token() { return localStorage.getItem(TOKEN_KEY); }
@@ -87,6 +88,7 @@
     ];
   }
   async function loadContacts() {
+    if (myRole === 'counts') return;  // counts-only: no people
     const p = new URLSearchParams();
     if (searchTerm) p.set('q', searchTerm);
     if (activeList) p.set('list', activeList);
@@ -122,7 +124,7 @@
     current = r.data.contact;
     $('dir-modal-title').textContent = 'Edit contact'; fill(current);
     $('f-member-note').textContent = current.is_member ? `Tribal member${current.trb_id ? ' · ' + current.trb_id : ''} — edit roll details in the Roll Book` : '';
-    $('f-lists-wrap').style.display = ''; renderModalLists(r.data.lists); openModal();
+    $('f-lists-wrap').style.display = ''; renderModalLists(r.data.lists); applyModalRole(); openModal();
   }
   function openNew() { current = {}; $('dir-modal-title').textContent = 'New contact'; fill({}); $('f-member-note').textContent = ''; $('f-lists-wrap').style.display = 'none'; openModal(); }
   async function saveContact() {
@@ -176,7 +178,7 @@
 
   async function reloadListsSidebar() {
     const r = await api('/api/admin/lists'); if (!r) return;
-    allLists = r.data.lists || []; renderSummary(r.data.summary); renderLists(allLists);
+    allLists = r.data.lists || []; myRole = r.data.role || myRole; renderSummary(r.data.summary); renderLists(allLists); applyRole();
   }
   async function refresh() { await reloadListsSidebar(); await loadContacts(); }
 
@@ -184,6 +186,57 @@
     const bar = $('dir-sticky');
     if (bar) document.documentElement.style.setProperty('--bar-h', bar.offsetHeight + 'px');
   }
+  // ---------- role-based UI ----------
+  function applyRole() {
+    const admin = myRole === 'admin';
+    const canSeePeople = admin || myRole === 'viewer';
+    ['dir-new', 'dir-new-list'].forEach(id => { const el = $(id); if (el) el.style.display = admin ? '' : 'none'; });
+    const ab = $('dir-access-btn'); if (ab) ab.style.display = admin ? '' : 'none';
+    const rb = $('dir-role-badge');
+    if (rb) rb.textContent = admin ? '' : (myRole === 'viewer' ? 'Read-only access' : 'Counts-only access');
+    $('dir-search').style.display = canSeePeople ? '' : 'none';
+    if (!canSeePeople) {
+      if (table) { table.destroy(); table = null; }
+      $('dir-grid').innerHTML = '<div style="padding:2rem 1rem;color:#888;">Counts-only access — individual contacts are restricted. You can see the totals above and list sizes at left.</div>';
+    }
+  }
+  function applyModalRole() {
+    const admin = myRole === 'admin';
+    ['f-first', 'f-last', 'f-org', 'f-title', 'f-email', 'f-phone', 'f-city', 'f-state', 'f-dnc'].forEach(id => { const el = $(id); if (el) el.disabled = !admin; });
+    $('f-save').style.display = admin ? '' : 'none';
+    const addRow = $('f-addlist').parentElement; if (addRow) addRow.style.display = admin ? '' : 'none';
+    if (!admin) $('f-lists').querySelectorAll('.dir-chip-x').forEach(x => x.style.display = 'none');
+  }
+
+  // ---------- access management (admin) ----------
+  async function openAccess() {
+    const r = await api('/api/admin/access'); if (!r || !r.res.ok) return;
+    renderAccess(r.data.grants || [], r.data.admins || []);
+    $('acc-msg').textContent = ''; $('access-modal-bg').classList.add('open');
+  }
+  function renderAccess(grants, admins) {
+    const row = (label, right) => `<div style="display:flex;justify-content:space-between;align-items:center;padding:.35rem .1rem;border-bottom:1px solid #eee;font-size:.9rem;">${label}${right}</div>`;
+    const adminRows = admins.map(e => row(`${esc(e)} — <b>admin</b>`, '<span style="color:#aaa;font-size:.8rem;">always</span>')).join('');
+    const grantRows = grants.length
+      ? grants.map(g => row(`${esc(g.email)} — <b>${esc(g.role)}</b>`, `<span class="dir-chip-x" data-email="${esc(g.email)}" style="cursor:pointer;color:#b33;font-size:.85rem;">revoke</span>`)).join('')
+      : '<div style="color:#aaa;font-size:.85rem;padding:.4rem 0;">No additional grants yet.</div>';
+    $('acc-list').innerHTML = adminRows + grantRows;
+    $('acc-list').querySelectorAll('.dir-chip-x').forEach(x => x.addEventListener('click', () => revokeAccess(x.getAttribute('data-email'))));
+  }
+  async function addAccess() {
+    const email = $('acc-email').value.trim(), role = $('acc-role').value;
+    if (!email) { $('acc-msg').textContent = 'Enter an email'; return; }
+    const r = await api('/api/admin/access', { method: 'POST', body: JSON.stringify({ email, role }) });
+    if (!r) return;
+    if (!r.res.ok) { $('acc-msg').textContent = r.data.error || 'Failed'; return; }
+    $('acc-email').value = ''; openAccess();
+  }
+  async function revokeAccess(email) {
+    const r = await api(`/api/admin/access/${encodeURIComponent(email)}`, { method: 'DELETE' });
+    if (r && r.res.ok) openAccess();
+  }
+  function closeAccess() { $('access-modal-bg').classList.remove('open'); }
+
   function wireSticky() {
     const sentinel = $('dir-sentinel'), bar = $('dir-sticky');
     measureBar();
@@ -194,7 +247,7 @@
 
   async function init() {
     const r = await api('/api/admin/lists'); if (!r) return;
-    allLists = r.data.lists || []; renderSummary(r.data.summary); renderLists(allLists);
+    allLists = r.data.lists || []; myRole = r.data.role || myRole; renderSummary(r.data.summary); renderLists(allLists); applyRole();
     await loadContacts();
     wireSticky();
     $('dir-search').addEventListener('input', e => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { searchTerm = e.target.value.trim(); loadContacts(); }, 250); });
@@ -210,6 +263,11 @@
     $('list-modal-x').addEventListener('click', closeListModal);
     $('l-delete').addEventListener('click', deleteList);
     $('list-modal-bg').addEventListener('click', e => { if (e.target === $('list-modal-bg')) closeListModal(); });
+    $('dir-access-btn').addEventListener('click', openAccess);
+    $('acc-add').addEventListener('click', addAccess);
+    $('access-modal-x').addEventListener('click', closeAccess);
+    $('access-modal-close').addEventListener('click', closeAccess);
+    $('access-modal-bg').addEventListener('click', e => { if (e.target === $('access-modal-bg')) closeAccess(); });
   }
   document.addEventListener('DOMContentLoaded', init);
 })();
