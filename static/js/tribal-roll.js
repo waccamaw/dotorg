@@ -531,13 +531,14 @@
     let params;
     try { params = new URLSearchParams(window.location.search); } catch (e) { return; }
     let added = false;
-    const push = (field, label, op, opLabel, value, valueLabel) => {
-      facets.push({ field, type: "text", label, op, opLabel, value, valueLabel: valueLabel == null ? value : valueLabel });
+    const push = (field, label, op, opLabel, value, valueLabel, type) => {
+      facets.push({ field, type: type || "text", label, op, opLabel, value, valueLabel: valueLabel == null ? value : valueLabel });
       added = true;
     };
     const status = params.get("status");
     if (status) push("status", "Status", "is", "is", status.toLowerCase(), status.toLowerCase());
     if (params.get("email") === "empty") push("email", "Email", "empty", "is empty", "", "(none)");
+    if (params.get("fee_exempt") === "1") push("fee_exempt", "Fee exempt", "is", "is", "yes", "yes", "bool");
     const expiring = params.get("expiring");
     if (expiring && /^\d+$/.test(expiring)) {
       const days = Number(expiring);

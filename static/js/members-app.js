@@ -1177,6 +1177,7 @@ class MemberPortalApp {
         set('edAtRisk', atRisk);
         set('edActive', Math.max(0, metrics.active - atRisk));
         set('edNoEmail', metrics.noEmail);
+        set('edFeeExempt', metrics.feeExempt);
     }
 
     /**
@@ -1191,25 +1192,30 @@ class MemberPortalApp {
             warning60: 0,
             retiredDeceased: 0,
             noEmail: 0,
+            feeExempt: 0,
             doNotContact: 0,
             atRiskMembers: []
         };
-        
+
         members.forEach(member => {
             // D1 returns flat rows (snake_case), not nested SharePoint fields.
             const statusLower = (member.status || 'unknown').toLowerCase();
             const email = (member.email || '').trim();
             if (!email || email === '-') metrics.noEmail++;
+            // Fee-exempt members (governing body, committees, volunteers, lifetime,
+            // hardship) owe no dues, so they're excluded from outreach below.
+            const feeExempt = !!member.fee_exempt;
             // The Do-Not-Contact opt-out lives in the notes column, which the
             // member-list endpoint doesn't return, so it isn't surfaced here.
             const doNotContact = false;
-            
+
             // Count retired, deceased, resigned, and revoked (excluded from engagement outreach)
-            if (statusLower === 'deceased' || statusLower === 'retired' || 
+            if (statusLower === 'deceased' || statusLower === 'retired' ||
                 statusLower === 'resigned' || statusLower === 'revoked') {
                 metrics.retiredDeceased++;
                 return; // Skip adding to at-risk list
             }
+            if (feeExempt) metrics.feeExempt++;  // non-excluded exempt only
             
             // Count active/inactive
             if (statusLower === 'active') {
@@ -1238,8 +1244,8 @@ class MemberPortalApp {
                     metrics.warning60++;
                 }
                 
-                // Add to at-risk list if expiring within 90 days
-                if (riskLevel) {
+                // Add to at-risk list if expiring within 90 days (skip fee-exempt — no dues owed)
+                if (riskLevel && !feeExempt) {
                     metrics.atRiskMembers.push({
                         id: member.trb_id,
                         email: email || '-',
@@ -1254,9 +1260,8 @@ class MemberPortalApp {
                 }
             }
             
-            // Add inactive members to the at-risk list for engagement outreach
-            // (Resigned and Revoked are excluded above)
-            if (statusLower === 'inactive') {
+            // Add inactive members to the outreach list (skip fee-exempt — no dues owed)
+            if (statusLower === 'inactive' && !feeExempt) {
                 const inactiveExp = member.expiration_date
                     ? (() => { const im = /^(\d{4})-(\d{2})-(\d{2})/.exec(member.expiration_date); return im ? new Date(+im[1], +im[2] - 1, +im[3]) : new Date(member.expiration_date); })()
                     : null;
@@ -1292,10 +1297,12 @@ class MemberPortalApp {
             this.emailChart.destroy();
         }
 
-        // Outreach list = inactive + at-risk (critical + warning)
+        // Outreach = non-exempt inactive + non-exempt at-risk (fee-exempt owe no
+        // dues, so they're already excluded from atRiskMembers).
         const atRisk = metrics.critical30 + metrics.warning60;
-        const outreachList = metrics.inactive + atRisk;
-        const totalMembers = metrics.active + metrics.inactive + metrics.critical30 + metrics.warning60 + metrics.retiredDeceased;
+        const outreachList = metrics.atRiskMembers.length;
+        const activeCurrent = Math.max(0, metrics.active + metrics.inactive - metrics.feeExempt - outreachList);
+        const totalMembers = metrics.active + metrics.inactive + metrics.retiredDeceased;
         const percentage = totalMembers > 0 ? Math.round((outreachList / totalMembers) * 100) : 0;
 
         // Calculate how many in outreach list have email addresses AND are not Do Not Contact
@@ -1329,8 +1336,8 @@ class MemberPortalApp {
         
         // Update summary stats
         percentageEl.textContent = `${percentage}%`;
-        countEl.textContent = 
-            `${outreachList} members (${metrics.inactive} inactive + ${atRisk} at-risk) out of ${totalMembers} total`;
+        countEl.textContent =
+            `${outreachList} members owe dues (fee-exempt excluded) of ${totalMembers} total · ${metrics.feeExempt} fee-exempt`;
         
         // Add revenue to summary
         potentialRevenueEl.textContent = `${formattedPotentialRevenue} in potential annual dues if all ${outreachList} lapsed or expiring members renew (at $${membershipFee}/yr)`;
@@ -1352,32 +1359,28 @@ class MemberPortalApp {
             }
         }
 
-        // Create chart with financial info in labels
-        const inactiveRevenue = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(metrics.inactive * membershipFee);
-        const atRiskRevenue = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(atRisk * membershipFee);
-        const activeRevenue = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0 }).format(metrics.active * membershipFee);
-        
+        // Coherent, mutually-exclusive slices (fee-exempt owe no dues).
         this.emailChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: [
-                    `📧 Outreach List (Inactive) - ${inactiveRevenue}`,
-                    `⚠️ Outreach List (At-Risk) - ${atRiskRevenue}`,
-                    `✅ Active (No Email Needed) - valued at ${activeRevenue}`,
-                    '🔒 Retired & Deceased (Excluded)'
+                    'Owe dues (outreach)',
+                    'Fee exempt (no dues)',
+                    'Active & current',
+                    'Retired / deceased (excluded)'
                 ],
                 datasets: [{
                     data: [
-                        metrics.inactive,
-                        atRisk,
-                        metrics.active,
+                        outreachList,
+                        metrics.feeExempt,
+                        activeCurrent,
                         metrics.retiredDeceased
                     ],
                     backgroundColor: [
-                        '#ef5350',  // Red - inactive (needs re-engagement)
-                        '#ffa726',  // Orange - at-risk (needs retention)
-                        '#66bb6a',  // Green - active (no action)
-                        '#90a4ae'   // Gray - retired/deceased (excluded)
+                        '#ef5350',  // red — owe dues
+                        '#8e7cc3',  // purple — fee exempt
+                        '#66bb6a',  // green — active & current
+                        '#90a4ae'   // gray — excluded
                     ],
                     borderWidth: 3,
                     borderColor: '#fff'
