@@ -1,0 +1,192 @@
+{{ define "main" }}
+<link rel="stylesheet" href="/theme.css?v={{ now.Unix }}">
+<link rel="stylesheet" href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator_simple.min.css">
+<style>
+  /* This page is a wide data table — break out of the theme's 900px content cap. */
+  main { max-width: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; }
+  /* Tactical layout: the title + description scroll away; the content frame
+     below them is a viewport-tall app frame where the grid fills the rest.
+     (footer is hidden on this view.) */
+  .roll-wrap { max-width: none; margin: 0; padding: 1rem 1.5rem; box-sizing: border-box; }
+  .roll-back { display: inline-block; font-size: .85rem; color: #7a5c2e; text-decoration: none; margin-bottom: .15rem; }
+  .roll-back:hover { text-decoration: underline; }
+  #roll-content { height: 100dvh; min-height: 0; display: flex; flex-direction: column; box-sizing: border-box; padding-top: 10px; }
+  #roll-content .roll-summary, #roll-content .roll-controls { flex: 0 0 auto; }
+  #roll-grid { flex: 1 1 auto; min-height: 0; }
+  .roll-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: .5rem; }
+  .roll-note { color: #666; font-size: .9rem; margin: .25rem 0 1rem; }
+  .roll-summary { display: flex; gap: .75rem; flex-wrap: wrap; margin: 1rem 0; }
+  .roll-stat { background: #f5f3ee; border: 1px solid #e2ddd2; border-radius: 8px; padding: .6rem 1rem; min-width: 110px; }
+  .roll-stat.warn { background: #fdf3e7; border-color: #f0d9b5; }
+  .roll-stat-n { font-size: 1.6rem; font-weight: 700; line-height: 1; }
+  .roll-stat-l { font-size: .8rem; color: #666; text-transform: uppercase; letter-spacing: .03em; }
+  /* clickable quick-filter cards */
+  .roll-stat { cursor: pointer; user-select: none; transition: background .12s, border-color .12s; }
+  .roll-stat:hover { border-color: #c9a96a; }
+  .roll-stat.sel { background: #7a5c2e; border-color: #7a5c2e; }
+  .roll-stat.sel .roll-stat-n, .roll-stat.sel .roll-stat-l { color: #fff; }
+  .roll-stat.warn.sel { background: #b9791b; border-color: #b9791b; }
+  /* facet builder */
+  .roll-facetbar { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+  .roll-facet-chips { display: inline-flex; gap: .35rem; flex-wrap: wrap; }
+  .roll-chip { background: #ece5d6; border: 1px solid #d8cdb5; border-radius: 12px; padding: .12rem .55rem; font-size: .8rem; white-space: nowrap; }
+  .roll-chip b { font-weight: 600; }
+  .roll-chip-x { cursor: pointer; color: #9b3030; margin-left: .25rem; }
+  .roll-facet-add-wrap { position: relative; }
+  .roll-facet-editor { position: absolute; top: 115%; left: 0; z-index: 50; background: #fff; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.18); padding: .5rem; display: flex; gap: .35rem; align-items: center; }
+  .roll-facet-editor select, .roll-facet-editor input { padding: .35rem .45rem; border: 1px solid #ccc; border-radius: 6px; font-size: .85rem; }
+  .roll-facet-x { border: 0; background: none; cursor: pointer; color: #888; font-size: 1rem; }
+  .roll-controls { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin: 1rem 0; }
+  .roll-controls input[type=text], .roll-controls select { padding: .45rem .6rem; border: 1px solid #ccc; border-radius: 6px; font-size: .95rem; }
+  .roll-controls input[type=text] { min-width: 240px; }
+  .roll-controls label { font-size: .9rem; color: #444; display: inline-flex; align-items: center; gap: .35rem; }
+  #roll-count { color: #666; font-size: .85rem; margin-left: auto; }
+  /* Tabulator grid */
+  #roll-grid { font-size: .86rem; }
+  .tabulator { border: 1px solid #e2ddd2; border-radius: 8px; background: #fff; }
+  .tabulator .tabulator-header { background: #f5f3ee; }
+  .tabulator-row.tabulator-row-even { background: #fbfaf7; }
+  .rs { font-size: .76rem; padding: .08rem .45rem; border-radius: 10px; background: #eee; text-transform: capitalize; }
+  .rs-active { background: #dff0d8; color: #2e6b2e; }
+  .rs-deceased, .rs-void { background: #eee; color: #888; }
+  .rs-resigned, .rs-revoked { background: #f6dada; color: #9b3030; }
+  .rs-retired { background: #e6ecf5; color: #3a567f; }
+  .rs-inactive { background: #f3efe6; color: #8a6d2f; }
+  .rp { font-size: .68rem; padding: .04rem .4rem; border-radius: 8px; margin-right: .25rem; }
+  .rp-v { background: #e6ecf5; color: #3a567f; }
+  .rp-w { background: #fdecd2; color: #8a5a12; }
+  .roll-edit-btn { font-size: .75rem; padding: .12rem .5rem; border: 1px solid #c9c1b0; border-radius: 6px; background: #fff; cursor: pointer; }
+  .roll-edit-btn:hover { background: #f5f3ee; }
+  .roll-btn { padding: .45rem .8rem; border: 0; border-radius: 6px; background: #7a5c2e; color: #fff; cursor: pointer; }
+  .roll-btn-secondary { padding: .45rem .8rem; border: 1px solid #ccc; border-radius: 6px; background: #fff; cursor: pointer; }
+  /* top actions */
+  .roll-actions { display: flex; align-items: center; gap: .5rem; }
+  /* SQL console drawer (slides up from the bottom) */
+  .roll-drawer { position: fixed; left: 0; right: 0; bottom: 0; height: 14rem; min-height: 7rem; max-height: 88dvh; display: flex; flex-direction: column; background: #f5f3ee; box-shadow: 0 -6px 24px rgba(0,0,0,.18); transform: translateY(100%); transition: transform .2s ease; z-index: 900; }
+  .roll-drawer.open { transform: translateY(0); }
+  .roll-drawer.dragging { transition: none; }
+  .roll-drawer-grip { flex: 0 0 auto; height: 10px; cursor: ns-resize; background: #3a3a3a; touch-action: none; }
+  .roll-drawer-grip::before { content: ""; display: block; width: 44px; height: 3px; margin: 3.5px auto 0; background: #888; border-radius: 2px; }
+  .roll-drawer-grip:hover { background: #4a4a4a; }
+  .roll-drawer-head { flex: 0 0 auto; display: flex; align-items: center; gap: .6rem; padding: .45rem .75rem; background: #2b2b2b; color: #eee; font-size: .85rem; }
+  .roll-drawer-head .muted { color: #9b9b9b; }
+  .roll-drawer-x { border: 0; background: none; color: #ccc; font-size: 1.3rem; line-height: 1; cursor: pointer; }
+  .roll-drawer textarea { flex: 1 1 auto; min-height: 0; width: 100%; box-sizing: border-box; border: 0; padding: .6rem .75rem; font-family: ui-monospace, Menlo, monospace; font-size: .85rem; resize: none; background: #1e1e1e; color: #e8e8e8; }
+  .roll-sql-foot { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; padding: .5rem .75rem; }
+  .roll-sql-foot #roll-sql-msg { font-size: .82rem; color: #666; }
+  .roll-sql-examples { font-size: .8rem; color: #777; margin-left: auto; }
+  .roll-sql-examples code { background: #e7e1d5; padding: .05rem .3rem; border-radius: 4px; cursor: pointer; }
+  /* edit modal */
+  .roll-modal { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: flex-start; justify-content: center; padding: 3vh 1rem; z-index: 1000; overflow: auto; }
+  .roll-modal-card { background: #fff; border-radius: 10px; width: 100%; max-width: 640px; box-shadow: 0 10px 40px rgba(0,0,0,.3); }
+  .roll-modal-head { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid #eee; }
+  .roll-modal-head h3 { margin: 0; }
+  .roll-modal-x { border: 0; background: none; font-size: 1.4rem; cursor: pointer; color: #888; }
+  .roll-modal-body { padding: 1rem 1.25rem; display: grid; grid-template-columns: 1fr 1fr; gap: .6rem 1rem; }
+  .roll-field { display: flex; flex-direction: column; gap: .2rem; }
+  .roll-field.full { grid-column: 1 / -1; }
+  .roll-field label { font-size: .75rem; color: #555; text-transform: uppercase; letter-spacing: .03em; }
+  .roll-field input[type=text], .roll-field input[type=date], .roll-field select, .roll-field textarea { padding: .4rem .5rem; border: 1px solid #ccc; border-radius: 6px; font-size: .9rem; }
+  .roll-field.check { flex-direction: row; align-items: center; gap: .4rem; }
+  .roll-field.check label { text-transform: none; font-size: .85rem; color: #333; }
+  .roll-modal-foot { display: flex; align-items: center; gap: .75rem; padding: .9rem 1.25rem; border-top: 1px solid #eee; }
+  .roll-modal-foot #roll-modal-msg { margin-right: auto; font-size: .85rem; }
+  .roll-photo { display: flex; align-items: center; gap: 1rem; padding: .85rem 1.25rem; border-bottom: 1px solid #eee; }
+  .roll-photo img, .roll-photo-ph { width: 76px; height: 76px; border-radius: 8px; object-fit: cover; background: #f0ece3; border: 1px solid #e2ddd2; }
+  .roll-photo-ph { display: flex; align-items: center; justify-content: center; color: #b3a88f; font-size: 1.9rem; }
+  .roll-photo-controls { display: flex; flex-direction: column; gap: .4rem; font-size: .85rem; }
+  .roll-photo-msg { font-size: .8rem; color: #777; margin-left: .5rem; }
+  .roll-history { padding: 0 1.25rem 0.5rem; }
+  .roll-history h4 { margin: .25rem 0 .4rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .03em; color: #777; }
+  .roll-history-list { max-height: 9rem; overflow: auto; font-size: .82rem; }
+  .roll-history-row { padding: .25rem 0; border-top: 1px solid #f0ece3; display: flex; gap: .5rem; flex-wrap: wrap; }
+  .roll-history-row .when { color: #999; white-space: nowrap; }
+  .roll-history-row .chg b { font-weight: 600; }
+  .roll-history-row .old { color: #9b3030; text-decoration: line-through; }
+  .roll-history-row .new { color: #2e6b2e; }
+  .roll-history-empty { color: #999; font-size: .82rem; padding: .3rem 0; }
+</style>
+
+<div class="roll-wrap">
+  <a href="/members/" class="roll-back">← Back to Member Portal</a>
+  <div class="roll-head">
+    <h1>Tribal Roll</h1>
+    <a href="#" id="roll-logout" style="font-size:.85rem;">Sign out</a>
+  </div>
+  <p class="roll-note">Executive leadership / recordkeeper view. Records reflect the reconstructed roster; entries marked <strong>review</strong> carry a status that predates the SharePoint era and should be confirmed against current records.</p>
+
+  <section id="roll-loading" style="display:none;"><p>Loading the tribal roll…</p></section>
+  <section id="roll-error" style="display:none;"><p id="roll-error-msg" style="color:#9b3030;"></p></section>
+
+  <!-- Content -->
+  <section id="roll-content" style="display:none;">
+    <div class="roll-summary" id="roll-summary"></div>
+
+    <div class="roll-controls">
+      <input type="text" id="roll-search" placeholder="Search name, email, ID, city…" />
+      <div class="roll-facetbar">
+        <span class="roll-facet-chips" id="roll-facet-chips"></span>
+        <div class="roll-facet-add-wrap">
+          <button class="roll-btn-secondary" id="roll-facet-add">+ Filter</button>
+          <div id="roll-facet-editor" class="roll-facet-editor" style="display:none;">
+            <select id="rf-field"></select>
+            <select id="rf-op"></select>
+            <span id="rf-value-wrap"></span>
+            <button class="roll-btn" id="rf-add">Add</button>
+            <button class="roll-facet-x" id="rf-cancel" aria-label="Cancel">&times;</button>
+          </div>
+        </div>
+      </div>
+      <button class="roll-btn-secondary" id="roll-download">⬇ Download CSV</button>
+      <button class="roll-btn-secondary" id="roll-sql-toggle">⌨ SQL console</button>
+      <span id="roll-count"></span>
+    </div>
+
+    <div id="roll-grid"></div>
+  </section>
+</div>
+
+<!-- SQL console drawer -->
+<div id="roll-drawer" class="roll-drawer">
+  <div class="roll-drawer-grip" id="roll-drawer-grip" title="Drag to resize"></div>
+  <div class="roll-drawer-head">
+    <strong>SQL console</strong>
+    <span class="muted">read-only — SELECT only; results replace the grid</span>
+    <span style="flex:1"></span>
+    <button class="roll-btn-secondary" id="roll-sql-roster" style="display:none;">↺ Back to roster</button>
+    <button class="roll-drawer-x" id="roll-drawer-close" aria-label="Close">&times;</button>
+  </div>
+  <textarea id="roll-sql-input" spellcheck="false" placeholder="SELECT first_name, last_name, status, city, state FROM members WHERE state = 'SC' AND status = 'active' ORDER BY last_name"></textarea>
+  <div class="roll-sql-foot">
+    <button class="roll-btn" id="roll-sql-run">Run query ▶</button>
+    <span id="roll-sql-msg"></span>
+    <span class="roll-sql-examples">Try:
+      <code data-sql="SELECT status, COUNT(*) AS n FROM members GROUP BY status ORDER BY n DESC">counts by status</code> ·
+      <code data-sql="SELECT first_name, last_name, city, state, expiration_date FROM members WHERE status='active' AND date(date_of_birth,'+18 years') > date('now')">active minors</code> ·
+      <code data-sql="SELECT first_name, last_name, email, phone FROM members WHERE needs_status_review = 1 ORDER BY last_name">needs review</code>
+    </span>
+  </div>
+</div>
+
+<!-- Recordkeeper edit modal -->
+<div id="roll-modal" class="roll-modal" style="display:none;">
+  <div class="roll-modal-card">
+    <div class="roll-modal-head">
+      <h3 id="roll-modal-title">Edit member</h3>
+      <button id="roll-modal-x" class="roll-modal-x" aria-label="Close">&times;</button>
+    </div>
+    <div id="roll-modal-photo" class="roll-photo"></div>
+    <div id="roll-modal-body" class="roll-modal-body"></div>
+    <div id="roll-modal-history" class="roll-history"></div>
+    <div class="roll-modal-foot">
+      <span id="roll-modal-msg"></span>
+      <button id="roll-modal-cancel" class="roll-btn-secondary">Cancel</button>
+      <button id="roll-modal-save" class="roll-btn">Save changes</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
+<script src="/js/members-config.js?v={{ now.Unix }}"></script>
+<script src="/js/tribal-roll.js?v={{ now.Unix }}"></script>
+{{ end }}

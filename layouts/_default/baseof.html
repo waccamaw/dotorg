@@ -2,13 +2,13 @@
 <html lang="en">
     {{ partial "head.html" . }}
     <body>
-        {{ partial "donation-banner.html" . }}
+        {{ if not .Params.hide_donate }}{{ partial "donation-banner.html" . }}{{ end }}
         {{ partial "header.html" . }}
         <main>
             {{ block "main" . }}{{ end }}
         </main>
-        {{ partial "donate.html" . }}
-        {{ partial "footer.html" . }}
-		{{ partial "custom_footer.html" . }}
+        {{ if not .Params.hide_donate }}{{ partial "donate.html" . }}{{ end }}
+        {{ if not .Params.hide_footer }}{{ partial "footer.html" . }}{{ end }}
+		{{ if not .Params.hide_footer }}{{ partial "custom_footer.html" . }}{{ end }}
     </body>
 </html>
