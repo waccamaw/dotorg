@@ -5,7 +5,11 @@
 //   2. previously-persisted override in localStorage.
 //   3. localhost:8787 when running on localhost, else the production Worker.
 const _isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+// Only honor the ?api override on localhost or a quick-tunnel host — never on
+// the production domain, so the live portal can't be repointed at another API.
+const _allowApiOverride = _isLocalHost || /\.trycloudflare\.com$/.test(window.location.hostname);
 const _apiOverride = (() => {
+    if (!_allowApiOverride) return null;
     try {
         const q = new URLSearchParams(window.location.search).get('api');
         if (q) { localStorage.setItem('waccamaw_api_base', q); return q; }
