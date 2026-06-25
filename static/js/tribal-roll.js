@@ -37,6 +37,9 @@
     { k: "enrollment_date", l: "Enrolled", t: "date" },
     { k: "expiration_date", l: "Expires", t: "date" },
     { k: "voter", l: "Voter", t: "bool" },
+    { k: "fee_exempt", l: "Fee exempt", t: "bool" },
+    { k: "fee_exemption_type", l: "Exemption reason", t: "enum" },
+    { k: "second_chance_used", l: "Second chance used", t: "bool" },
     { k: "at_risk", l: "At risk", t: "bool" },
     { k: "needs_status_review", l: "Needs review", t: "bool" },
     { k: "voting_eligible", l: "Voting eligible", t: "bool" },
@@ -52,6 +55,7 @@
   const MEMBER_TYPES = ["regular", "honorary", "spousal", "associate", "minor", "hunka"];
   const STATUSES = ["active", "inactive", "resigned", "retired", "deceased", "revoked", "void", "unknown"];
   const TIERS = ["tribal_member", "executive_leadership", "public"];
+  const EXEMPTION_TYPES = ["", "Governing body", "Active committee", "Volunteer (8+ hrs/yr)", "Lifetime membership", "Hardship"];
   const FIELDS = [
     { k: "first_name", l: "First name" }, { k: "last_name", l: "Last name" },
     { k: "initial", l: "Initial" }, { k: "maiden_name", l: "Maiden name" },
@@ -67,6 +71,9 @@
     { k: "status", l: "Status", t: "select", opts: STATUSES },
     { k: "portal_acl_tier", l: "Portal tier", t: "select", opts: TIERS },
     { k: "voter", l: "Voter", t: "check" },
+    { k: "fee_exempt", l: "Fee exempt", t: "check" },
+    { k: "fee_exemption_type", l: "Exemption reason", t: "select", opts: EXEMPTION_TYPES },
+    { k: "second_chance_used", l: "Second chance used", t: "check" },
     { k: "at_risk", l: "At risk", t: "check" },
     { k: "newsletter_opt_in", l: "Newsletter (paper)", t: "check" },
     { k: "needs_status_review", l: "Needs status review", t: "check" },
@@ -137,10 +144,12 @@
       { title: "Email", field: "email", widthGrow: 2 },
       { title: "Phone", field: "phone", width: 125 },
       { title: "Expires", field: "expiration_date", width: 105 },
-      { title: "Flags", field: "needs_status_review", headerSort: false, width: 115,
+      { title: "Flags", field: "needs_status_review", headerSort: false, width: 205,
         formatter: (cell) => {
           const d = cell.getRow().getData();
           return (d.voting_eligible ? '<span class="rp rp-v">vote</span>' : "") +
+                 (d.fee_exempt ? '<span class="rp rp-e">exempt</span>' : "") +
+                 (d.second_chance_used ? '<span class="rp rp-2">2nd chance</span>' : "") +
                  (d.needs_status_review ? '<span class="rp rp-w">review</span>' : "");
         } },
     ];
