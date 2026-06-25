@@ -18,7 +18,10 @@ content-export*
 content.zip
 *.zip
 
-content/
+# Micro.blog-synced subdirs only (date posts handled above). Do NOT exclude all
+# of content/ — a bare `content/` traps new top-level page sources like
+# content/contacts.md despite `!content/*.md` (a parent-dir exclude can't be negated).
+content/newsletters/
 # Micro.blog syncs data/ (blogrolls, bookshelves, …) — ignore those,
 # but keep hand-authored config like the Pauwau date in the repo.
 data/*
