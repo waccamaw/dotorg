@@ -1144,11 +1144,10 @@ class MemberPortalApp {
             // Create pie chart showing engagement outreach across entire roll
             this.createEmailReachChart(metrics);
             
-            // Store at-risk members for display
             this.atRiskMembers = metrics.atRiskMembers;
-            
-            // Display outreach list table
-            this.displayAtRiskMembers(metrics.atRiskMembers);
+            // The member grid lives in the Tribal Roll Book now — here we just
+            // populate the outreach cohort cards, which deep-link into it.
+            this.populateOutreachCards(metrics);
             
         } catch (error) {
             console.error('[Email Dashboard] Error loading data:', error);
@@ -1163,6 +1162,18 @@ class MemberPortalApp {
                 `;
             }
         }
+    }
+
+    /**
+     * Populate the outreach cohort cards (counts only — the grid is the Roll Book)
+     */
+    populateOutreachCards(metrics) {
+        const set = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = Number(n || 0).toLocaleString(); };
+        const atRisk = metrics.critical30 + metrics.warning60;
+        set('edInactive', metrics.inactive);
+        set('edAtRisk', atRisk);
+        set('edActive', Math.max(0, metrics.active - atRisk));
+        set('edNoEmail', metrics.noEmail);
     }
 
     /**
@@ -1304,25 +1315,9 @@ class MemberPortalApp {
         const doNotContactEl = document.getElementById('doNotContactCount');
         const doNotContactMessageEl = document.getElementById('doNotContactMessage');
         
-        if (isHealthy) {
-            // Green for healthy state
-            summaryBox.style.background = 'linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%)';
-            percentageEl.style.color = '#1b5e20';
-            messageEl.style.color = '#2e7d32';
-            countEl.style.color = '#558b2f';
-            emailReachPercentageEl.style.color = '#1b5e20';
-            emailReachMessageEl.style.color = '#2e7d32';
-            potentialRevenueEl.style.color = '#1b5e20';
-        } else {
-            // Red for dire state
-            summaryBox.style.background = 'linear-gradient(135deg, #ffebee 0%, #ef9a9a 100%)';
-            percentageEl.style.color = '#b71c1c';
-            messageEl.style.color = '#c62828';
-            countEl.style.color = '#d32f2f';
-            emailReachPercentageEl.style.color = '#b71c1c';
-            emailReachMessageEl.style.color = '#c62828';
-            potentialRevenueEl.style.color = '#b71c1c';
-        }
+        // Flat healthy/dire styling via CSS classes (no inline gradients).
+        summaryBox.classList.toggle('healthy', isHealthy);
+        summaryBox.classList.toggle('dire', !isHealthy);
 
         // Calculate potential revenue at $50/member
         const membershipFee = 50;
@@ -1460,30 +1455,16 @@ class MemberPortalApp {
         // Create preview section HTML
         const previewSection = document.createElement('div');
         previewSection.id = 'emailTemplatePreviewSection';
+        previewSection.className = 'ed-previews';
         previewSection.style.marginTop = '2rem';
-        previewSection.style.padding = '1.5rem';
-        previewSection.style.background = '#f5f9ff';
-        previewSection.style.borderLeft = '4px solid #1976d2';
-        previewSection.style.borderRadius = '4px';
         
         previewSection.innerHTML = `
-            <h4 style="margin-bottom: 0.75rem; color: #1565c0; font-size: 1rem;">📧 Email Template Previews</h4>
-            <p style="color: #666; font-size: 0.9375rem; line-height: 1.6; margin-bottom: 1rem;">
-                Preview the automated reminder emails that will be sent to members:
-            </p>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
-                <button id="previewInactiveBtn" class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                    <span>📧</span>
-                    <span>Inactive Member Email</span>
-                </button>
-                <button id="previewCriticalBtn" class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                    <span>⚠️</span>
-                    <span>Critical (&lt;30 Days) Email</span>
-                </button>
-                <button id="previewWarningBtn" class="btn btn-secondary" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                    <span>📋</span>
-                    <span>Warning (30-90 Days) Email</span>
-                </button>
+            <div class="panel-label">Reminder email previews</div>
+            <p class="ed-note">See exactly what each automated reminder looks like before it sends.</p>
+            <div class="ed-preview-btns">
+                <button id="previewInactiveBtn" class="ed-preview-btn"><svg class="mi" aria-hidden="true"><use href="#mi-receipt"/></svg><span>Inactive member</span></button>
+                <button id="previewCriticalBtn" class="ed-preview-btn"><svg class="mi" aria-hidden="true"><use href="#mi-clock"/></svg><span>Critical (&lt; 30 days)</span></button>
+                <button id="previewWarningBtn" class="ed-preview-btn"><svg class="mi" aria-hidden="true"><use href="#mi-cal"/></svg><span>Warning (30-90 days)</span></button>
             </div>
         `;
         

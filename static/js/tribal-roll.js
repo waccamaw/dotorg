@@ -513,6 +513,35 @@
     await loadRoster();
   }
 
+  // Seed facets from deep-link query params so the Engagement Dashboard (and any
+  // link) can open the roster pre-filtered, e.g.:
+  //   ?status=inactive          -> lapsed members
+  //   ?email=empty              -> members with no email on file
+  //   ?expiring=90              -> active members expiring within N days (at-risk)
+  function applyUrlFilters() {
+    let params;
+    try { params = new URLSearchParams(window.location.search); } catch (e) { return; }
+    let added = false;
+    const push = (field, label, op, opLabel, value, valueLabel) => {
+      facets.push({ field, type: "text", label, op, opLabel, value, valueLabel: valueLabel == null ? value : valueLabel });
+      added = true;
+    };
+    const status = params.get("status");
+    if (status) push("status", "Status", "is", "is", status.toLowerCase(), status.toLowerCase());
+    if (params.get("email") === "empty") push("email", "Email", "empty", "is empty", "", "(none)");
+    const expiring = params.get("expiring");
+    if (expiring && /^\d+$/.test(expiring)) {
+      const days = Number(expiring);
+      const today = new Date(); today.setHours(0, 0, 0, 0);
+      const end = new Date(today.getTime() + days * 86400000);
+      const iso = (d) => d.toISOString().slice(0, 10);
+      push("status", "Status", "is", "is", "active", "active");
+      push("expiration_date", "Expiration", "after", "after", iso(today), "today");
+      push("expiration_date", "Expiration", "before", "before", iso(end), iso(end));
+    }
+    if (added) renderChips();
+  }
+
   function init() {
     $("roll-search").addEventListener("input", applyFilters);
 
@@ -588,6 +617,7 @@
     $("roll-modal-x").addEventListener("click", closeModal);
     $("roll-modal").addEventListener("click", (e) => { if (e.target.id === "roll-modal") closeModal(); });
 
+    applyUrlFilters();
     load();
   }
 
