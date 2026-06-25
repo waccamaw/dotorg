@@ -389,6 +389,12 @@
     $("roll-modal-title").textContent = `Edit — ${esc(m.first_name)} ${esc(m.last_name)} (${esc(m.trb_id)})`;
     $("roll-modal-body").innerHTML = FIELDS.map((f) => fieldHtml(f, m)).join("");
     $("roll-modal-msg").textContent = "";
+    // queue position + adapt the Save & next button on the last record
+    const ids = viewIds();
+    const idx = ids.indexOf(trbId);
+    $("roll-modal-pos").textContent = idx >= 0 ? `Record ${idx + 1} of ${ids.length}` : "";
+    const nextBtn = $("roll-modal-next");
+    if (nextBtn) nextBtn.textContent = (idx >= 0 && idx < ids.length - 1) ? "Save & next →" : "Save & close";
     renderPhoto(m);
     loadHistory(trbId);
   }
@@ -488,8 +494,23 @@
     if (table && mode === "roster") table.updateData([upd]).catch(() => {});
   }
 
-  async function saveEditor() {
+  // trb_ids in the grid's current view order (after filters + sort)
+  function viewIds() {
+    if (!table || mode !== "roster") return [];
+    try { return table.getRows("active").map((r) => r.getData().trb_id); }
+    catch (e) { return []; }
+  }
+  function nextIdInView(id) {
+    const ids = viewIds();
+    const i = ids.indexOf(id);
+    return i >= 0 && i < ids.length - 1 ? ids[i + 1] : null;
+  }
+
+  async function saveEditor(advance) {
     if (!EDIT_ID) return;
+    // capture the next record BEFORE saving, so a status edit that drops this
+    // row out of the current filter doesn't lose our place in the queue.
+    const nextId = advance ? nextIdInView(EDIT_ID) : null;
     $("roll-modal-msg").textContent = "Saving…";
     const vals = collectForm();
     const { res, data } = await api(`/api/members/${encodeURIComponent(EDIT_ID)}`, {
@@ -498,7 +519,8 @@
     });
     if (res.ok && data.success) {
       mergeRow(EDIT_ID, vals);
-      closeModal();
+      if (advance && nextId) openEditor(nextId);
+      else closeModal();
     } else {
       $("roll-modal-msg").textContent = (data && data.error) || "Save failed.";
     }
@@ -508,6 +530,7 @@
     $("roll-modal").style.display = "none";
     EDIT_ID = null;
     $("roll-modal-msg").textContent = "";
+    $("roll-modal-pos").textContent = "";
     $("roll-modal-history").innerHTML = "";
     $("roll-modal-photo").innerHTML = "";
   }
@@ -622,10 +645,17 @@
     });
 
     // modal
-    $("roll-modal-save").addEventListener("click", saveEditor);
+    $("roll-modal-save").addEventListener("click", () => saveEditor(false));
+    $("roll-modal-next").addEventListener("click", () => saveEditor(true));
     $("roll-modal-cancel").addEventListener("click", closeModal);
     $("roll-modal-x").addEventListener("click", closeModal);
     $("roll-modal").addEventListener("click", (e) => { if (e.target.id === "roll-modal") closeModal(); });
+    // keyboard: ⌘/Ctrl+Enter = save & next (fast batch work), Esc = close
+    document.addEventListener("keydown", (e) => {
+      if ($("roll-modal").style.display === "none" || !EDIT_ID) return;
+      if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); saveEditor(true); }
+      else if (e.key === "Escape") { e.preventDefault(); closeModal(); }
+    });
 
     applyUrlFilters();
     load();

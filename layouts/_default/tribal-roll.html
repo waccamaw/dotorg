@@ -93,6 +93,7 @@
   .roll-field.check label { text-transform: none; font-size: .85rem; color: #333; }
   .roll-modal-foot { display: flex; align-items: center; gap: .75rem; padding: .9rem 1.25rem; border-top: 1px solid #eee; }
   .roll-modal-foot #roll-modal-msg { margin-right: auto; font-size: .85rem; }
+  .roll-modal-pos { font-size: .8rem; color: #888; margin-right: .25rem; }
   .roll-photo { display: flex; align-items: center; gap: 1rem; padding: .85rem 1.25rem; border-bottom: 1px solid #eee; }
   .roll-photo img, .roll-photo-ph { width: 76px; height: 76px; border-radius: 8px; object-fit: cover; background: #f0ece3; border: 1px solid #e2ddd2; }
   .roll-photo-ph { display: flex; align-items: center; justify-content: center; color: #b3a88f; font-size: 1.9rem; }
@@ -182,8 +183,10 @@
     <div id="roll-modal-history" class="roll-history"></div>
     <div class="roll-modal-foot">
       <span id="roll-modal-msg"></span>
+      <span id="roll-modal-pos" class="roll-modal-pos"></span>
       <button id="roll-modal-cancel" class="roll-btn-secondary">Cancel</button>
-      <button id="roll-modal-save" class="roll-btn">Save changes</button>
+      <button id="roll-modal-save" class="roll-btn-secondary">Save</button>
+      <button id="roll-modal-next" class="roll-btn" title="Save and open the next record (⌘/Ctrl+Enter)">Save &amp; next →</button>
     </div>
   </div>
 </div>
