@@ -41,6 +41,9 @@
   .roll-controls input[type=text] { min-width: 240px; }
   .roll-controls label { font-size: .9rem; color: #444; display: inline-flex; align-items: center; gap: .35rem; }
   #roll-count { color: #666; font-size: .85rem; margin-left: auto; }
+  .roll-bulk { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; margin: 0 0 1rem; padding: .6rem .8rem; background: #eef4ff; border: 1px solid #cfe0fb; border-radius: 8px; font-size: .9rem; }
+  .roll-bulk select { padding: .35rem .5rem; border: 1px solid #ccc; border-radius: 6px; }
+  .roll-bulk-msg { color: #555; font-size: .85rem; }
   /* Tabulator grid */
   #roll-grid { font-size: .86rem; }
   .tabulator { border: 1px solid #e2ddd2; border-radius: 8px; background: #fff; }
@@ -94,6 +97,8 @@
   .roll-modal-foot { display: flex; align-items: center; gap: .75rem; padding: .9rem 1.25rem; border-top: 1px solid #eee; }
   .roll-modal-foot #roll-modal-msg { margin-right: auto; font-size: .85rem; }
   .roll-modal-pos { font-size: .8rem; color: #888; margin-right: .25rem; }
+  .rk-editable { cursor: text; }
+  .rk-editable:hover { background: #f1f7ff; box-shadow: inset 0 0 0 1px #cfe0fb; }
   .roll-photo { display: flex; align-items: center; gap: 1rem; padding: .85rem 1.25rem; border-bottom: 1px solid #eee; }
   .roll-photo img, .roll-photo-ph { width: 76px; height: 76px; border-radius: 8px; object-fit: cover; background: #f0ece3; border: 1px solid #e2ddd2; }
   .roll-photo-ph { display: flex; align-items: center; justify-content: center; color: #b3a88f; font-size: 1.9rem; }
@@ -145,6 +150,17 @@
       <span id="roll-count"></span>
     </div>
 
+    <div class="roll-bulk" id="roll-bulk" style="display:none;">
+      <strong id="roll-bulk-count">0 selected</strong>
+      <span>— set</span>
+      <select id="rb-field"></select>
+      <span>to</span>
+      <span id="rb-value-wrap"></span>
+      <button class="roll-btn" id="rb-apply">Apply to selected</button>
+      <button class="roll-btn-secondary" id="rb-clear">Clear selection</button>
+      <span id="rb-msg" class="roll-bulk-msg"></span>
+    </div>
+
     <div id="roll-grid"></div>
   </section>
 </div>
@@ -184,6 +200,8 @@
     <div class="roll-modal-foot">
       <span id="roll-modal-msg"></span>
       <span id="roll-modal-pos" class="roll-modal-pos"></span>
+      <button id="roll-modal-prev" class="roll-btn-secondary" title="Previous record (no save)">← Prev</button>
+      <button id="roll-modal-renew" class="roll-btn-secondary" title="Set status active and expiration to one year out">Renew 1 yr</button>
       <button id="roll-modal-cancel" class="roll-btn-secondary">Cancel</button>
       <button id="roll-modal-save" class="roll-btn-secondary">Save</button>
       <button id="roll-modal-next" class="roll-btn" title="Save and open the next record (⌘/Ctrl+Enter)">Save &amp; next →</button>

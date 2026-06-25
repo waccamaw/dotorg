@@ -136,14 +136,16 @@
         } },
       { title: "TRB ID", field: "trb_id", width: 95 },
       { title: "Type", field: "member_type", width: 95 },
-      { title: "Status", field: "status", width: 110,
+      { title: "Status", field: "status", width: 110, cssClass: IS_RK ? "rk-editable" : "",
+        editor: IS_RK ? "list" : false, editorParams: { values: STATUSES }, editableTitle: false,
         formatter: (cell) => { const v = cell.getValue() || ""; return `<span class="rs rs-${esc(v)}">${esc(v)}</span>`; } },
       { title: "Position", field: "position", widthGrow: 1 },
       { title: "Location", field: "city", widthGrow: 1, sorter: "string",
         formatter: (cell) => { const d = cell.getRow().getData(); return esc([d.city, d.state].filter(Boolean).join(", ")); } },
       { title: "Email", field: "email", widthGrow: 2 },
       { title: "Phone", field: "phone", width: 125 },
-      { title: "Expires", field: "expiration_date", width: 105 },
+      { title: "Expires", field: "expiration_date", width: 115, cssClass: IS_RK ? "rk-editable" : "",
+        editor: IS_RK ? "input" : false, formatter: (cell) => esc(cell.getValue() || "") },
       { title: "Flags", field: "needs_status_review", headerSort: false, width: 205,
         formatter: (cell) => {
           const d = cell.getRow().getData();
@@ -154,6 +156,8 @@
         } },
     ];
     if (IS_RK) {
+      cols.unshift({ formatter: "rowSelection", titleFormatter: "rowSelection",
+        hozAlign: "center", headerSort: false, width: 42 });
       cols.push({ title: "", headerSort: false, width: 70, hozAlign: "center",
         formatter: () => '<button class="roll-edit-btn">Edit</button>',
         cellClick: (e, cell) => openEditor(cell.getRow().getData().trb_id) });
@@ -170,11 +174,14 @@
         placeholder: "No members match.",
         columnDefaults: { headerSortTristate: true, resizable: true },
         columns: rosterColumns(),
+        selectableRows: IS_RK,
         data: [],
       });
+      if (IS_RK) table.on("rowSelectionChanged", onSelectionChanged);
       table.on("dataFiltered", (filters, rows) => {
         if (mode === "roster") $("roll-count").textContent = `${rows.length} of ${ALL.length} members`;
       });
+      if (IS_RK) table.on("cellEdited", onCellEdited);
       table.on("tableBuilt", resolve);
     });
   }
@@ -389,12 +396,15 @@
     $("roll-modal-title").textContent = `Edit — ${esc(m.first_name)} ${esc(m.last_name)} (${esc(m.trb_id)})`;
     $("roll-modal-body").innerHTML = FIELDS.map((f) => fieldHtml(f, m)).join("");
     $("roll-modal-msg").textContent = "";
-    // queue position + adapt the Save & next button on the last record
+    FORM_SNAPSHOT = JSON.stringify(collectForm());   // baseline for the unsaved-changes guard
+    // queue position + adapt the nav buttons for first/last record
     const ids = viewIds();
     const idx = ids.indexOf(trbId);
     $("roll-modal-pos").textContent = idx >= 0 ? `Record ${idx + 1} of ${ids.length}` : "";
     const nextBtn = $("roll-modal-next");
     if (nextBtn) nextBtn.textContent = (idx >= 0 && idx < ids.length - 1) ? "Save & next →" : "Save & close";
+    const prevBtn = $("roll-modal-prev");
+    if (prevBtn) prevBtn.disabled = !(idx > 0);
     renderPhoto(m);
     loadHistory(trbId);
   }
@@ -504,6 +514,125 @@
     const ids = viewIds();
     const i = ids.indexOf(id);
     return i >= 0 && i < ids.length - 1 ? ids[i + 1] : null;
+  }
+  function prevIdInView(id) {
+    const ids = viewIds();
+    const i = ids.indexOf(id);
+    return i > 0 ? ids[i - 1] : null;
+  }
+
+  // Unsaved-changes guard: snapshot the form on open, compare on close/navigate.
+  let FORM_SNAPSHOT = null;
+  function isDirty() {
+    return FORM_SNAPSHOT !== null && FORM_SNAPSHOT !== JSON.stringify(collectForm());
+  }
+  function guardedClose() {
+    if (isDirty() && !confirm("Discard unsaved changes?")) return;
+    closeModal();
+  }
+  function gotoPrev() {
+    const p = prevIdInView(EDIT_ID);
+    if (!p) return;
+    if (isDirty() && !confirm("Discard unsaved changes and go to the previous record?")) return;
+    openEditor(p);
+  }
+  // Renew: set status active + expiration one year out (in the form; she reviews + saves).
+  function renewMember() {
+    const exp = document.getElementById("f_expiration_date");
+    const st = document.getElementById("f_status");
+    if (exp) {
+      const d = new Date(); d.setFullYear(d.getFullYear() + 1);
+      exp.value = d.toISOString().slice(0, 10);
+    }
+    if (st) st.value = "active";
+    $("roll-modal-msg").textContent = "Renewed 1 yr — review and save.";
+  }
+
+  // Inline grid edit (Status / Expires) -> save just that field, like a mini-PUT.
+  async function onCellEdited(cell) {
+    const field = cell.getField();
+    const trbId = cell.getRow().getData().trb_id;
+    let value = cell.getValue();
+    if (field === "expiration_date") {
+      value = (value || "").trim();
+      if (value && !/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+        alert("Use date format YYYY-MM-DD (e.g. 2027-08-08).");
+        cell.restoreOldValue();
+        return;
+      }
+      if (value === "") value = null;
+    }
+    const { res, data } = await api(`/api/members/${encodeURIComponent(trbId)}`, {
+      method: "PUT", body: JSON.stringify({ [field]: value }),
+    });
+    if (res.ok && data.success) {
+      const row = ALL.find((m) => m.trb_id === trbId);
+      if (row) {
+        row[field] = value;
+        // only active members can be voting-eligible; clear the pill if no longer active
+        if (field === "status" && value !== "active") {
+          row.voting_eligible = 0;
+          if (table) table.updateData([{ trb_id: trbId, voting_eligible: 0 }]).catch(() => {});
+        }
+      }
+    } else {
+      alert((data && data.error) || "Save failed.");
+      cell.restoreOldValue();
+    }
+  }
+
+  // ---- Bulk select + set ----------------------------------------------------
+  const BULK_FIELDS = [
+    { k: "status", l: "Status", t: "enum", opts: STATUSES },
+    { k: "fee_exempt", l: "Fee exempt", t: "bool" },
+    { k: "fee_exemption_type", l: "Exemption reason", t: "enum", opts: EXEMPTION_TYPES },
+    { k: "second_chance_used", l: "Second chance used", t: "bool" },
+    { k: "portal_acl_tier", l: "Portal tier", t: "enum", opts: TIERS },
+    { k: "needs_status_review", l: "Needs review", t: "bool" },
+  ];
+  function bulkField() { return BULK_FIELDS.find((f) => f.k === $("rb-field").value) || BULK_FIELDS[0]; }
+  function renderBulkValue() {
+    const f = bulkField();
+    $("rb-value-wrap").innerHTML = f.t === "bool"
+      ? '<select id="rb-value"><option value="1">yes</option><option value="0">no</option></select>'
+      : `<select id="rb-value">${f.opts.map((o) => `<option value="${esc(o)}">${esc(o) || "(none)"}</option>`).join("")}</select>`;
+  }
+  function onSelectionChanged(data, rows) {
+    const bar = $("roll-bulk");
+    if (!rows.length) { bar.style.display = "none"; return; }
+    bar.style.display = "flex";
+    $("roll-bulk-count").textContent = `${rows.length} selected`;
+    $("rb-msg").textContent = "";
+  }
+  async function applyBulk() {
+    const rows = table.getSelectedRows();
+    if (!rows.length) return;
+    const f = bulkField();
+    const display = $("rb-value").value || "(none)";
+    let value = $("rb-value").value;
+    if (f.t === "bool") value = value === "1" ? 1 : 0;
+    else if (value === "") value = null;
+    if (!confirm(`Set ${f.l} to "${display}" for ${rows.length} member(s)?`)) return;
+    $("rb-msg").textContent = "Applying…";
+    let ok = 0, fail = 0;
+    const updates = [];
+    for (const row of rows) {
+      const trbId = row.getData().trb_id;
+      const { res, data } = await api(`/api/members/${encodeURIComponent(trbId)}`, {
+        method: "PUT", body: JSON.stringify({ [f.k]: value }),
+      });
+      if (res.ok && data.success) {
+        ok++;
+        const m = ALL.find((x) => x.trb_id === trbId);
+        if (m) m[f.k] = value;
+        const upd = { trb_id: trbId, [f.k]: value };
+        if (f.k === "status" && value !== "active") upd.voting_eligible = 0;
+        updates.push(upd);
+      } else { fail++; }
+    }
+    if (updates.length && table) table.updateData(updates).catch(() => {});
+    table.deselectRow();
+    $("rb-msg").textContent = `Updated ${ok}${fail ? `, ${fail} failed` : ""}.`;
   }
 
   async function saveEditor(advance) {
@@ -647,14 +776,25 @@
     // modal
     $("roll-modal-save").addEventListener("click", () => saveEditor(false));
     $("roll-modal-next").addEventListener("click", () => saveEditor(true));
-    $("roll-modal-cancel").addEventListener("click", closeModal);
-    $("roll-modal-x").addEventListener("click", closeModal);
-    $("roll-modal").addEventListener("click", (e) => { if (e.target.id === "roll-modal") closeModal(); });
+    $("roll-modal-prev").addEventListener("click", gotoPrev);
+    $("roll-modal-renew").addEventListener("click", renewMember);
+    $("roll-modal-cancel").addEventListener("click", guardedClose);
+    $("roll-modal-x").addEventListener("click", guardedClose);
+    $("roll-modal").addEventListener("click", (e) => { if (e.target.id === "roll-modal") guardedClose(); });
+    // bulk select + set
+    if (IS_RK) {
+      $("rb-field").innerHTML = BULK_FIELDS.map((f) => `<option value="${f.k}">${f.l}</option>`).join("");
+      renderBulkValue();
+      $("rb-field").addEventListener("change", renderBulkValue);
+      $("rb-apply").addEventListener("click", applyBulk);
+      $("rb-clear").addEventListener("click", () => table.deselectRow());
+    }
+
     // keyboard: ⌘/Ctrl+Enter = save & next (fast batch work), Esc = close
     document.addEventListener("keydown", (e) => {
       if ($("roll-modal").style.display === "none" || !EDIT_ID) return;
       if ((e.metaKey || e.ctrlKey) && e.key === "Enter") { e.preventDefault(); saveEditor(true); }
-      else if (e.key === "Escape") { e.preventDefault(); closeModal(); }
+      else if (e.key === "Escape") { e.preventDefault(); guardedClose(); }
     });
 
     applyUrlFilters();
