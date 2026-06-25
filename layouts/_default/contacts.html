@@ -1,0 +1,170 @@
+{{ define "main" }}
+<link rel="stylesheet" href="/theme.css?v={{ now.Unix }}">
+<link rel="stylesheet" href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator_simple.min.css">
+<style>
+  main { max-width: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; }
+  .dir-wrap { max-width: none; margin: 0; padding: 1rem 1.5rem 0; box-sizing: border-box; }
+  .dir-back { display: inline-block; font-size: .85rem; color: #7a5c2e; text-decoration: none; }
+  .dir-back:hover { text-decoration: underline; }
+  .dir-titlewrap h1 { margin: .3rem 0 0; }
+  .dir-note { color: #666; font-size: .9rem; margin: .25rem 0 .5rem; max-width: 760px; }
+
+  /* sticky bar — pills + controls pin to the top once you scroll past the title */
+  #dir-sentinel { height: 1px; }
+  .dir-sticky { position: sticky; top: 0; z-index: 40; background: #fbfaf7; padding: .5rem 0; margin: 0 -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; border-bottom: 1px solid #e2ddd2; transition: box-shadow .15s; }
+  .dir-sticky.stuck { box-shadow: 0 6px 16px rgba(0,0,0,.08); }
+  .dir-summary { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .dir-stat { background: #f5f3ee; border: 1px solid #e2ddd2; border-radius: 8px; padding: .35rem .8rem; min-width: 84px; cursor: pointer; user-select: none; transition: background .12s, border-color .12s; }
+  .dir-stat:hover { border-color: #c9a96a; }
+  .dir-stat.sel { background: #7a5c2e; border-color: #7a5c2e; }
+  .dir-stat.sel .dir-stat-n, .dir-stat.sel .dir-stat-l { color: #fff; }
+  .dir-stat.dnc.sel { background: #b33; border-color: #b33; }
+  .dir-stat-n { font-size: 1.3rem; font-weight: 700; line-height: 1; }
+  .dir-stat-l { font-size: .72rem; color: #666; text-transform: uppercase; letter-spacing: .03em; }
+  .dir-controls { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin-top: .5rem; }
+  .dir-controls input[type=text], .dir-controls select { padding: .45rem .6rem; border: 1px solid #ccc; border-radius: 6px; font-size: .95rem; }
+  .dir-active-list { font-size: .85rem; color: #7a5c2e; display: inline-flex; align-items: center; gap: .4rem; }
+
+  .dir-main { display: flex; gap: 1rem; align-items: flex-start; padding: .75rem 0 1rem; }
+  .dir-lists-col { flex: 0 0 280px; position: sticky; top: 92px; max-height: calc(100dvh - 110px); display: flex; flex-direction: column; }
+  .dir-lists-head { display: flex; justify-content: space-between; align-items: center; padding: .1rem .2rem .4rem; }
+  .dir-lists-head span { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: #9b8a66; font-weight: 600; }
+  .dir-lists { overflow-y: auto; border: 1px solid #e2ddd2; border-radius: 8px; background: #faf8f3; padding: .5rem; }
+  .dir-lists h3 { font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; color: #9b8a66; margin: .6rem .4rem .25rem; }
+  .dir-list-item { display: flex; justify-content: space-between; align-items: center; padding: .3rem .5rem; border-radius: 6px; cursor: pointer; font-size: .9rem; }
+  .dir-list-item:hover { background: #ece5d6; }
+  .dir-list-item.sel { background: #7a5c2e; color: #fff; }
+  .dir-list-item .cnt { font-size: .75rem; color: #998; }
+  .dir-list-item.sel .cnt { color: #e8dcc4; }
+  .dir-list-all { font-weight: 600; }
+  #dir-grid { flex: 1 1 auto; min-width: 0; height: calc(100dvh - 110px); }
+
+  .pill { display: inline-block; padding: .05rem .45rem; border-radius: 10px; font-size: .75rem; }
+  .pill-member { background: #e3efd9; color: #3a5a22; }
+  .pill-ext { background: #e9e4f3; color: #4a3a6a; }
+  .pill-dnc { background: #f6dada; color: #8a2a2a; }
+  @media (max-width: 800px) { .dir-main { flex-direction: column; } .dir-lists-col { position: static; flex-basis: auto; max-height: none; width: 100%; } #dir-grid { height: 70vh; } }
+
+  .dir-btn { background: #7a5c2e; color: #fff; border: 0; border-radius: 6px; padding: .45rem .8rem; font-size: .9rem; cursor: pointer; }
+  .dir-btn:hover { background: #654a22; }
+  .dir-btn.ghost { background: #ece5d6; color: #5a4420; }
+  .dir-btn.sm { padding: .25rem .55rem; font-size: .8rem; }
+  .dir-btn.danger { background: #b33; }
+  .dir-modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: none; align-items: flex-start; justify-content: center; z-index: 100; overflow-y: auto; padding: 4vh 1rem; }
+  .dir-modal-bg.open { display: flex; }
+  .dir-modal { background: #fff; border-radius: 10px; width: 560px; max-width: 100%; box-shadow: 0 12px 40px rgba(0,0,0,.3); }
+  .dir-modal-head { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border-bottom: 1px solid #eee; }
+  .dir-modal-head h2 { margin: 0; font-size: 1.2rem; }
+  .dir-modal-x { border: 0; background: none; font-size: 1.4rem; cursor: pointer; color: #888; }
+  .dir-modal-body { padding: 1rem 1.25rem; }
+  .dir-field { margin-bottom: .7rem; }
+  .dir-field label { display: block; font-size: .78rem; text-transform: uppercase; letter-spacing: .03em; color: #998; margin-bottom: .2rem; }
+  .dir-field input, .dir-field select, .dir-field textarea { width: 100%; padding: .45rem .6rem; border: 1px solid #ccc; border-radius: 6px; font-size: .95rem; box-sizing: border-box; }
+  .dir-row2 { display: flex; gap: .6rem; } .dir-row2 > * { flex: 1; }
+  .dir-chip { display: inline-flex; align-items: center; gap: .35rem; background: #ece5d6; border: 1px solid #d8cdb5; border-radius: 12px; padding: .12rem .55rem; font-size: .82rem; margin: .15rem .2rem .15rem 0; }
+  .dir-chip-x { cursor: pointer; color: #9b3030; font-weight: 700; }
+  .dir-modal-foot { display: flex; justify-content: space-between; gap: .5rem; padding: 1rem 1.25rem; border-top: 1px solid #eee; }
+  .dir-addlist { display: flex; gap: .4rem; margin-top: .4rem; }
+  .dir-msg { font-size: .85rem; color: #b33; }
+</style>
+
+<div class="dir-wrap">
+  <a class="dir-back" href="/members/">← Back to portal</a>
+  <div class="dir-titlewrap">
+    <h1>Contacts &amp; Directory</h1>
+    <p class="dir-note">Everyone in the tribe's address book — members and external contacts — plus the mailing &amp; committee lists. Members are linked to the tribal roll; edit membership details in the <a href="/members/tribal-roll/">Tribal Roll Book</a>.</p>
+  </div>
+
+  <div id="dir-sentinel"></div>
+  <div class="dir-sticky" id="dir-sticky">
+    <div class="dir-summary" id="dir-summary"><!-- clickable pills --></div>
+    <div class="dir-controls">
+      <input type="text" id="dir-search" placeholder="Search name, org, or email…" style="min-width:240px;">
+      <button type="button" id="dir-new" class="dir-btn">+ New contact</button>
+      <span class="dir-active-list" id="dir-active-list"></span>
+    </div>
+  </div>
+
+  <div class="dir-main">
+    <div class="dir-lists-col">
+      <div class="dir-lists-head">
+        <span>Lists</span>
+        <button type="button" class="dir-btn ghost sm" id="dir-new-list">+ New list</button>
+      </div>
+      <div class="dir-lists" id="dir-lists"></div>
+    </div>
+    <div id="dir-grid"></div>
+  </div>
+</div>
+
+<!-- Contact edit / create modal -->
+<div class="dir-modal-bg" id="dir-modal-bg">
+  <div class="dir-modal">
+    <div class="dir-modal-head"><h2 id="dir-modal-title">Edit contact</h2><button type="button" class="dir-modal-x" id="dir-modal-x">&times;</button></div>
+    <div class="dir-modal-body">
+      <input type="hidden" id="f-id">
+      <div class="dir-row2">
+        <div class="dir-field"><label>First name</label><input type="text" id="f-first"></div>
+        <div class="dir-field"><label>Last name</label><input type="text" id="f-last"></div>
+      </div>
+      <div class="dir-row2">
+        <div class="dir-field"><label>Organization</label><input type="text" id="f-org"></div>
+        <div class="dir-field"><label>Title</label><input type="text" id="f-title"></div>
+      </div>
+      <div class="dir-row2">
+        <div class="dir-field"><label>Email</label><input type="email" id="f-email"></div>
+        <div class="dir-field"><label>Phone</label><input type="text" id="f-phone"></div>
+      </div>
+      <div class="dir-row2">
+        <div class="dir-field"><label>City</label><input type="text" id="f-city"></div>
+        <div class="dir-field"><label>State</label><input type="text" id="f-state"></div>
+      </div>
+      <div class="dir-field"><label><input type="checkbox" id="f-dnc" style="width:auto;"> Do not contact</label></div>
+      <div class="dir-field" id="f-lists-wrap">
+        <label>Lists</label>
+        <div id="f-lists"></div>
+        <div class="dir-addlist">
+          <select id="f-addlist"><option value="">Add to list…</option></select>
+          <button type="button" class="dir-btn ghost" id="f-addlist-btn">Add</button>
+        </div>
+      </div>
+      <div class="dir-msg" id="f-msg"></div>
+    </div>
+    <div class="dir-modal-foot">
+      <span id="f-member-note" style="font-size:.82rem;color:#888;align-self:center;"></span>
+      <span><button type="button" class="dir-btn ghost" id="f-cancel">Cancel</button> <button type="button" class="dir-btn" id="f-save">Save</button></span>
+    </div>
+  </div>
+</div>
+
+<!-- List create / edit modal -->
+<div class="dir-modal-bg" id="list-modal-bg">
+  <div class="dir-modal">
+    <div class="dir-modal-head"><h2 id="list-modal-title">New list</h2><button type="button" class="dir-modal-x" id="list-modal-x">&times;</button></div>
+    <div class="dir-modal-body">
+      <input type="hidden" id="l-id">
+      <div class="dir-field"><label>Name</label><input type="text" id="l-name" placeholder="e.g. 2027 Pow-Wow Volunteers"></div>
+      <div class="dir-field"><label>Kind</label>
+        <select id="l-kind">
+          <option value="distribution">Mailing / distribution</option>
+          <option value="committee">Committee</option>
+          <option value="governance">Governance</option>
+          <option value="event">Event / pow-wow</option>
+          <option value="external">External org</option>
+          <option value="system">System</option>
+        </select>
+      </div>
+      <div class="dir-field"><label>Description (optional)</label><textarea id="l-desc" rows="2"></textarea></div>
+      <div class="dir-msg" id="l-msg"></div>
+    </div>
+    <div class="dir-modal-foot">
+      <button type="button" class="dir-btn danger" id="l-delete" style="visibility:hidden;">Delete list</button>
+      <span><button type="button" class="dir-btn ghost" id="l-cancel">Cancel</button> <button type="button" class="dir-btn" id="l-save">Save</button></span>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
+<script src="/js/members-config.js?v={{ now.Unix }}"></script>
+<script src="/js/contacts.js?v={{ now.Unix }}"></script>
+{{ end }}
