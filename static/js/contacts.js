@@ -180,8 +180,14 @@
   }
   async function refresh() { await reloadListsSidebar(); await loadContacts(); }
 
+  function measureBar() {
+    const bar = $('dir-sticky');
+    if (bar) document.documentElement.style.setProperty('--bar-h', bar.offsetHeight + 'px');
+  }
   function wireSticky() {
     const sentinel = $('dir-sentinel'), bar = $('dir-sticky');
+    measureBar();
+    window.addEventListener('resize', measureBar);
     if (!sentinel || !bar || !('IntersectionObserver' in window)) return;
     new IntersectionObserver(([e]) => bar.classList.toggle('stuck', !e.isIntersecting), { threshold: 0 }).observe(sentinel);
   }
