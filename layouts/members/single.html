@@ -183,8 +183,8 @@
     </div>
 </div>
 
-<!-- Member Portal Scripts -->
-<script src="/js/members-config.js"></script>
-<script src="/js/members-api.js"></script>
-<script src="/js/members-app.js"></script>
+<!-- Member Portal Scripts (?v=build cache-buster — see members.html) -->
+<script src="/js/members-config.js?v={{ now.Unix }}"></script>
+<script src="/js/members-api.js?v={{ now.Unix }}"></script>
+<script src="/js/members-app.js?v={{ now.Unix }}"></script>
 {{ end }}
