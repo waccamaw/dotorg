@@ -295,6 +295,13 @@
     IS_RK = !!data.isRecordkeeper;
     renderSummary(data.summary);
     show("roll-content");
+    // Counts-only access (tribal leadership): summary numbers, no roster.
+    if (data.role === "counts") {
+      document.querySelectorAll(".roll-controls, .roll-facetbar").forEach((el) => { el.style.display = "none"; });
+      $("roll-grid").innerHTML =
+        '<div style="padding:2rem 1rem;color:#888;">Counts-only access — the member roster is restricted. The summary above reflects current totals.</div>';
+      return;
+    }
     if (!table) await initGrid();
     mode = "roster";
     $("roll-sql-roster").style.display = "none";
