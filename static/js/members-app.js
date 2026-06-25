@@ -1148,6 +1148,9 @@ class MemberPortalApp {
             // The member grid lives in the Tribal Roll Book now — here we just
             // populate the outreach cohort cards, which deep-link into it.
             this.populateOutreachCards(metrics);
+            // Keep the reminder email-template previews (they used to be injected
+            // by displayAtRiskMembers, which we no longer call).
+            this.addTemplatePreviewSection();
             
         } catch (error) {
             console.error('[Email Dashboard] Error loading data:', error);
