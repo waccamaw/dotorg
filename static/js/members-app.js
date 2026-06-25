@@ -510,21 +510,36 @@ class MemberPortalApp {
                 // Update position
                 const memberPositionElement = document.getElementById('memberPosition');
                 if (memberPositionElement) {
-                    memberPositionElement.textContent = position || '-';
+                    // Used as the profile subtitle now — fall back to a generic
+                    // label rather than a bare "-".
+                    memberPositionElement.textContent = position || 'Tribal member';
                     console.log('[Member Portal] Updated position:', position);
                 }
                 
-                // Update voter status
+                // Update voter status as a colored badge (green = registered)
                 const memberVoterElement = document.getElementById('memberVoter');
                 if (memberVoterElement) {
-                    memberVoterElement.textContent = voter || '-';
+                    const isVoter = voter === true || voter === 1 || voter === '1'
+                        || (typeof voter === 'string' && ['true', 'yes', 'y'].includes(voter.toLowerCase()));
+                    memberVoterElement.innerHTML = isVoter
+                        ? '<span class="voter-badge yes">Registered</span>'
+                        : '<span class="voter-badge no">Not registered</span>';
                     console.log('[Member Portal] Updated voter status:', voter);
                 }
                 
-                // Update expires date with color coding
+                // Update "dues paid through" date — prefix "Expired ·" when past,
+                // and color-code the row (red expired / amber approaching).
                 const memberExpiresElement = document.getElementById('memberExpires');
                 if (memberExpiresElement) {
-                    memberExpiresElement.textContent = expires ? this.formatDate(expires) : '-';
+                    if (expires) {
+                        const ed = /^(\d{4})-(\d{2})-(\d{2})/.exec(expires);
+                        const expDate = ed ? new Date(+ed[1], +ed[2] - 1, +ed[3]) : new Date(expires);
+                        const today = new Date(); today.setHours(0, 0, 0, 0);
+                        const isExpired = expDate < today;
+                        memberExpiresElement.textContent = (isExpired ? 'Expired · ' : '') + this.formatDate(expires);
+                    } else {
+                        memberExpiresElement.textContent = '-';
+                    }
                     this.applyDateWarning(memberExpiresElement.parentElement, expires, warningThresholdDays);
                     console.log('[Member Portal] Updated expires:', expires);
                 }
@@ -726,8 +741,11 @@ class MemberPortalApp {
      */
     formatDate(dateString) {
         if (!dateString) return '';
-        
-        const date = new Date(dateString);
+        // Parse a YYYY-MM-DD string as a LOCAL date. new Date('2019-07-24')
+        // parses as UTC midnight, which renders as the previous day in US
+        // timezones (the "off by one" bug). Build it from parts instead.
+        const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(dateString);
+        const date = m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(dateString);
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         return date.toLocaleDateString('en-US', options);
     }
