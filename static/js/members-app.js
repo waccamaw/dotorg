@@ -870,11 +870,16 @@ class MemberPortalApp {
         
         // Update photo source and toggle photo/placeholder visibility
         if (photoPath && photoPath.trim() !== '' && tribalId) {
-            // Use API proxy endpoint to load photo from SharePoint
-            // Uses member's SharePoint item ID for the API endpoint (for lookup)
+            // Load via the API proxy, keyed by trb_id (memberData.id).
+            // The /api/member-photo endpoint requires a JWT; an <img> can't send
+            // an Authorization header, so the token goes in the ?token= query
+            // param (the endpoint accepts either). Without it the request 401s.
             const memberId = statusResponse?.status?.memberId;
-            const photoUrl = CONFIG.API_BASE_URL + CONFIG.ENDPOINTS.MEMBER_PHOTO.replace(':itemId', memberId);
-            console.log('[Member Photo] Loading photo from:', photoUrl);
+            const token = api.getSessionToken();
+            const photoUrl = CONFIG.API_BASE_URL
+                + CONFIG.ENDPOINTS.MEMBER_PHOTO.replace(':itemId', memberId)
+                + '?token=' + encodeURIComponent(token || '');
+            console.log('[Member Photo] Loading photo from API (trbId):', memberId);
             
             memberPhoto.src = photoUrl;
             memberPhoto.style.display = 'block';
