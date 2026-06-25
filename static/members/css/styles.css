@@ -1200,3 +1200,9 @@ margin-top: 0.25rem;
 .ed-preview-btn { display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.7rem 1rem; background: #ffffff; border: 1px solid #d8def0; border-radius: 10px; color: #0033cc; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all .15s ease; }
 .ed-preview-btn:hover { background: #f4f6fb; border-color: #0033cc; }
 .ed-preview-btn .mi { width: 17px; height: 17px; }
+
+/* Email pause banner (engagement dashboard) */
+.ed-banner { display: flex; align-items: flex-start; gap: 0.7rem; background: #fef6e7; border: 1px solid #f0d49a; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.ed-banner .mi { width: 20px; height: 20px; color: #b9770b; flex-shrink: 0; margin-top: 1px; }
+.ed-banner-text { font-size: 0.9rem; color: #7a4e06; line-height: 1.55; }
+.ed-banner-text strong { color: #6b3f05; font-weight: 600; }

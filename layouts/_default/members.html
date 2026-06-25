@@ -21,6 +21,7 @@
                 <symbol id="mi-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
                 <symbol id="mi-book" viewBox="0 0 24 24"><path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5z"/><path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19"/></symbol>
                 <symbol id="mi-chart" viewBox="0 0 24 24"><path d="M4 20V11M9.5 20V5M15 20v-6M20.5 20V8"/><path d="M3 20.5h18"/></symbol>
+                <symbol id="mi-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 16.5H2.5z"/><path d="M12 10v4.5M12 17.5v.01"/></symbol>
             </svg>
     <!-- Login Screen -->
     <section id="loginScreen" class="auth-screen">
@@ -182,6 +183,15 @@
                     <p>Roll health, outreach cohorts, and reminder previews</p>
                 </div>
                 <button id="backToDashboardBtn" class="btn btn-secondary">← Back to Portal</button>
+            </div>
+
+            <!-- Email pause banner -->
+            <div class="ed-banner" role="status">
+                <svg class="mi" aria-hidden="true"><use href="#mi-alert"/></svg>
+                <div class="ed-banner-text">
+                    <strong>Outreach emails are paused.</strong>
+                    Automated membership reminders are on hold while we finish cleaning up the roster data. No member emails will go out until this is lifted — the numbers below are for review only.
+                </div>
             </div>
 
             <!-- Roll composition chart -->
