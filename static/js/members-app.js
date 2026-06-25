@@ -880,10 +880,10 @@ class MemberPortalApp {
         
         if (!memberPhoto || !photoPlaceholder) return;
         
-        // Use Tribal ID (from hierarchy: T_Nbr > ID0 > ID) instead of SharePoint item ID
+        // Tribal ID comes from the members service (T_Nbr if present, else trb_id)
         const tribalId = statusResponse?.status?.tribalId;
-        
-        console.log('[Member Photo] Photo path from SharePoint:', photoPath);
+
+        console.log('[Member Photo] Photo key (R2):', photoPath);
         console.log('[Member Photo] Tribal ID:', tribalId);
         
         // Update photo source and toggle photo/placeholder visibility
