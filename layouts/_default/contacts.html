@@ -1,0 +1,68 @@
+{{ define "main" }}
+<link rel="stylesheet" href="/theme.css?v={{ now.Unix }}">
+<link rel="stylesheet" href="https://unpkg.com/tabulator-tables@6.3.0/dist/css/tabulator_simple.min.css">
+<style>
+  /* Wide data view — break out of the theme's content cap, like the roll book. */
+  main { max-width: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; }
+  .dir-wrap { max-width: none; margin: 0; padding: 1rem 1.5rem; box-sizing: border-box; }
+  .dir-back { display: inline-block; font-size: .85rem; color: #7a5c2e; text-decoration: none; margin-bottom: .15rem; }
+  .dir-back:hover { text-decoration: underline; }
+  #dir-content { height: 100dvh; min-height: 0; display: flex; flex-direction: column; box-sizing: border-box; padding-top: 10px; }
+  .dir-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: .5rem; }
+  .dir-note { color: #666; font-size: .9rem; margin: .25rem 0 .75rem; }
+  .dir-summary { display: flex; gap: .75rem; flex-wrap: wrap; margin: .5rem 0; flex: 0 0 auto; }
+  .dir-stat { background: #f5f3ee; border: 1px solid #e2ddd2; border-radius: 8px; padding: .5rem .9rem; min-width: 92px; }
+  .dir-stat-n { font-size: 1.4rem; font-weight: 700; line-height: 1; }
+  .dir-stat-l { font-size: .75rem; color: #666; text-transform: uppercase; letter-spacing: .03em; }
+  .dir-controls { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; margin: .5rem 0; flex: 0 0 auto; }
+  .dir-controls input[type=text], .dir-controls select { padding: .45rem .6rem; border: 1px solid #ccc; border-radius: 6px; font-size: .95rem; }
+  .dir-main { flex: 1 1 auto; min-height: 0; display: flex; gap: 1rem; }
+  /* lists sidebar */
+  .dir-lists { flex: 0 0 280px; overflow-y: auto; border: 1px solid #e2ddd2; border-radius: 8px; background: #faf8f3; padding: .5rem; }
+  .dir-lists h3 { font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; color: #9b8a66; margin: .6rem .4rem .25rem; }
+  .dir-list-item { display: flex; justify-content: space-between; align-items: center; padding: .3rem .5rem; border-radius: 6px; cursor: pointer; font-size: .9rem; }
+  .dir-list-item:hover { background: #ece5d6; }
+  .dir-list-item.sel { background: #7a5c2e; color: #fff; }
+  .dir-list-item .cnt { font-size: .75rem; color: #998; }
+  .dir-list-item.sel .cnt { color: #e8dcc4; }
+  .dir-list-all { font-weight: 600; }
+  /* grid */
+  #dir-grid { flex: 1 1 auto; min-height: 0; }
+  .pill { display: inline-block; padding: .05rem .45rem; border-radius: 10px; font-size: .75rem; }
+  .pill-member { background: #e3efd9; color: #3a5a22; }
+  .pill-ext { background: #e9e4f3; color: #4a3a6a; }
+  .pill-dnc { background: #f6dada; color: #8a2a2a; }
+  @media (max-width: 800px) { .dir-main { flex-direction: column; } .dir-lists { flex-basis: auto; max-height: 30vh; } }
+</style>
+
+<div class="dir-wrap">
+  <a class="dir-back" href="/members/">← Back to portal</a>
+  <div id="dir-content">
+    <div class="dir-head">
+      <h1 style="margin:0;">Contacts &amp; Directory</h1>
+    </div>
+    <p class="dir-note">Everyone in the tribe's address book — members and external contacts — plus the mailing &amp; committee lists. Members are linked to the tribal roll; edit membership details in the <a href="/members/tribal-roll/">Tribal Roll Book</a>.</p>
+
+    <div class="dir-summary" id="dir-summary"><!-- stats injected --></div>
+
+    <div class="dir-controls">
+      <input type="text" id="dir-search" placeholder="Search name, org, or email…" style="min-width:260px;">
+      <select id="dir-member">
+        <option value="">All contacts</option>
+        <option value="1">Members only</option>
+        <option value="0">External only</option>
+      </select>
+      <span id="dir-active-list" style="font-size:.85rem;color:#7a5c2e;"></span>
+    </div>
+
+    <div class="dir-main">
+      <div class="dir-lists" id="dir-lists"><!-- lists injected --></div>
+      <div id="dir-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/tabulator-tables@6.3.0/dist/js/tabulator.min.js"></script>
+<script src="/js/members-config.js?v={{ now.Unix }}"></script>
+<script src="/js/contacts.js?v={{ now.Unix }}"></script>
+{{ end }}

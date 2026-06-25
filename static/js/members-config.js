@@ -26,7 +26,12 @@ const CONFIG = {
     MEETINGS_API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'http://localhost:8789'  // Meetings service port
         : 'https://meetings.waccamaw.org',
-    
+
+    // Contact/Directory API Base URL - Standalone contact service
+    CONTACT_API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:8788'  // Contact service port
+        : 'https://contact.waccamaw.org',
+
     // Environment
     ENV: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'development'
