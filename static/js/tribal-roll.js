@@ -40,6 +40,7 @@
     { k: "fee_exempt", l: "Fee exempt", t: "bool" },
     { k: "fee_exemption_type", l: "Exemption reason", t: "enum" },
     { k: "second_chance_used", l: "Second chance used", t: "bool" },
+    { k: "core_member", l: "Core member", t: "bool" },
     { k: "at_risk", l: "At risk", t: "bool" },
     { k: "needs_status_review", l: "Needs review", t: "bool" },
     { k: "voting_eligible", l: "Voting eligible", t: "bool" },
@@ -74,6 +75,7 @@
     { k: "fee_exempt", l: "Fee exempt", t: "check" },
     { k: "fee_exemption_type", l: "Exemption reason", t: "select", opts: EXEMPTION_TYPES },
     { k: "second_chance_used", l: "Second chance used", t: "check" },
+    { k: "core_member", l: "Core member", t: "check" },
     { k: "at_risk", l: "At risk", t: "check" },
     { k: "newsletter_opt_in", l: "Newsletter (paper)", t: "check" },
     { k: "needs_status_review", l: "Needs status review", t: "check" },
@@ -149,7 +151,8 @@
       { title: "Flags", field: "needs_status_review", headerSort: false, width: 205,
         formatter: (cell) => {
           const d = cell.getRow().getData();
-          return (d.voting_eligible ? '<span class="rp rp-v">vote</span>' : "") +
+          return (d.core_member ? '<span class="rp rp-c">core</span>' : "") +
+                 (d.voting_eligible ? '<span class="rp rp-v">vote</span>' : "") +
                  (d.fee_exempt ? '<span class="rp rp-e">exempt</span>' : "") +
                  (d.second_chance_used ? '<span class="rp rp-2">2nd chance</span>' : "") +
                  (d.needs_status_review ? '<span class="rp rp-w">review</span>' : "");
@@ -594,6 +597,7 @@
     { k: "fee_exempt", l: "Fee exempt", t: "bool" },
     { k: "fee_exemption_type", l: "Exemption reason", t: "enum", opts: EXEMPTION_TYPES },
     { k: "second_chance_used", l: "Second chance used", t: "bool" },
+    { k: "core_member", l: "Core member", t: "bool" },
     { k: "portal_acl_tier", l: "Portal tier", t: "enum", opts: TIERS },
     { k: "needs_status_review", l: "Needs review", t: "bool" },
   ];
