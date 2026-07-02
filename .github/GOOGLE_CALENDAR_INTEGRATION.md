@@ -95,6 +95,29 @@ The parser handles two iCal date formats:
    - URL (optional, for external event links)
 3. Events appear automatically on the website within minutes
 
+### Editing Events (Operator & Agent Access)
+
+The site reads from **two** Google Calendars whose events feed the homepage "Upcoming Meetings & Events" section:
+
+| Calendar | Purpose |
+|----------|---------|
+| `nativecalendar13@gmail.com` | Primary tribal calendar (the iCal feed consumed by `layouts/index.html` → `#upcomingMeetingsContainer`) |
+| `wip.peoples.alliance@gmail.com` | Waccamaw Indian People's Alliance events |
+
+Both calendars live on **personal `@gmail.com` accounts**, *not* in the `waccamaw.org` Google Workspace tenant. That has one important consequence:
+
+> **The Google Workspace MCP / admin tooling cannot provision access to these calendars.** Edit grants must be made **manually by each calendar's owner** from the Google Calendar UI. There is no API/automation shortcut while the calendars remain on personal accounts.
+
+**To let an operator or agent (e.g. `ember@waccamaw.org`) add/edit events without escalating to a human each time:**
+
+1. The owner of each calendar opens **Google Calendar → Settings → [calendar name] → Share with specific people**.
+2. Add the operator/agent identity (e.g. `ember@waccamaw.org`) with the permission **"Make changes to events"**.
+3. Repeat for **both** calendars above.
+
+Until that grant exists, every new event (committee meetings, school days, vendor calls, pauwau dates, etc.) requires a human with calendar write access — a recurring blocker tracked in `dotorg#24`.
+
+**Longer-term option:** migrate these two calendars into the `waccamaw.org` Workspace tenant so access can be managed centrally (and via the Workspace MCP) instead of per-owner manual shares.
+
 ### Making Calendar Public
 
 The calendar must be set to **public** for the iCal feed to work:
@@ -204,6 +227,9 @@ The parser expects standard iCal date formats. If dates don't parse:
 - [Meetings Service](../apps/meetings-service/README.md) - Meetings API integration
 
 ## Changelog
+
+### 2026-06-28
+- Documented the "Editing Events" access pattern (dotorg#24): both source calendars (`nativecalendar13@gmail.com`, `wip.peoples.alliance@gmail.com`) are personal `@gmail.com` accounts, so edit grants must be made manually by each owner; Workspace MCP cannot provision them.
 
 ### 2025-12-23
 - Initial implementation of Google Calendar integration
