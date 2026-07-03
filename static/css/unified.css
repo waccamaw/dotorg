@@ -50,7 +50,7 @@ h1, h2, h3, h4, .section-heading, .post-card h3, .hero-title {
   content: ""; width: 34px; height: 34px; flex: 0 0 auto;
   background: url('/logos/doug-2025/logo-flat.svg') center/contain no-repeat;
 }
-.nav-menu { display: flex; gap: 2.4rem; list-style: none; margin: 0; padding: 0; }
+.nav-menu { display: flex; gap: 3.1rem; list-style: none; margin: 0; padding: 0; }
 .header-container { gap: 2.75rem !important; }
 .header-right { gap: 2.5rem !important; }
 .nav-menu a {
@@ -171,6 +171,10 @@ h1, h2, h3, h4, .section-heading, .post-card h3, .hero-title {
 .chief-welcome-cta { font-family: var(--wm-sans); font-weight: 700; color: #c8963e; }
 .chief-welcome-card:hover .chief-welcome-cta { color: #fff; }
 @media (max-width: 760px) { .welcome-duo { grid-template-columns: 1fr; } }
+
+/* Learn history sections: drop the full-width divider between sections — the
+   heading with its accent underline is enough; the extra rule read as busy. */
+.learn-content .history-sections section { border-bottom: none; }
 
 /* Chiefs grid: with Cheryl now in her own spotlight, only Alan Faver remains —
    center a single capped card (matches Susan's chief-of-council card below,
