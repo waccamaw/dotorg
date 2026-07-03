@@ -172,6 +172,14 @@ h1, h2, h3, h4, .section-heading, .post-card h3, .hero-title {
 .chief-welcome-card:hover .chief-welcome-cta { color: #fff; }
 @media (max-width: 760px) { .welcome-duo { grid-template-columns: 1fr; } }
 
+/* Chiefs grid: with Cheryl now in her own spotlight, only Alan Faver remains —
+   center a single capped card (matches Susan's chief-of-council card below,
+   not the old full-width stretch). */
+.chiefs-section .governing-body-grid {
+  display: flex; justify-content: center; gap: 2rem;
+}
+.chiefs-section .governing-body-card { max-width: 300px; width: 100%; }
+
 /* ---------- Founding Chief tribute (Learn page) ---------- */
 .founding-chief-section { margin: 2.5rem 0 3.25rem; }
 .founding-chief-section > h2 {
