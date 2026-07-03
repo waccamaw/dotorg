@@ -50,7 +50,10 @@ h1, h2, h3, h4, .section-heading, .post-card h3, .hero-title {
   content: ""; width: 34px; height: 34px; flex: 0 0 auto;
   background: url('/logos/doug-2025/logo-flat.svg') center/contain no-repeat;
 }
-.nav-menu { display: flex; gap: 3.1rem; list-style: none; margin: 0; padding: 0; }
+.nav-menu { display: flex; list-style: none; margin: 0; padding: 0; }
+/* theme's `.site-nav ul { gap: .5rem }` (specificity 0,1,1) out-ranks a bare
+   `.nav-menu` — must match or beat it or the nav stays cramped at 8px. */
+.site-nav ul.nav-menu { gap: 2.5rem; }
 .header-container { gap: 2.75rem !important; }
 .header-right { gap: 2.5rem !important; }
 .nav-menu a {
