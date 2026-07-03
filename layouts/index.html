@@ -37,7 +37,47 @@
 <!-- Featured-post hero suppressed: the Museum feature above is the permanent hero.
      (Restore from git history if a rotating featured slot is wanted again.) -->
 
-.5rem;
+<!--
+	Seasonal Pauwau Promo — auto-cycling states, hidden Dec–Feb.
+	  Mar–Apr  → "open"     : subtle strip, "Registration is open"
+	  May–Sep  → "register" : full image banner, "Plan your visit & register"
+	  Oct–Nov  → "stay"     : full image banner, registration closed, "Plan Your Stay"
+	Year / anniversary number update automatically (first Pauwau: 1992).
+	Background photo: drop a wide lifestyle/grounds shot at
+	static/images/pauwau/grounds-aerial.jpg — until it exists, the gradient shows alone.
+-->
+<style>
+	/* Subtle "open" strip */
+	.pauwau-strip {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.5rem 0.85rem;
+		flex-wrap: wrap;
+		margin: 0 0 2.5rem;
+		padding: 0.85rem 1.25rem;
+		background: var(--bg-secondary, #fff5eb);
+		border: 1px solid var(--border-color, #d4c5b9);
+		border-left: 4px solid #d4a574;
+		border-radius: 8px;
+		font-size: 0.95rem;
+		color: var(--text-color, #5c4a3a);
+		text-decoration: none;
+		transition: border-color 0.2s ease, background 0.2s ease;
+	}
+	.pauwau-strip:hover {
+		border-left-color: #0033cc;
+		background: #fffaf3;
+		text-decoration: none;
+	}
+	.pauwau-strip strong { color: #9c4a2f; }
+	.pauwau-strip .pauwau-strip-cta { color: #9c4a2f; font-weight: 600; white-space: nowrap; }
+
+	/* Full image banner (register + stay states) */
+	.pauwau-promo {
+		display: block;
+		text-decoration: none;
+		margin: 0 0 2.5rem;
 		border-radius: 12px;
 		overflow: hidden;
 		background: linear-gradient(135deg, rgba(156, 74, 47, 0.62) 0%, rgba(58, 44, 28, 0.78) 100%), url('/images/pauwau/grounds-aerial.jpg');
