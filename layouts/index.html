@@ -34,94 +34,13 @@
 
 {{ $allPosts := where .Site.RegularPages "Type" "post" }}
 
-<!-- Featured Hero (1 post only) -->
-{{ $featured := where .Site.RegularPages ".Params.categories" "intersect" (slice "featured") }}
-{{ if $featured }}
-	<div class="hero-carousel">
-		{{ range first 1 $featured }}
-			<article class="hero-slide">
-				{{ if .Params.photos }}
-					{{ $originalImage := index .Params.photos 0 }}
-					{{ $heroImage := printf "https://micro.blog/photos/1800x/%s" $originalImage }}
-					<div class="hero-background">
-						<img src="{{ $heroImage }}" alt="{{ .Title }}" loading="eager">
-						<div class="hero-overlay"></div>
-					</div>
-				{{ end }}
-				<div class="hero-content">
-					<div class="hero-text">
-						<span class="hero-label">Featured</span>
-						<h1 class="hero-title">{{ .Title }}</h1>
-					<div class="hero-meta">
-						<time datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
-							{{ .Date.Format "January 2, 2006" }}
-						</time>
-						{{ with .Params.author }}
-							{{ if reflect.IsMap . }}
-								<span class="hero-author">
-									{{ with .avatar }}<img src="{{ . }}" alt="{{ $.Params.author.full_name }}" class="author-avatar"> {{ end }}
-									{{ .full_name | default .name }}
-								</span>
-							{{ else }}
-								<span class="hero-author">{{ . }}</span>
-							{{ end }}
-						{{ end }}
-					</div>
-						{{ if .Content }}
-							<p class="hero-excerpt">{{ .Content | plainify | htmlUnescape | truncate 250 }}</p>
-						{{ end }}
-						<a href="{{ .Permalink }}" class="hero-cta">Read Full Story</a>
-					</div>
-				</div>
-			</article>
-		{{ end }}
-	</div>
-{{ end }}
+<!-- Featured-post hero suppressed: the Museum feature above is the permanent hero.
+     (Restore from git history if a rotating featured slot is wanted again.) -->
 
-<!--
-	Seasonal Pauwau Promo — auto-cycling states, hidden Dec–Feb.
-	  Mar–Apr  → "open"     : subtle strip, "Registration is open"
-	  May–Sep  → "register" : full image banner, "Plan your visit & register"
-	  Oct–Nov  → "stay"     : full image banner, registration closed, "Plan Your Stay"
-	Year / anniversary number update automatically (first Pauwau: 1992).
-	Background photo: drop a wide lifestyle/grounds shot at
-	static/images/pauwau/grounds-aerial.jpg — until it exists, the gradient shows alone.
--->
-<style>
-	/* Subtle "open" strip */
-	.pauwau-strip {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.5rem 0.85rem;
-		flex-wrap: wrap;
-		margin: 0 0 2.5rem;
-		padding: 0.85rem 1.25rem;
-		background: var(--bg-secondary, #fff5eb);
-		border: 1px solid var(--border-color, #d4c5b9);
-		border-left: 4px solid #d4a574;
-		border-radius: 8px;
-		font-size: 0.95rem;
-		color: var(--text-color, #5c4a3a);
-		text-decoration: none;
-		transition: border-color 0.2s ease, background 0.2s ease;
-	}
-	.pauwau-strip:hover {
-		border-left-color: #0033cc;
-		background: #fffaf3;
-		text-decoration: none;
-	}
-	.pauwau-strip strong { color: #0033cc; }
-	.pauwau-strip .pauwau-strip-cta { color: #0033cc; font-weight: 600; white-space: nowrap; }
-
-	/* Full image banner (register + stay states) */
-	.pauwau-promo {
-		display: block;
-		text-decoration: none;
-		margin: 0 0 2.5rem;
+.5rem;
 		border-radius: 12px;
 		overflow: hidden;
-		background: linear-gradient(135deg, rgba(0, 51, 204, 0.58) 0%, rgba(0, 45, 90, 0.72) 100%), url('/images/pauwau/grounds-aerial.jpg');
+		background: linear-gradient(135deg, rgba(156, 74, 47, 0.62) 0%, rgba(58, 44, 28, 0.78) 100%), url('/images/pauwau/grounds-aerial.jpg');
 		background-size: cover;
 		background-position: center;
 		box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -165,7 +84,7 @@
 	.pauwau-promo-cta {
 		display: inline-block;
 		background: #fff;
-		color: #0033cc;
+		color: #9c4a2f;
 		padding: 0.6rem 1.6rem;
 		border-radius: 50px;
 		font-weight: 600;
