@@ -1268,13 +1268,19 @@ document.addEventListener('DOMContentLoaded', async () => {
   background:#9c4a2f !important; border:none !important;
 }
 .newsletter-form button:hover, #newsletterForm button:hover { background:#1f3a52 !important; }
-/* donate section */
-.donate-section, .donate-banner { background:#efe6d2 !important; border-radius:14px; }
-.donate-banner { border:1px solid #ddd0b6 !important; }
-.donate-button, a.donate-button, button.donate-button {
-  background:#9c4a2f !important; border:none !important; color:#fff !important;
+/* donate section — ONE paper panel (was double: section + banner both styled,
+   the inner border was the nested banner edge inset from the section). */
+.donate-section { background:transparent !important; border:none !important; }
+.donate-banner {
+  background:#efe6d2 !important; border:1px solid #ddd0b6 !important;
+  border-radius:14px !important;
 }
-.donate-button:hover, a.donate-button:hover { background:#1f3a52 !important; }
+.donate-embed > div { border:none !important; box-shadow:none !important; }
+/* button: plum — the middle between our clay and Zeffy's purple thermometer */
+.donate-button, a.donate-button, button.donate-button {
+  background:#7a4a63 !important; border:none !important; color:#fff !important;
+}
+.donate-button:hover, a.donate-button:hover { background:#5e3a4d !important; }
 /* read-more + misc links to clay */
 .read-more, a.read-more { color:#9c4a2f !important; font-weight:600; }
 /* meetings/events: soften the empty state */
