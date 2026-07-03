@@ -37,4 +37,4 @@ __pycache__/
 node_modules/
 
 # Backups
-backups/
+backups/.claude/worktrees/
