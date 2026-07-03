@@ -98,9 +98,30 @@ h1, h2, h3, h4, .section-heading, .post-card h3, .hero-title {
   color: var(--link-color) !important; font-weight: 700; font-family: var(--wm-sans);
 }
 /* consistent image area */
-.post-card-image { aspect-ratio: 3/2; overflow: hidden; }
+.post-card-image { aspect-ratio: 3/2; overflow: hidden; position: relative; }
 .post-card-image img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.update-image { position: relative; overflow: hidden; }
 .update-image img { object-fit: cover; }
+/* --- reconcile mismatched tribal photos/flyers into ONE curated set ---
+   muted, warm-toned at rest (reads as a museum collection); the real color
+   blooms back on hover so the content still lives. */
+.post-card-image img, .update-image img {
+  filter: saturate(.8) contrast(1.03) sepia(.14) brightness(1.02);
+  transition: filter .3s ease, transform .3s ease;
+}
+.post-card:hover .post-card-image img,
+.updates-list .update-item:hover .update-image img {
+  filter: saturate(1) contrast(1) sepia(0) brightness(1);
+  transform: scale(1.04);
+}
+/* a whisper-thin paper+clay wash unifies whatever palette the source has */
+.post-card-image::after, .update-image::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(175deg, rgba(31,58,82,.06) 0%, rgba(156,74,47,.12) 100%);
+  mix-blend-mode: multiply; transition: opacity .3s ease;
+}
+.post-card:hover .post-card-image::after,
+.updates-list .update-item:hover .update-image::after { opacity: 0; }
 /* the theme's placeholder (📄 on a color block) -> branded tribal-logo watermark */
 .post-card-placeholder {
   aspect-ratio: 3/2 !important; display: flex !important;
@@ -112,6 +133,44 @@ h1, h2, h3, h4, .section-heading, .post-card h3, .hero-title {
   border-bottom: 1px solid var(--border-color);
 }
 .post-card-placeholder .placeholder-icon { display: none; }
+
+/* ---------- Homepage: Pauwau promo + "Welcome Chief Cheryl" duo ---------- */
+.welcome-duo, .welcome-solo { max-width: 1200px; margin: 0 auto 2.5rem; }
+.welcome-duo {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; align-items: stretch;
+}
+.welcome-duo .pauwau-promo { margin: 0; height: 100%; }
+.welcome-duo .pauwau-promo-inner {
+  height: 100%; display: flex; flex-direction: column; justify-content: center;
+}
+.chief-welcome-card {
+  display: flex; flex-direction: column; justify-content: center; align-items: flex-start;
+  gap: 0.1rem; text-decoration: none; border-radius: 12px; padding: 2rem 2.25rem;
+  background: linear-gradient(135deg, #1f3a52 0%, #16283a 100%);
+  color: #f2ecdf; box-shadow: 0 4px 16px rgba(0,0,0,.12);
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.chief-welcome-card:hover {
+  transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.18); text-decoration: none;
+}
+.chief-welcome-portrait {
+  width: 76px; height: 76px; border-radius: 50%; flex: 0 0 auto;
+  border: 2px solid rgba(200,150,62,.75);
+  background: url('/governing-body/chief-cheryl-cail.jpg') center 16%/cover no-repeat;
+  margin-bottom: 0.7rem; box-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.chief-welcome-kicker {
+  font-family: var(--wm-sans); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase; color: #c8963e;
+}
+.chief-welcome-title {
+  font-family: var(--wm-serif); color: #fff; font-size: 1.6rem;
+  margin: 0.2rem 0 0.4rem; line-height: 1.12;
+}
+.chief-welcome-text { color: #e6ddcc; font-size: 1rem; line-height: 1.55; margin: 0 0 0.9rem; }
+.chief-welcome-cta { font-family: var(--wm-sans); font-weight: 700; color: #c8963e; }
+.chief-welcome-card:hover .chief-welcome-cta { color: #fff; }
+@media (max-width: 760px) { .welcome-duo { grid-template-columns: 1fr; } }
 
 /* ---------- Founding Chief tribute (Learn page) ---------- */
 .founding-chief-section { margin: 2.5rem 0 3.25rem; }
@@ -154,6 +213,56 @@ h1, h2, h3, h4, .section-heading, .post-card h3, .hero-title {
   .founding-chief-card { grid-template-columns: 1fr; }
   .founding-chief-portrait img { aspect-ratio: 4/3; min-height: 0; }
   .founding-chief-content { padding: 1.5rem 1.5rem 1.75rem; }
+}
+/* Current Chief — mirror of the founding-chief card (portrait right, clay accent),
+   so the two sections read as a leadership hand-off. */
+.current-chief-card {
+  grid-template-columns: 1fr minmax(260px, 380px);
+  border-left: 1px solid var(--border-color); border-right: 5px solid var(--link-color);
+}
+.current-chief-card .founding-chief-portrait { order: 2; }
+.current-chief-card .founding-chief-content { order: 1; padding: 2rem 0.5rem 2rem 2.25rem; }
+.current-chief-card .founding-chief-portrait img { object-position: center 16%; }
+.current-chief-card .founding-chief-content .title { color: var(--link-color); }
+@media (max-width: 640px) {
+  .current-chief-card { grid-template-columns: 1fr; }
+  .current-chief-card .founding-chief-portrait { order: 0; }
+  .current-chief-card .founding-chief-content { order: 0; padding: 1.5rem 1.5rem 1.75rem; }
+}
+
+/* ---------- Homepage editorial ledger (replaces the lower card grid) ---------- */
+.ledger-heading {
+  font-family: var(--wm-serif); color: var(--primary-color); font-size: 1.5rem;
+  margin: 0 0 0.4rem;
+}
+.updates-ledger {
+  list-style: none; margin: 0 0 1.25rem; padding: 0;
+  border-top: 1px solid var(--border-color);
+}
+.ledger-item { border-bottom: 1px solid var(--border-color); }
+.ledger-link {
+  display: grid; grid-template-columns: 6.5rem 1fr auto; gap: 1.25rem; align-items: baseline;
+  padding: 1.05rem 0.9rem; text-decoration: none; transition: background .18s ease;
+}
+.ledger-link:hover { background: var(--bg-secondary); }
+.ledger-date {
+  font-family: var(--wm-sans); color: var(--wm-ochre); font-weight: 700;
+  font-size: 0.72rem; letter-spacing: 0.07em; text-transform: uppercase;
+  white-space: nowrap;
+}
+.ledger-title {
+  font-family: var(--wm-serif); color: var(--primary-color);
+  font-size: 1.18rem; line-height: 1.3; transition: color .15s;
+}
+.ledger-link:hover .ledger-title { color: var(--link-color); }
+.ledger-arrow {
+  color: var(--wm-ochre); font-weight: 700; opacity: 0;
+  transform: translateX(-4px); transition: opacity .18s ease, transform .18s ease;
+}
+.ledger-link:hover .ledger-arrow { opacity: 1; transform: translateX(0); }
+@media (max-width: 560px) {
+  .ledger-link { grid-template-columns: 1fr auto; gap: 0.25rem 0.75rem; padding: 0.95rem 0.4rem; }
+  .ledger-date { grid-column: 1 / -1; }
 }
 
 /* ---------- pauwau + newsletter + donate already re-toned inline on home;

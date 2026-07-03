@@ -147,31 +147,41 @@
 {{- $when := printf "First full weekend of November %d" $year -}}
 {{- with .Site.Data.pauwau }}{{ if eq .year $year }}{{ $when = .dates }}{{ end }}{{ end -}}
 {{- if and (ge $month 3) (le $month 4) }}
-	<!-- OPEN: subtle -->
+	<!-- OPEN: subtle strip (full width), Chief welcome below -->
 	<a href="/pauwau/applications/" class="pauwau-strip">
 		<span>🪶 <strong>Registration is open</strong> for the {{ $anniv }}{{ $ord }} Annual Waccamaw Pauwau — {{ $when }}.</span>
 		<span class="pauwau-strip-cta">Register →</span>
 	</a>
+	<div class="welcome-solo">{{ partial "home/chief-welcome.html" . }}</div>
 {{- else if and (ge $month 5) (le $month 9) }}
-	<!-- REGISTER: full promo -->
-	<a href="/pauwau/" class="pauwau-promo">
-		<div class="pauwau-promo-inner">
-			<span class="pauwau-promo-badge">{{ $anniv }}{{ $ord }} Annual</span>
-			<h2 class="pauwau-promo-title">Waccamaw Pauwau &amp; Cultural Arts Festival</h2>
-			<p class="pauwau-promo-meta">{{ $when }} • Waccamaw Tribal Grounds, Aynor SC</p>
-			<span class="pauwau-promo-cta">Plan your visit &amp; register →</span>
-		</div>
-	</a>
+	<!-- REGISTER: promo banner + Chief welcome, side by side -->
+	<div class="welcome-duo">
+		<a href="/pauwau/" class="pauwau-promo">
+			<div class="pauwau-promo-inner">
+				<span class="pauwau-promo-badge">{{ $anniv }}{{ $ord }} Annual</span>
+				<h2 class="pauwau-promo-title">Waccamaw Pauwau &amp; Cultural Arts Festival</h2>
+				<p class="pauwau-promo-meta">{{ $when }} • Waccamaw Tribal Grounds, Aynor SC</p>
+				<span class="pauwau-promo-cta">Plan your visit &amp; register →</span>
+			</div>
+		</a>
+		{{ partial "home/chief-welcome.html" . }}
+	</div>
 {{- else if and (ge $month 10) (le $month 11) }}
-	<!-- STAY: registration closed, attend mode -->
-	<a href="/pauwau/" class="pauwau-promo">
-		<div class="pauwau-promo-inner">
-			<span class="pauwau-promo-badge">{{ $anniv }}{{ $ord }} Annual · {{ $year }}</span>
-			<h2 class="pauwau-promo-title">Join Us at the Waccamaw Pauwau</h2>
-			<p class="pauwau-promo-meta">{{ $when }} • 591 Bluewater Rd, Aynor SC • Free parking, RV &amp; camping on-site</p>
-			<span class="pauwau-promo-cta">Plan Your Stay →</span>
-		</div>
-	</a>
+	<!-- STAY: attend banner + Chief welcome, side by side -->
+	<div class="welcome-duo">
+		<a href="/pauwau/" class="pauwau-promo">
+			<div class="pauwau-promo-inner">
+				<span class="pauwau-promo-badge">{{ $anniv }}{{ $ord }} Annual · {{ $year }}</span>
+				<h2 class="pauwau-promo-title">Join Us at the Waccamaw Pauwau</h2>
+				<p class="pauwau-promo-meta">{{ $when }} • 591 Bluewater Rd, Aynor SC • Free parking, RV &amp; camping on-site</p>
+				<span class="pauwau-promo-cta">Plan Your Stay →</span>
+			</div>
+		</a>
+		{{ partial "home/chief-welcome.html" . }}
+	</div>
+{{- else }}
+	<!-- Off-season (Dec–Feb): Chief welcome alone -->
+	<div class="welcome-solo">{{ partial "home/chief-welcome.html" . }}</div>
 {{- end }}
 
 <!-- Last 3 Blog Posts -->
@@ -269,36 +279,22 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- Recent Updates Grid (all content) -->
 <div class="homepage-sections">
 	<div class="other-posts-section">
-		<div class="posts-grid">
+		<h2 class="ledger-heading">More Updates</h2>
+		<ul class="updates-ledger">
 			{{ range $index, $post := after 3 (first 11 $allPosts) }}
-				{{ $colorIndex := mod $index 6 }}
-				<article class="post-card h-entry">
-					{{ if .Params.photos }}
-						{{ $originalImage := index .Params.photos 0 }}
-						{{ $resizedImage := printf "https://micro.blog/photos/400x/%s" $originalImage }}
-						<div class="post-card-image">
-							<a href="{{ .Permalink }}">
-								<img src="{{ $resizedImage }}" alt="{{ .Title }}" loading="lazy">
-							</a>
-						</div>
-					{{ else }}
-						<div class="post-card-placeholder post-card-color-{{ $colorIndex }}">
-							<a href="{{ .Permalink }}">
-								<span class="placeholder-icon">📄</span>
-							</a>
-						</div>
-					{{ end }}
-					<div class="post-card-content">
-						<h3 class="p-name post-card-title">
-							<a href="{{ .Permalink }}">{{ .Title }}</a>
-						</h3>
-						<time class="dt-published post-card-date" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
-							{{ .Date.Format "Jan 2, 2006" }}
+				{{ $title := $post.Title }}
+				{{ if not $title }}{{ $title = ($post.Content | plainify | htmlUnescape | truncate 70) }}{{ end }}
+				<li class="ledger-item h-entry">
+					<a href="{{ $post.Permalink }}" class="ledger-link">
+						<time class="dt-published ledger-date" datetime="{{ $post.Date.Format "2006-01-02T15:04:05-0700" }}">
+							{{ $post.Date.Format "Jan 2, 2006" }}
 						</time>
-					</div>
-				</article>
+						<span class="p-name ledger-title">{{ $title }}</span>
+						<span class="ledger-arrow" aria-hidden="true">→</span>
+					</a>
+				</li>
 			{{ end }}
-		</div>
+		</ul>
 		<a href="/updates/" class="view-all-link">View all updates →</a>
 	</div>
 </div>
