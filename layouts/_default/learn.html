@@ -14,29 +14,34 @@
       {{ partial "learn/today.html" . }}
     </div>
 
+    {{ $data := index .Site.Data "governing-body" }}
+    {{ if not $data }}
+      {{ $data = partial "learn/governing-body-data.html" . }}
+    {{ end }}
+
+    <!-- Founding Chief — Retirement Tribute -->
+    {{ with $data.founding_chief }}
+    <section class="founding-chief-section">
+      <h2>OUR FOUNDING CHIEF</h2>
+      <div class="founding-chief-card">
+        {{ if .image }}
+        <div class="founding-chief-portrait">
+          <img src="{{ .image }}" alt="{{ .name }}">
+        </div>
+        {{ end }}
+        <div class="founding-chief-content">
+          <h3>{{ .name }}</h3>
+          <p class="title">{{ .title }}</p>
+          {{ with .note }}<p class="founding-chief-note">{{ . | safeHTML }}</p>{{ end }}
+          <a class="founding-chief-link" href="https://museum.waccamaw.org">Visit his museum →</a>
+        </div>
+      </div>
+    </section>
+    {{ end }}
+
     <!-- Governing Body -->
     <section class="governing-body-section">
       <h2>GOVERNING BODY</h2>
-      
-      {{ $data := index .Site.Data "governing-body" }}
-      {{ if not $data }}
-        {{ $data = partial "learn/governing-body-data.html" . }}
-      {{ end }}
-      
-      <!-- Chief -->
-      {{ with $data.chief }}
-      <div class="chief-section">
-        <div class="governing-body-card featured-chief">
-          {{ if .image }}
-          <img src="{{ .image }}" alt="{{ .name }}">
-          {{ end }}
-          <div class="card-content">
-            <h3>{{ .name }}</h3>
-            <p class="title">{{ .title }}</p>
-          </div>
-        </div>
-      </div>
-      {{ end }}
 
       <!-- Dynamic Sections from YAML -->
       {{ range $data.sections }}
