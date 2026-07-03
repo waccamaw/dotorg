@@ -85,3 +85,10 @@ This logo embraces **detailed illustrative realism**:
 - Dual-tone color palette creates natural depth without gradients
 - No text allows for universal recognition and flexible pairing with wordmarks
 - Vector format scales from small icons to large prints while maintaining detail
+
+## 2026 update — flattened single-tone variant (`logo-flat.svg`)
+
+`logo-flat.svg` collapses the dual-tone blues to a **single navy (#1f3a52)** matching the
+site's river-navy palette. This flattened mark is what **waccamaw.org uses in its header**
+as of the 2026 redesign — a cleaner, modern presentation. It is a website styling choice,
+**not** a ratified replacement for the tribe's official "People of the Waccamaw" logo.

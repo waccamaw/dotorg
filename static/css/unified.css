@@ -48,7 +48,7 @@ h1, h2, h3, h4, .section-heading, .post-card h3, .hero-title {
 /* show the real logo mark beside the wordmark */
 .site-wordmark::before {
   content: ""; width: 34px; height: 34px; flex: 0 0 auto;
-  background: url('/logos/classic/logo.svg') center/contain no-repeat;
+  background: url('/logos/doug-2025/logo-flat.svg') center/contain no-repeat;
 }
 .nav-menu { display: flex; gap: 1.6rem; list-style: none; margin: 0; padding: 0; }
 .nav-menu a {
