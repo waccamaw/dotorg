@@ -63,9 +63,20 @@
     document.getElementById('donation-banner').style.display = 'none';
   }
   
-  // Show banner if no cookie set
+  // Show banner only for engaged visitors: after scrolling past the hero, or 25s.
+  // (Was: instantly on load — greeted every visitor with an appeal before content.)
   if (!getCookie(COOKIE_NAME)) {
-    document.getElementById('donation-banner').style.display = 'block';
+    let shown = false;
+    function showBanner() {
+      if (shown) return; shown = true;
+      document.getElementById('donation-banner').style.display = 'block';
+      window.removeEventListener('scroll', onScroll);
+    }
+    function onScroll() {
+      if (window.scrollY > window.innerHeight * 0.9) showBanner();
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    setTimeout(showBanner, 25000);
   }
   
   // Add click handler to donation button to set cookie

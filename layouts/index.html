@@ -270,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="homepage-sections">
 	<div class="other-posts-section">
 		<div class="posts-grid">
-			{{ range $index, $post := after 3 (first 18 $allPosts) }}
+			{{ range $index, $post := after 3 (first 11 $allPosts) }}
 				{{ $colorIndex := mod $index 6 }}
 				<article class="post-card h-entry">
 					{{ if .Params.photos }}
@@ -1242,5 +1242,45 @@ document.addEventListener('DOMContentLoaded', async () => {
 	}
 });
 </script>
+
+
+<!-- Homepage visual warm-up: align the lower page with the museum-hero language.
+     Scoped overrides only; site-wide styles in static/css/main.css untouched. -->
+<style>
+/* section rhythm + warm surfaces */
+.homepage-sections, .updates-list { --wm-border:#ddd0b6; }
+.post-card, .updates-list article {
+  border:1px solid #ddd0b6 !important; border-radius:12px !important;
+  box-shadow:0 1px 4px rgba(43,33,24,.07) !important;
+  transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+  background:#fffdf8 !important;
+}
+.post-card:hover, .updates-list article:hover {
+  transform:translateY(-3px); border-color:#c8963e !important;
+  box-shadow:0 12px 26px -16px rgba(122,69,19,.45) !important;
+}
+/* newsletter + donate: warm paper instead of stark white/blue */
+.newsletter-signup {
+  background:#efe6d2 !important; border:1px solid #ddd0b6 !important;
+  border-radius:14px !important;
+}
+.newsletter-form button, .newsletter-form input[type="submit"], #newsletterForm button {
+  background:#9c4a2f !important; border:none !important;
+}
+.newsletter-form button:hover, #newsletterForm button:hover { background:#1f3a52 !important; }
+/* donate section */
+.donate-section, .donate-banner { background:#efe6d2 !important; border-radius:14px; }
+.donate-banner { border:1px solid #ddd0b6 !important; }
+.donate-button, a.donate-button, button.donate-button {
+  background:#9c4a2f !important; border:none !important; color:#fff !important;
+}
+.donate-button:hover, a.donate-button:hover { background:#1f3a52 !important; }
+/* read-more + misc links to clay */
+.read-more, a.read-more { color:#9c4a2f !important; font-weight:600; }
+/* meetings/events: soften the empty state */
+.events-empty, .no-events { opacity:.55; font-style:italic; }
+/* section headings: small-caps ochre kicker rhythm (matches museum) */
+.homepage-sections h2, .updates-list > h2 { color:#1f3a52; }
+</style>
 
 {{ end }}
