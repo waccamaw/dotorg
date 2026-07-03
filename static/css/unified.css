@@ -50,7 +50,9 @@ h1, h2, h3, h4, .section-heading, .post-card h3, .hero-title {
   content: ""; width: 34px; height: 34px; flex: 0 0 auto;
   background: url('/logos/doug-2025/logo-flat.svg') center/contain no-repeat;
 }
-.nav-menu { display: flex; gap: 1.6rem; list-style: none; margin: 0; padding: 0; }
+.nav-menu { display: flex; gap: 2.4rem; list-style: none; margin: 0; padding: 0; }
+.header-container { gap: 2.75rem !important; }
+.header-right { gap: 2.5rem !important; }
 .nav-menu a {
   color: var(--text-light); text-decoration: none; font-weight: 600;
   font-size: 0.95rem; padding: 0.35rem 0; position: relative; transition: color .15s;
@@ -102,8 +104,11 @@ h1, h2, h3, h4, .section-heading, .post-card h3, .hero-title {
 /* the theme's placeholder (📄 on a color block) -> branded tribal-logo watermark */
 .post-card-placeholder {
   aspect-ratio: 3/2 !important; display: flex !important;
-  background: url('/logos/classic/logo.svg') center/64px no-repeat,
-              linear-gradient(135deg, var(--bg-secondary), #e6d9bd) !important;
+  /* faint watermark: a translucent paper layer dims the small logo underneath */
+  background:
+    linear-gradient(rgba(247,242,231,.62), rgba(247,242,231,.62)),
+    url('/logos/doug-2025/logo-flat.svg') center/46px no-repeat,
+    linear-gradient(135deg, #efe6d2, #e2d4b4) !important;
   border-bottom: 1px solid var(--border-color);
 }
 .post-card-placeholder .placeholder-icon { display: none; }
