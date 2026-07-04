@@ -374,6 +374,13 @@ h1, h2, h3, h4, h5, .section-heading, .post-card h3, .hero-title {
   .learn-hero-lede { font-size: 1.05rem; }
 }
 
+/* small photo-credits colophon (replaces the old prominent attribution section) */
+.learn-credits {
+  max-width: 44rem; margin: 3.5rem auto 0; padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color); text-align: center;
+  font-size: 0.82rem; line-height: 1.6; color: var(--text-light);
+}
+
 /* inline figures within the reading column */
 .learn-figure { margin: 0 0 1.75rem; }
 .learn-figure img { width: 100%; height: auto; display: block; border-radius: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.1); }
