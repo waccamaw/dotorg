@@ -2,8 +2,12 @@
 <div class="learn-page">
   <header class="page-header">
     <h1>{{ .Title }}</h1>
-    <p class="page-description">Learn about the history, governance, and traditions of the Waccamaw Indian People</p>
+    <p class="page-description">The history, culture, and living traditions of the Waccamaw Indian People</p>
   </header>
+
+  <div class="learn-intro">
+    <p><span class="lede">The Waccamaw Indian People are a living community</span> in Horry County, South Carolina — with roots along these rivers that reach back long before the first Europeans arrived on this coast. Whether you're a student meeting us for the first time, or tracing your own family's story back to the Dimery Settlement, this is a place to begin.</p>
+  </div>
 
   <div class="learn-content">
     <!-- Historical Sections -->
@@ -59,105 +63,17 @@
     </section>
     {{ end }}
 
-    <!-- Governing Body -->
-    <section class="governing-body-section">
-      <h2>GOVERNING BODY</h2>
-
-      <!-- Dynamic Sections from YAML -->
-      {{ range $data.sections }}
-      {{ $sectionId := .section_id }}
-      <div class="{{ .section_id }}-section">
-        <h3>{{ .section_title }}</h3>
-        
-        {{ if eq .display_as "grid" }}
-          <!-- Grid Layout (Chiefs, etc) -->
-          <div class="governing-body-grid">
-            {{ range .members }}
-            {{ if .name }}
-            <div class="governing-body-card">
-              {{ if .image }}
-              <img src="{{ .image }}" alt="{{ .name }}">
-              {{ end }}
-              <div class="card-content">
-                <h3>{{ .name }}</h3>
-                <p class="title">{{ .title }}</p>
-              </div>
-            </div>
-            {{ end }}
-            {{ end }}
-          </div>
-        
-        {{ else if eq .display_as "council" }}
-          <!-- Council Layout (Chief + Seats) -->
-          {{ with .chief_of_council }}
-          <div class="chief-of-council-wrapper">
-            <div class="governing-body-card">
-              {{ if .image }}
-              <img src="{{ .image }}" alt="{{ .name }}">
-              {{ end }}
-              <div class="card-content">
-                <h3>{{ .name }}</h3>
-                <p class="title">{{ .title }}</p>
-              </div>
-            </div>
-          </div>
-          {{ end }}
-          
-          {{ if .seats }}
-          <div class="council-seats-grid">
-            <div class="governing-body-grid">
-            {{ range .seats }}
-            <div class="governing-body-card">
-              {{ if .image }}
-              <img src="{{ .image }}" alt="Seat {{ .seat_number }}{{ if .name }} - {{ .name }}{{ end }}">
-              {{ end }}
-              <div class="card-content">
-                <h3>Seat {{ .seat_number }}</h3>
-                {{ if .name }}
-                <p class="member-name">{{ .name }}</p>
-                {{ end }}
-              </div>
-            </div>
-            {{ end }}
-            </div>
-          </div>
-          {{ end }}
-        
-        {{ else if eq .display_as "list" }}
-          <!-- List Layout (Elders, Judicial, Administrative) -->
-          {{ $listClass := .list_class | default $sectionId }}
-          <div class="{{ $listClass }}-list">
-            {{ range .members }}
-            {{ if .name }}
-            <div class="{{ $sectionId }}-item">
-              <h3>{{ .name }}</h3>
-              <p class="title">{{ .title }}</p>
-            </div>
-            {{ end }}
-            {{ end }}
-          </div>
-        {{ end }}
-      </div>
-      {{ end }}
-
-      <!-- Retired Leadership -->
-      {{ with $data.retired_leadership }}
-      <div class="retired-chiefs-minimized">
-        <h4>{{ .section_title }}</h4>
-        <div class="retired-chiefs-list">
-          {{ range .members }}
-          {{ if .name }}
-          <div class="retired-chief-item">
-            <div class="retired-chief-content">
-              <h5>{{ .name }}</h5>
-              <p class="title">{{ .title }}</p>
-            </div>
-          </div>
-          {{ end }}
-          {{ end }}
-        </div>
-      </div>
-      {{ end }}
+    <!-- Link to the full governing body roster (moved to /government/) -->
+    <section class="learn-cta-section">
+      <h2>OUR GOVERNING BODY</h2>
+      <p>
+        The Waccamaw are led by elected chiefs and a tribal council, guided by a
+        Council of Elders and served by tribal officers who carry the day-to-day
+        work of the tribe.
+      </p>
+      <p>
+        <a class="learn-cta-link" href="/government/">Meet the full governing body &rarr;</a>
+      </p>
     </section>
 
     <!-- Attribution -->
