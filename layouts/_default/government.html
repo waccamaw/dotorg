@@ -18,6 +18,25 @@
       <a href="/learn/">Learn about the Waccamaw</a>.
     </p>
 
+    <!-- Current Chief — head of the tribal government -->
+    {{ with $data.current_chief }}
+    <section class="founding-chief-section current-chief-section" id="our-chief">
+      <h2>OUR CHIEF</h2>
+      <div class="founding-chief-card current-chief-card">
+        {{ if .image }}
+        <div class="founding-chief-portrait">
+          <img src="{{ .image }}" alt="{{ .name }}">
+        </div>
+        {{ end }}
+        <div class="founding-chief-content">
+          <h3>{{ .name }}</h3>
+          <p class="title">{{ .title }}</p>
+          {{ with .note }}<p class="founding-chief-note">{{ . | safeHTML }}</p>{{ end }}
+        </div>
+      </div>
+    </section>
+    {{ end }}
+
     <!-- Governing Body -->
     <section class="governing-body-section">
       <h2>GOVERNING BODY</h2>

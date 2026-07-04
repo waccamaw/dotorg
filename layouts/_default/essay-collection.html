@@ -1,0 +1,15 @@
+{{ define "main" }}
+<div class="learn-page essay-collection-page">
+  <header class="page-header">
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.subtitle }}<p class="page-description">{{ . }}</p>{{ end }}
+  </header>
+
+  <article class="essay-body">
+    {{ .Content }}
+
+    <p class="essay-source"><a href="https://drive.google.com/file/d/0B9DYUNjBIotReDRfVDJTNmVmUGM/view" target="_blank" rel="noopener noreferrer">View the original PDF &rarr;</a></p>
+    <p class="back-to-learn"><a href="/learn/">&larr; Back to Learn</a></p>
+  </article>
+</div>
+{{ end }}

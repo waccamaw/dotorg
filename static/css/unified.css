@@ -387,3 +387,23 @@ h1, h2, h3, h4, h5, .section-heading, .post-card h3, .hero-title {
   .learn-page .page-header h1 { font-size: 2.1rem; }
   .learn-intro p { font-size: 1.08rem; }
 }
+
+/* ---- Essay collection (Rethinking the Notion of Waccamaw Indians) ---- */
+.essay-body { max-width: 44rem; margin: 0 auto; }
+.essay-body > blockquote {
+  background: var(--bg-white); border: 1px solid var(--border-color);
+  border-left: 4px solid var(--primary-color); border-radius: 0 10px 10px 0;
+  padding: 1.1rem 1.35rem; margin: 0 0 2.5rem; color: var(--text-light);
+  font-size: 0.95rem; line-height: 1.65;
+}
+.essay-body > blockquote p { margin: 0; }
+.essay-body h2 {
+  font-family: var(--wm-serif); color: var(--primary-color);
+  font-size: 1.5rem; text-transform: none; letter-spacing: -0.01em;
+  margin: 2.75rem 0 0.15rem; padding: 0;
+}
+.essay-body h2 + p em { color: var(--text-light); font-size: 0.95rem; }
+.essay-body p { line-height: 1.8; margin: 0 0 1.1rem; }
+.essay-body hr { border: 0; border-top: 1px solid var(--border-color); margin: 2.5rem 0; }
+.essay-source, .back-to-learn { text-align: center; margin-top: 2rem; }
+.essay-source a, .back-to-learn a { font-weight: 700; }
