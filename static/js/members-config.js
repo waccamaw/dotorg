@@ -5,6 +5,9 @@
 //   2. previously-persisted override in localStorage.
 //   3. localhost:8787 when running on localhost, else the production Worker.
 const _isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+// One-origin proxy (a quick-tunnel, or prod once waccamaw.org/api/* Worker routes
+// are live): the API is same-origin, so use a relative base.
+const _isTunnel = /\.trycloudflare\.com$/.test(window.location.hostname);
 // Only honor the ?api override on localhost or a quick-tunnel host — never on
 // the production domain, so the live portal can't be repointed at another API.
 const _allowApiOverride = _isLocalHost || /\.trycloudflare\.com$/.test(window.location.hostname);
@@ -18,9 +21,11 @@ const _apiOverride = (() => {
 })();
 const CONFIG = {
     // API Base URL - override > localhost > production
-    API_BASE_URL: _apiOverride || (_isLocalHost
-        ? 'http://localhost:8787'
-        : 'https://members.waccamaw.org'),
+    API_BASE_URL: _apiOverride || (_isTunnel
+        ? '' // same-origin: /api/* -> the proxy/Worker route
+        : _isLocalHost
+          ? 'http://localhost:8787'
+          : 'https://members.waccamaw.org'),
     
     // Meetings API Base URL - Standalone meetings service
     MEETINGS_API_BASE_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
