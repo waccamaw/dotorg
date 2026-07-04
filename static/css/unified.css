@@ -427,7 +427,9 @@ h1, h2, h3, h4, h5, .section-heading, .post-card h3, .hero-title {
   margin: 0 0 .8rem; padding: 0; text-transform: none; letter-spacing: -.01em;
 }
 .cr-feature-banner h2::after { display: none; }
-.cr-standfirst { font-size: 1.15rem; line-height: 1.6; color: #e6ddcc; max-width: 40rem; margin: 0 auto 1.75rem; }
+/* .learn-content p (dark) out-specifies a bare .cr-standfirst; scope it to win */
+.cr-feature-banner .cr-standfirst { font-size: 1.15rem; line-height: 1.6; color: #e6ddcc; max-width: 40rem; margin: 0 auto 1.75rem; }
+.cr-feature-banner p { color: #e6ddcc; }
 .cr-credo {
   font-family: var(--wm-serif); font-style: italic; font-size: 1.7rem; line-height: 1.35;
   color: #fff; max-width: 40rem; margin: 0 auto 2rem; padding: 0; border: 0;
