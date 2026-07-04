@@ -1,5 +1,7 @@
 {{ define "main" }}
-<link rel="stylesheet" href="/theme.css?v={{ now.Unix }}">
+{{/* theme.css is already loaded globally by the head partial; loading it again
+     here re-declared :root and clobbered unified.css's palette (the header
+     wordmark reverted to electric blue). Load only the portal's own styles. */}}
 <link rel="stylesheet" href="/members/css/styles.css?v={{ now.Unix }}">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
@@ -47,12 +49,12 @@
                     
                     <div class="auth-footer">
                         <p>We'll send you a secure link to access your member information</p>
-                        <p style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e0e0e0;">
+                        <p style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #ddd0b6;">
                             <strong>Not a member yet?</strong> 
                             <a href="https://www.zeffy.com/en-US/newsletter-form/inquiry-genealogy-and-membership" 
                                target="_blank" 
                                rel="noopener noreferrer"
-                               style="color: #0033cc; font-weight: 600;">
+                               style="color: #9c4a2f; font-weight: 600;">
                                 Start your membership inquiry →
                             </a>
                         </p>
