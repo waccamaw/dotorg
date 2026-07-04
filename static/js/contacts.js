@@ -183,8 +183,13 @@
   async function refresh() { await reloadListsSidebar(); await loadContacts(); }
 
   function measureBar() {
+    // --bar-h = the full sticky stack above the grid: the sticky site-header
+    // PLUS this page's pills/controls bar. The grid area (.dir-main) offsets and
+    // sizes itself by this so nothing is hidden behind the header.
     const bar = $('dir-sticky');
-    if (bar) document.documentElement.style.setProperty('--bar-h', bar.offsetHeight + 'px');
+    const header = document.querySelector('.site-header');
+    const h = (header ? header.offsetHeight : 0) + (bar ? bar.offsetHeight : 0);
+    document.documentElement.style.setProperty('--bar-h', h + 'px');
   }
   // ---------- role-based UI ----------
   function applyRole() {

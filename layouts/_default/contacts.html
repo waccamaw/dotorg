@@ -10,7 +10,7 @@
 
   /* sticky bar — pills + controls pin to the top once you scroll past the title */
   #dir-sentinel { height: 1px; }
-  .dir-sticky { position: sticky; top: 0; z-index: 40; background: #fbfaf7; padding: .5rem 0; margin: 0 -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; border-bottom: 1px solid #e2ddd2; transition: box-shadow .15s; }
+  .dir-sticky { position: sticky; top: var(--wm-header-h, 75px); z-index: 40; background: #fbfaf7; padding: .5rem 0; margin: 0 -1.5rem; padding-left: 1.5rem; padding-right: 1.5rem; border-bottom: 1px solid #e2ddd2; transition: box-shadow .15s; }
   .dir-sticky.stuck { box-shadow: 0 6px 16px rgba(0,0,0,.08); }
   .dir-summary { display: flex; gap: .5rem; flex-wrap: wrap; }
   .dir-stat { background: #f5f3ee; border: 1px solid #e2ddd2; border-radius: 8px; padding: .35rem .8rem; min-width: 84px; cursor: pointer; user-select: none; transition: background .12s, border-color .12s; }
@@ -26,9 +26,10 @@
 
   /* Below the sticky bar: pin the whole content region under the (measured) bar
      height and let the columns scroll internally — no magic-number clipping. */
-  /* stick the grid area right below the sticky site-header and fill the rest of
-     the viewport (shared --wm-header-h token; was a stale 116px). */
-  .dir-main { display: flex; gap: 1rem; align-items: stretch; position: sticky; top: var(--wm-header-h, 75px); height: calc(100dvh - var(--wm-header-h, 75px)); box-sizing: border-box; padding-top: .5rem; }
+  /* pin the grid area below the full sticky stack (site-header + pills bar) and
+     fill the rest of the viewport. --bar-h is MEASURED in contacts.js (header +
+     .dir-sticky heights) and updated on resize — no magic-number clipping. */
+  .dir-main { display: flex; gap: 1rem; align-items: stretch; position: sticky; top: var(--bar-h, 165px); height: calc(100dvh - var(--bar-h, 165px)); box-sizing: border-box; padding-top: .5rem; }
   .dir-lists-col { flex: 0 0 280px; height: 100%; display: flex; flex-direction: column; }
   .dir-lists-head { display: flex; justify-content: space-between; align-items: center; padding: .1rem .2rem .4rem; }
   .dir-lists-head span { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: #9b8a66; font-weight: 600; }
