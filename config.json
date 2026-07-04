@@ -94,7 +94,7 @@
   "enableRobotsTXT": true,
   "languageCode": "en-us",
   "defaultContentLanguage": "en-us",
-  "paginate": 25,
+  "pagination": { "pagerSize": 25 },
   "pluralizeListTitles": false,
   "params": {
     "description": "The Waccamaw Indian People - First state-recognized tribe in South Carolina. Preserving our heritage and culture in Dog Bluff community near Aynor, SC.",

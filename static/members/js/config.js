@@ -1,7 +1,9 @@
 // Configuration for Member Portal
 const CONFIG = {
-    // API Base URL - Update this to point to your member-services endpoint
-    API_BASE_URL: 'http://localhost:8787',
+    // API Base URL - relative, so the portal calls /api/* on the SAME origin.
+    // In prod, Cloudflare Worker routes send waccamaw.org/api/* to members-service;
+    // locally the Caddy dev proxy does the same. This keeps one origin + one cookie.
+    API_BASE_URL: '',
     
     // Environment
     ENV: 'development',
