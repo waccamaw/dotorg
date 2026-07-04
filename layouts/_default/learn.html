@@ -13,15 +13,26 @@
   </div>
 
   <div class="learn-content">
-    <!-- Historical Sections -->
-    <div class="history-sections">
-      {{ partial "learn/history.html" . }}
-      {{ partial "learn/ancient.html" . }}
-      {{ partial "learn/dimery.html" . }}
-      {{ partial "learn/civil-rights.html" . }}
-      {{ partial "learn/today.html" . }}
-      {{ partial "learn/exhibit.html" . }}
+    <!-- Our story — tabbed chapters (keeps the page compact; the Civil Rights
+         chapter leads as the default, accented tab) -->
+    <div class="story-tabs">
+      <nav class="story-tabnav" role="tablist" aria-label="Our story">
+        <button class="story-tab story-tab--feature is-active" role="tab" id="tabbtn-fight" aria-controls="tab-fight" aria-selected="true">A Civil Rights Leader</button>
+        <button class="story-tab" role="tab" id="tabbtn-ancient" aria-controls="tab-ancient" aria-selected="false">The Ancient Waccamaw</button>
+        <button class="story-tab" role="tab" id="tabbtn-dimery" aria-controls="tab-dimery" aria-selected="false">The Dimery Settlement</button>
+        <button class="story-tab" role="tab" id="tabbtn-founding" aria-controls="tab-founding" aria-selected="false">The Founding</button>
+        <button class="story-tab" role="tab" id="tabbtn-today" aria-controls="tab-today" aria-selected="false">The Waccamaw Today</button>
+      </nav>
+      <div class="story-panels">
+        <div class="story-panel story-panel--wide" role="tabpanel" id="tab-fight" aria-labelledby="tabbtn-fight">{{ partial "learn/civil-rights.html" . }}</div>
+        <div class="story-panel" role="tabpanel" id="tab-ancient" aria-labelledby="tabbtn-ancient" hidden>{{ partial "learn/ancient.html" . }}</div>
+        <div class="story-panel" role="tabpanel" id="tab-dimery" aria-labelledby="tabbtn-dimery" hidden>{{ partial "learn/dimery.html" . }}</div>
+        <div class="story-panel" role="tabpanel" id="tab-founding" aria-labelledby="tabbtn-founding" hidden>{{ partial "learn/history.html" . }}</div>
+        <div class="story-panel" role="tabpanel" id="tab-today" aria-labelledby="tabbtn-today" hidden>{{ partial "learn/today.html" . }}</div>
+      </div>
     </div>
+
+    {{ partial "learn/exhibit.html" . }}
 
     {{ $data := index .Site.Data "governing-body" }}
     {{ if not $data }}
@@ -86,6 +97,34 @@
     </p>
   </div>
 </div>
+
+<!-- Story tabs -->
+<script>
+(function () {
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.story-tab'));
+  if (!tabs.length) return;
+  function activate(btn) {
+    tabs.forEach(function (t) {
+      var panel = document.getElementById(t.getAttribute('aria-controls'));
+      var on = t === btn;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.classList.toggle('is-active', on);
+      t.tabIndex = on ? 0 : -1;
+      if (panel) panel.hidden = !on;
+    });
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { activate(t); });
+    t.addEventListener('keydown', function (e) {
+      var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (!d) return;
+      e.preventDefault();
+      var next = tabs[(i + d + tabs.length) % tabs.length];
+      activate(next); next.focus();
+    });
+  });
+})();
+</script>
 
 <!-- Face focusing script -->
 <script src="{{ "js/face-focus.js" | absURL }}"></script>
