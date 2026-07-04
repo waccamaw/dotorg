@@ -23,15 +23,13 @@
   --wm-ochre: #c8963e;
 }
 
-/* ---------- typography: serif display voice ---------- */
-body { font-family: var(--wm-serif); font-size: 1.05rem; color: var(--text-color); }
-h1, h2, h3, h4, .section-heading, .post-card h3, .hero-title {
+/* ---------- typography: serif for DISPLAY (headings), clean sans for BODY/UI ----------
+   Heritage serif echoes the museum on the display type; body copy, forms, tables and
+   app chrome stay sans for readability. */
+body { font-family: var(--wm-sans); font-size: 1.04rem; color: var(--text-color); }
+h1, h2, h3, h4, h5, .section-heading, .post-card h3, .hero-title {
   font-family: var(--wm-serif); color: var(--primary-color); letter-spacing: -0.01em;
 }
-/* keep UI chrome (nav, buttons, meta, forms) in clean sans */
-.nav-menu, .site-wordmark, .btn, .hero-cta, time, .post-meta,
-.newsletter-form, .search-input, .donate-button, .pauwau-promo-cta,
-.card .meta, .post-card time { font-family: var(--wm-sans); }
 
 /* ---------- header: from white utility bar to institution ---------- */
 .site-header {
@@ -216,9 +214,12 @@ h1, h2, h3, h4, .section-heading, .post-card h3, .hero-title {
   text-transform: uppercase; letter-spacing: 0.07em; font-size: 0.8rem; margin: 0 0 1.1rem;
 }
 .founding-chief-note {
-  font-family: var(--wm-serif); color: var(--text-color); line-height: 1.6;
-  font-size: 1.06rem; margin: 0 0 1.25rem;
+  color: var(--text-color); line-height: 1.6;
+  font-size: 1.04rem; margin: 0 0 1.25rem;
 }
+/* member portal login: drop theme.css's constrained gradient panel so the card
+   floats on the uniform page paper (it read as a 'box' on wide screens). */
+.auth-screen { background: none !important; }
 .founding-chief-link {
   font-family: var(--wm-sans); font-weight: 700; color: var(--link-color);
   text-decoration: none;
