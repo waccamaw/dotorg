@@ -32,8 +32,6 @@
 @media (max-width:640px){.museum-hero{border-radius:0;margin-top:0}}
 </style>
 
-{{ $allPosts := where .Site.RegularPages "Type" "post" }}
-
 <!-- Featured-post hero suppressed: the Museum feature above is the permanent hero.
      (Restore from git history if a rotating featured slot is wanted again.) -->
 
@@ -183,121 +181,6 @@
 	<!-- Off-season (Dec–Feb): Chief welcome alone -->
 	<div class="welcome-solo">{{ partial "home/chief-welcome.html" . }}</div>
 {{- end }}
-
-<!-- Last 3 Blog Posts -->
-<div class="recent-updates">
-	<div class="updates-list">
-	{{ range $index, $post := first 3 $allPosts }}
-		<article class="update-item h-entry">
-			{{ if $post.Params.photos }}
-				{{ $originalImage := index $post.Params.photos 0 }}
-				{{ $resizedImage := printf "https://micro.blog/photos/900x/%s" $originalImage }}
-				<div class="update-image auto-layout-image" data-index="{{ $index }}" onclick="openLightbox('{{ $originalImage }}')">
-					<img src="{{ $resizedImage }}" alt="{{ $post.Title }}" loading="lazy" data-src="{{ $originalImage }}">
-				</div>
-			{{ end }}
-			<div class="update-content">
-				<h3 class="p-name update-title">
-					<a href="{{ $post.Permalink }}">{{ $post.Title }}</a>
-				</h3>
-				<div class="update-meta">
-					<time class="dt-published" datetime="{{ $post.Date.Format "2006-01-02T15:04:05-0700" }}">
-						{{ $post.Date.Format "January 2, 2006" }}
-					</time>
-					{{ if $post.Params.categories }}
-						<span class="update-categories">
-							{{ range $post.Params.categories }}
-								<span class="category-badge">{{ . }}</span>
-							{{ end }}
-						</span>
-					{{ end }}
-				</div>
-				{{ if $post.Content }}
-					<p class="update-excerpt">{{ $post.Content | plainify | htmlUnescape | truncate 200 }}</p>
-				{{ end }}
-				<a href="{{ $post.Permalink }}" class="u-url update-link">Read more →</a>
-				</div>
-			</article>
-		{{ end }}
-	</div>
-</div>
-
-<!-- Lightbox -->
-<div id="lightbox" class="lightbox" onclick="closeLightbox()">
-	<span class="lightbox-close">×</span>
-	<img id="lightbox-img" src="" alt="">
-</div>
-
-<script>
-function openLightbox(src) {
-	event.stopPropagation();
-	document.getElementById('lightbox').classList.add('active');
-	document.getElementById('lightbox-img').src = src;
-	document.body.style.overflow = 'hidden';
-}
-
-function closeLightbox() {
-	document.getElementById('lightbox').classList.remove('active');
-	document.body.style.overflow = 'auto';
-}
-
-document.addEventListener('keydown', function(e) {
-	if (e.key === 'Escape') {
-		closeLightbox();
-	}
-});
-
-// Auto-layout images based on aspect ratio
-function autoLayoutImage(img) {
-	if (img.naturalWidth && img.naturalHeight) {
-		const aspectRatio = img.naturalWidth / img.naturalHeight;
-		const container = img.closest('.auto-layout-image');
-		
-		if (!container) return;
-		
-		// If image is square or portrait (aspect ratio <= 1.2), float it right
-		if (aspectRatio <= 1.2) {
-			container.classList.add('floated-right');
-		}
-	}
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-	const images = document.querySelectorAll('.auto-layout-image img');
-	images.forEach(img => {
-		if (img.complete && img.naturalHeight !== 0) {
-			autoLayoutImage(img);
-		} else {
-			img.addEventListener('load', function() {
-				autoLayoutImage(img);
-			});
-		}
-	});
-});
-</script>
-
-<!-- Recent Updates Grid (all content) -->
-<div class="homepage-sections">
-	<div class="other-posts-section">
-		<h2 class="ledger-heading">More Updates</h2>
-		<ul class="updates-ledger">
-			{{ range $index, $post := after 3 (first 11 $allPosts) }}
-				{{ $title := $post.Title }}
-				{{ if not $title }}{{ $title = ($post.Content | plainify | htmlUnescape | truncate 70) }}{{ end }}
-				<li class="ledger-item h-entry">
-					<a href="{{ $post.Permalink }}" class="ledger-link">
-						<time class="dt-published ledger-date" datetime="{{ $post.Date.Format "2006-01-02T15:04:05-0700" }}">
-							{{ $post.Date.Format "Jan 2, 2006" }}
-						</time>
-						<span class="p-name ledger-title">{{ $title }}</span>
-						<span class="ledger-arrow" aria-hidden="true">→</span>
-					</a>
-				</li>
-			{{ end }}
-		</ul>
-		<a href="/updates/" class="view-all-link">View all updates →</a>
-	</div>
-</div>
 
 <!-- Newsletter Signup -->
 <div class="newsletter-signup">
