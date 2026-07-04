@@ -85,9 +85,47 @@ h1, h2, h3, h4, h5, .section-heading, .post-card h3, .hero-title {
 .nav-menu a:hover { color: var(--primary-color); }
 .nav-menu a:hover::after, .nav-menu li.active a::after { transform: scaleX(1); }
 /* the flagship link gets a standing accent */
-.nav-menu a.nav-museum { color: var(--primary-color); }
+.nav-menu a.nav-museum { color: var(--primary-color); font-weight: 700; }
 .nav-menu a.nav-museum::after { transform: scaleX(1); background: var(--wm-ochre); opacity:.5; }
 .nav-menu a.nav-museum:hover::after { opacity: 1; }
+
+/* --- Primary-nav dropdown (About ▾) — the expansion valve for lower-traffic
+   informational pages. CSS-only: opens on hover and on focus-within, so a tap on
+   touch devices opens it too. In unified.css so BOTH the site header and the
+   worker's gated-page header inherit it. --- */
+.nav-menu .has-dropdown { position: relative; }
+.nav-dropdown-toggle {
+  background: none; border: 0; padding: 0.35rem 0; margin: 0; cursor: pointer;
+  font: inherit; font-weight: 600; font-size: 0.95rem; color: var(--text-light);
+  display: inline-flex; align-items: center; gap: .35rem; transition: color .15s;
+}
+.nav-dropdown-toggle:hover { color: var(--primary-color); }
+.nav-dropdown-toggle:focus { outline: none; }
+.nav-dropdown-toggle:focus-visible { outline: 2px solid var(--wm-ochre); outline-offset: 3px; border-radius: 4px; }
+.nav-dropdown-toggle .caret { font-size: .7em; transition: transform .15s ease; }
+.has-dropdown:hover .caret, .has-dropdown:focus-within .caret { transform: rotate(180deg); }
+.nav-menu .submenu {
+  position: absolute; top: calc(100% + .5rem); left: 50%;
+  transform: translateX(-50%) translateY(-4px);
+  margin: 0; padding: .4rem; min-width: 12rem; list-style: none;
+  background: #fff; border: 1px solid #e6dcc8; border-radius: 12px;
+  box-shadow: 0 10px 28px rgba(0,0,0,.14);
+  opacity: 0; visibility: hidden;
+  transition: opacity .15s ease, transform .15s ease, visibility .15s; z-index: 60;
+}
+.has-dropdown:hover .submenu, .has-dropdown:focus-within .submenu {
+  opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0);
+}
+.nav-menu .submenu li { display: block; margin: 0; }
+.nav-menu .submenu a { display: block; padding: .5rem .75rem; border-radius: 8px; white-space: nowrap; font-weight: 500; }
+.nav-menu .submenu a::after { display: none; }
+.nav-menu .submenu a:hover { background: #f3eee6; color: var(--primary-color); }
+
+/* Utility cluster (right side): the account entry + member-only Library. */
+.nav-utility { display: flex; align-items: center; gap: 1.5rem; }
+.nav-utility a { font-weight: 600; text-decoration: none; color: var(--text-light); transition: color .15s; }
+.nav-utility a:hover { color: var(--primary-color); }
+.nav-utility .nav-lib { color: var(--primary-color); }
 .search-input {
   border: 1px solid var(--border-color); border-radius: 20px; background: var(--bg-white);
 }

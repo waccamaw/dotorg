@@ -12,13 +12,16 @@
 		<div class="header-right">
 			<nav class="site-nav" aria-label="Main navigation">
 				<ul class="nav-menu">
-					<li><a href="/updates/">Updates</a></li>
-					<li><a href="/learn/">Learn</a></li>
-					<li><a href="/meetings/">Meetings</a></li>
-					<li><a href="/members/">Members</a></li>
-					<li class="nav-authed" style="display:none"><a href="/library">Library</a></li>
-					<li><a href="https://museum.waccamaw.org" class="nav-museum">Museum</a></li>
-				</ul>
+						<li><a href="https://museum.waccamaw.org" class="nav-museum">Museum</a></li>
+						<li><a href="/updates/">Updates</a></li>
+						<li class="has-dropdown">
+							<button type="button" class="nav-dropdown-toggle" aria-haspopup="true" aria-expanded="false">About <span class="caret" aria-hidden="true">&#9662;</span></button>
+							<ul class="submenu">
+								<li><a href="/learn/">Learn</a></li>
+								<li><a href="/meetings/">Meetings</a></li>
+							</ul>
+						</li>
+					</ul>
 			</nav>
 			<script>
 			// Reveal member-only nav (Library) only when a valid session exists.
@@ -34,6 +37,10 @@
 				.catch(function () {});
 			</script>
 
+			<div class="nav-utility">
+				<a href="/members/" class="nav-members">Members</a>
+				<a href="/members/library" class="nav-authed nav-lib" style="display:none">Library</a>
+			</div>
 			<div class="site-search">
 				<form action="https://www.google.com/search" method="get" target="_blank" role="search">
 					<input type="hidden" name="sitesearch" value="waccamaw.org">
