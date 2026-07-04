@@ -26,7 +26,9 @@
 
   /* Below the sticky bar: pin the whole content region under the (measured) bar
      height and let the columns scroll internally — no magic-number clipping. */
-  .dir-main { display: flex; gap: 1rem; align-items: stretch; position: sticky; top: var(--bar-h, 116px); height: calc(100dvh - var(--bar-h, 116px)); box-sizing: border-box; padding-top: .5rem; }
+  /* stick the grid area right below the sticky site-header and fill the rest of
+     the viewport (shared --wm-header-h token; was a stale 116px). */
+  .dir-main { display: flex; gap: 1rem; align-items: stretch; position: sticky; top: var(--wm-header-h, 75px); height: calc(100dvh - var(--wm-header-h, 75px)); box-sizing: border-box; padding-top: .5rem; }
   .dir-lists-col { flex: 0 0 280px; height: 100%; display: flex; flex-direction: column; }
   .dir-lists-head { display: flex; justify-content: space-between; align-items: center; padding: .1rem .2rem .4rem; }
   .dir-lists-head span { font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: #9b8a66; font-weight: 600; }
