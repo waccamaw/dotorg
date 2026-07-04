@@ -33,147 +33,95 @@
 	<!-- Color Palette -->
 	<section class="style-section" id="colors">
 		<h2 id="color-palette">Color Palette<a href="#color-palette" class="heading-link">#</a></h2>
-		
-		<!-- Color Band Overview -->
-		<div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 3rem;">
-			<h3 id="complete-color-palette" style="margin-top: 0; margin-bottom: 1rem; font-size: 1.2rem;">Complete Color Palette<a href="#complete-color-palette" class="heading-link">#</a></h3>
-			<div style="display: flex; flex-wrap: wrap; gap: 0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-				<div style="flex: 1; min-width: 60px; height: 80px; background-color: #0033cc;" title="Primary Color"></div>
-				<div style="flex: 1; min-width: 60px; height: 80px; background-color: #0028a3;" title="Primary Hover"></div>
-				<div style="flex: 1; min-width: 60px; height: 80px; background-color: #2a2a2a;" title="Text Color"></div>
-				<div style="flex: 1; min-width: 60px; height: 80px; background-color: #6b6b6b;" title="Text Light"></div>
-				<div style="flex: 1; min-width: 60px; height: 80px; background-color: rgba(255, 255, 255, 0.9); border: 1px solid #e0e0e0;" title="Text White"></div>
-				<div style="flex: 1; min-width: 60px; height: 80px; background-color: #faf8f3; border: 1px solid #e0e0e0;" title="Background"></div>
-				<div style="flex: 1; min-width: 60px; height: 80px; background-color: #fff5eb; border: 1px solid #e0e0e0;" title="Background Secondary"></div>
-				<div style="flex: 1; min-width: 60px; height: 80px; background-color: #ffffff; border: 1px solid #e0e0e0;" title="Background White"></div>
-				<div style="flex: 1; min-width: 60px; height: 80px; background-color: #004384;" title="Logo Primary"></div>
-				<div style="flex: 1; min-width: 60px; height: 80px; background-color: #002D5A;" title="Logo Secondary"></div>
-				<div style="flex: 1; min-width: 60px; height: 80px; background-color: #e0e0e0;" title="Border Color"></div>
+		<p style="color: var(--text-light); max-width: 60ch;">The museum palette, rendered live from the site's design tokens
+			(<code>static/css/unified.css</code> <code>:root</code>). Every swatch below <em>is</em> the token — the hex
+			values are read straight back from the running CSS, so this guide can never fall out of sync with the site.</p>
+
+		{{/* Single source: the token list. Band + cards + JS all read from this. */}}
+		{{ $tokens := slice
+			(dict "group" "Brand & Accent" "name" "River Navy"  "var" "--wm-navy"       "role" "Primary — headings, buttons, brand")
+			(dict "group" "Brand & Accent" "name" "Deep Navy"   "var" "--wm-navy-deep"  "role" "Hovers, gradient ends")
+			(dict "group" "Brand & Accent" "name" "Clay"        "var" "--wm-clay"       "role" "Links, secondary accent")
+			(dict "group" "Brand & Accent" "name" "Ochre"       "var" "--wm-ochre"      "role" "Kickers, underlines, highlights")
+			(dict "group" "Text"           "name" "Earth Ink"   "var" "--wm-ink"        "role" "Body text")
+			(dict "group" "Text"           "name" "Muted Ink"   "var" "--wm-ink-muted"  "role" "Captions, secondary text")
+			(dict "group" "Surfaces"       "name" "Warm Paper"  "var" "--wm-paper"      "role" "Page background")
+			(dict "group" "Surfaces"       "name" "Paper Shade" "var" "--wm-paper-shade" "role" "Panels, secondary surface")
+			(dict "group" "Surfaces"       "name" "Warm White"  "var" "--wm-card"       "role" "Cards")
+			(dict "group" "Border"         "name" "Warm Border" "var" "--wm-border"     "role" "Dividers, outlines")
+		}}
+
+		<!-- Full-palette band -->
+		<div style="background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 8px; padding: 1.5rem; margin-bottom: 3rem;">
+			<h3 id="complete-color-palette" style="margin-top: 0; margin-bottom: 1rem; font-size: 1.2rem;">Complete Palette<a href="#complete-color-palette" class="heading-link">#</a></h3>
+			<div style="display: flex; flex-wrap: wrap; gap: 0; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(43,33,24,0.12);">
+				{{ range $tokens }}<div style="flex: 1; min-width: 56px; height: 80px; background: var({{ .var | safeCSS }});" title="{{ .name }} — var({{ .var }})"></div>{{ end }}
 			</div>
 			<p style="margin-top: 1rem; font-size: 0.9rem; color: var(--text-light); text-align: center;">
-				Hover over each color to see its name • Detailed specifications below
+				Hover a band for its name • full specs below
 			</p>
 		</div>
-		
-		<h3 id="primary-colors">Primary Colors<a href="#primary-colors" class="heading-link">#</a></h3>
-		<div class="color-grid">
-			<div class="color-card">
-				<div class="color-swatch" style="background-color: #0033cc;"></div>
-				<div class="color-info">
-					<div class="color-name">Primary Color</div>
-					<code class="color-var">--primary-color</code>
-					<code class="color-var">#0033cc</code>
-					<code class="color-var">rgb(0, 51, 204)</code>
-				</div>
-			</div>
-			<div class="color-card">
-				<div class="color-swatch" style="background-color: #0028a3;"></div>
-				<div class="color-info">
-					<div class="color-name">Primary Hover</div>
-					<code class="color-var">--primary-hover</code>
-					<code class="color-var">#0028a3</code>
-					<code class="color-var">rgb(0, 40, 163)</code>
-				</div>
-			</div>
-		</div>
 
-		<h3 id="text-colors">Text Colors<a href="#text-colors" class="heading-link">#</a></h3>
+		{{ $groups := slice "Brand & Accent" "Text" "Surfaces" "Border" }}
+		{{ range $groups }}
+		{{ $g := . }}
+		<h3 id="colors-{{ $g | urlize }}">{{ $g }}<a href="#colors-{{ $g | urlize }}" class="heading-link">#</a></h3>
 		<div class="color-grid">
+			{{ range where $tokens "group" $g }}
 			<div class="color-card">
-				<div class="color-swatch" style="background-color: #2a2a2a;"></div>
+				<div class="color-swatch" data-token="{{ .var }}" style="background: var({{ .var | safeCSS }}); border: 1px solid rgba(43,33,24,.12);"></div>
 				<div class="color-info">
-					<div class="color-name">Text Color</div>
-					<code class="color-var">--text-color</code>
-					<code class="color-var">#2a2a2a</code>
+					<div class="color-name">{{ .name }}</div>
+					<div class="color-role" style="font-size: 0.82rem; color: var(--text-light); margin-bottom: 0.4rem;">{{ .role }}</div>
+					<code class="color-var">var({{ .var }})</code>
+					<code class="color-var color-hex" data-token="{{ .var }}">…</code>
+					<code class="color-var color-rgb" data-token="{{ .var }}"></code>
 				</div>
 			</div>
-			<div class="color-card">
-				<div class="color-swatch" style="background-color: #6b6b6b;"></div>
-				<div class="color-info">
-					<div class="color-name">Text Light</div>
-					<code class="color-var">--text-light</code>
-					<code class="color-var">#6b6b6b</code>
-				</div>
-			</div>
-			<div class="color-card">
-				<div class="color-swatch" style="background-color: rgba(255, 255, 255, 0.9);"></div>
-				<div class="color-info">
-					<div class="color-name">Text White</div>
-					<code class="color-var">--text-white</code>
-					<code class="color-var">rgba(255, 255, 255, 0.9)</code>
-				</div>
-			</div>
+			{{ end }}
 		</div>
+		{{ end }}
 
-		<h3 id="background-colors">Background Colors<a href="#background-colors" class="heading-link">#</a></h3>
+		<h3 id="logo-colors">Official Logo Colors<a href="#logo-colors" class="heading-link">#</a></h3>
+		<p style="color: var(--text-light); max-width: 60ch;">These are the tribe's <strong>official ratified logo</strong> colors and are
+			<strong>not</strong> part of the website theme — they don't change with the palette above. See the
+			<a href="#logo" style="color: var(--link-color);">Logo</a> section for the mark itself.</p>
 		<div class="color-grid">
 			<div class="color-card">
-				<div class="color-swatch" style="background-color: #faf8f3; border: 1px solid #e0e0e0;"></div>
-				<div class="color-info">
-					<div class="color-name">Background</div>
-					<code class="color-var">--bg-color</code>
-					<code class="color-var">#faf8f3</code>
-				</div>
-			</div>
-			<div class="color-card">
-				<div class="color-swatch" style="background-color: #fff5eb; border: 1px solid #e0e0e0;"></div>
-				<div class="color-info">
-					<div class="color-name">Background Secondary</div>
-					<code class="color-var">--bg-secondary</code>
-					<code class="color-var">#fff5eb</code>
-				</div>
-			</div>
-			<div class="color-card">
-				<div class="color-swatch" style="background-color: #ffffff; border: 1px solid #e0e0e0;"></div>
-				<div class="color-info">
-					<div class="color-name">Background White</div>
-					<code class="color-var">--bg-white</code>
-					<code class="color-var">#ffffff</code>
-				</div>
-			</div>
-			<div class="color-card">
-				<div class="color-swatch" style="background-color: #2a2a2a;"></div>
-				<div class="color-info">
-					<div class="color-name">Footer Background</div>
-					<code class="color-var">--bg-footer</code>
-					<code class="color-var">#2a2a2a</code>
-				</div>
-			</div>
-		</div>
-
-		<h3 id="logo-colors">Logo Colors<a href="#logo-colors" class="heading-link">#</a></h3>
-		<div class="color-grid">
-			<div class="color-card">
-				<div class="color-swatch" style="background-color: #004384;"></div>
+				<div class="color-swatch" style="background-color: #004384; border: 1px solid rgba(43,33,24,.12);"></div>
 				<div class="color-info">
 					<div class="color-name">Logo Primary</div>
-					<code class="color-var">--logo-primary</code>
 					<code class="color-var">#004384</code>
 					<code class="color-var">rgb(0, 67, 132)</code>
 				</div>
 			</div>
 			<div class="color-card">
-				<div class="color-swatch" style="background-color: #002D5A;"></div>
+				<div class="color-swatch" style="background-color: #002D5A; border: 1px solid rgba(43,33,24,.12);"></div>
 				<div class="color-info">
 					<div class="color-name">Logo Secondary</div>
-					<code class="color-var">--logo-secondary</code>
 					<code class="color-var">#002D5A</code>
 					<code class="color-var">rgb(0, 45, 90)</code>
 				</div>
 			</div>
 		</div>
 
-		<h3 id="border-colors">Border Colors<a href="#border-colors" class="heading-link">#</a></h3>
-		<div class="color-grid">
-			<div class="color-card">
-				<div class="color-swatch" style="background-color: #e0e0e0;"></div>
-				<div class="color-info">
-					<div class="color-name">Border Color</div>
-					<code class="color-var">--border-color</code>
-					<code class="color-var">#e0e0e0</code>
-				</div>
-			</div>
-		</div>
+		<script>
+		// Fill hex + rgb straight from the live computed token values — no hardcoded
+		// duplicates to drift. Change a token in unified.css and this updates itself.
+		(function () {
+			var rootCS = getComputedStyle(document.documentElement);
+			document.querySelectorAll('#colors .color-swatch[data-token]').forEach(function (sw) {
+				var token = sw.getAttribute('data-token');
+				var hex = rootCS.getPropertyValue(token).trim();
+				var rgb = getComputedStyle(sw).backgroundColor;
+				var card = sw.closest('.color-card');
+				var hexEl = card.querySelector('.color-hex');
+				var rgbEl = card.querySelector('.color-rgb');
+				if (hexEl) hexEl.textContent = hex;
+				if (rgbEl) rgbEl.textContent = rgb;
+			});
+		})();
+		</script>
 	</section>
 
 	<!-- Logo -->
@@ -553,8 +501,14 @@
 		<h2 id="typography-heading">Typography<a href="#typography-heading" class="heading-link">#</a></h2>
 		
 		<h3 id="font-stack">Font Stack<a href="#font-stack" class="heading-link">#</a></h3>
+		<p style="color: var(--text-light); max-width: 60ch;">A two-font system: a heritage <strong>serif for display</strong> (headings, echoing
+			the museum) and a clean <strong>sans for body &amp; UI</strong>.</p>
 		<div class="font-stack">
-			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+			<strong>Headings</strong> — <code>--wm-serif</code>:<br>
+			font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+			<br><br>
+			<strong>Body &amp; UI</strong> — <code>--wm-sans</code>:<br>
+			font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 		</div>
 		
 		<h3 id="headings">Headings<a href="#headings" class="heading-link">#</a></h3>
@@ -569,7 +523,7 @@
 		<h3 id="links">Links<a href="#links" class="heading-link">#</a></h3>
 		<div class="typography-sample">
 			<p>This is a <a href="#">standard link</a> in body text.</p>
-			<p>Links use <code>--link-color: #0033cc</code> and hover to <code>--link-hover: #0028a3</code></p>
+			<p>Links use <code>--link-color: #9c4a2f</code> (clay) and hover to <code>--link-hover: #1f3a52</code> (navy).</p>
 		</div>
 	</section>
 
@@ -578,7 +532,7 @@
 		<h2 id="layout-heading">Layout<a href="#layout-heading" class="heading-link">#</a></h2>
 		
 		<h3 id="max-width">Max Width<a href="#max-width" class="heading-link">#</a></h3>
-		<p>Content containers use a maximum width of <code>--max-width: 900px</code> for optimal readability.</p>
+		<p>Content containers use a maximum width of <code>--max-width: 1080px</code> for optimal readability.</p>
 		
 		<h3 id="spacing">Spacing<a href="#spacing" class="heading-link">#</a></h3>
 		<p>The design uses consistent spacing:</p>
@@ -856,15 +810,19 @@
 			<li>Logo and navigation adapt for smaller screens</li>
 		</ul>
 
-		<h3 id="css-variables">CSS Variables<a href="#css-variables" class="heading-link">#</a></h3>
-		<p>All colors and key values are defined as CSS custom properties in <code>:root</code> for easy theme customization and maintenance.</p>
-		
+		<h3 id="css-variables">Design Tokens<a href="#css-variables" class="heading-link">#</a></h3>
+		<p>The palette above is defined once as CSS custom properties (design tokens) in
+			<code>static/css/unified.css</code> <code>:root</code>. Every page — and this style guide — reads from them, so
+			changing a value there updates the whole site at once.</p>
+
 		<div class="font-stack" style="margin-top: 1rem;">
-			/* View all variables in /static/custom.css */<br>
+			/* static/css/unified.css — single source of truth */<br>
 			:root {<br>
-			&nbsp;&nbsp;--primary-color: #0033cc;<br>
-			&nbsp;&nbsp;--bg-color: #faf8f3;<br>
-			&nbsp;&nbsp;/* ... and more */<br>
+			&nbsp;&nbsp;--wm-navy: #1f3a52;&nbsp;&nbsp;/* primary */<br>
+			&nbsp;&nbsp;--wm-clay: #9c4a2f;&nbsp;&nbsp;/* links */<br>
+			&nbsp;&nbsp;--wm-ochre: #c8963e;&nbsp;&nbsp;/* accent */<br>
+			&nbsp;&nbsp;--wm-paper: #f7f2e7;&nbsp;&nbsp;/* background */<br>
+			&nbsp;&nbsp;/* ...full palette above */<br>
 			}
 		</div>
 	</section>

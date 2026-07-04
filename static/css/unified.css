@@ -3,24 +3,44 @@
    the whole site at once), then a small set of typographic + component lifts. */
 
 :root {
-  /* Museum palette mapped onto the theme's tokens */
-  --primary-color: #1f3a52;   /* river navy (was electric #0033cc) */
-  --primary-hover: #16283a;
-  --link-color: #9c4a2f;      /* clay */
-  --link-hover: #1f3a52;
-  --text-color: #2b2118;
-  --text-light: #5f5040;
-  --bg-color: #f7f2e7;        /* warm paper */
-  --bg-secondary: #efe6d2;
-  --bg-white: #fffdf8;
-  --border-color: #ddd0b6;
-  --logo-primary: #1f3a52;
-  --logo-secondary: #16283a;
-  --max-width: 1080px;        /* smooths the hero(1200)->content(900) jump */
+  /* ============================================================================
+     Waccamaw.org design tokens — museum palette. SINGLE SOURCE OF TRUTH.
+     The /style-guide/ renders these live (swatch = var(--token), hex read back
+     from the computed value), and the theme.css variables below alias them, so
+     the guide, the site, and every page can never drift apart. Change a value
+     here and it updates everywhere, style guide included.
+     ============================================================================ */
+  --wm-navy:        #1f3a52;   /* River Navy — primary: headings, buttons, brand */
+  --wm-navy-deep:   #16283a;   /* Deep Navy — hovers, gradient ends */
+  --wm-clay:        #9c4a2f;   /* Clay — links, secondary accent */
+  --wm-ochre:       #c8963e;   /* Ochre — kickers, underlines, highlights */
+  --wm-ink:         #2b2118;   /* Earth Ink — body text */
+  --wm-ink-muted:   #5f5040;   /* Muted Ink — captions, secondary text */
+  --wm-paper:       #f7f2e7;   /* Warm Paper — page background */
+  --wm-paper-shade: #efe6d2;   /* Paper Shade — panels, secondary surface */
+  --wm-card:        #fffdf8;   /* Warm White — cards */
+  --wm-border:      #ddd0b6;   /* Warm Border — dividers, outlines */
 
   --wm-serif: "Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
   --wm-sans: system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  --wm-ochre: #c8963e;
+
+  /* theme.css variables aliased onto the tokens (keeps existing selectors working) */
+  --primary-color: var(--wm-navy);
+  --primary-hover: var(--wm-navy-deep);
+  --link-color: var(--wm-clay);
+  --link-hover: var(--wm-navy);
+  --text-color: var(--wm-ink);
+  --text-light: var(--wm-ink-muted);
+  --bg-color: var(--wm-paper);
+  --bg-secondary: var(--wm-paper-shade);
+  --bg-white: var(--wm-card);
+  --border-color: var(--wm-border);
+  --logo-primary: var(--wm-navy);      /* website's flattened mark; the OFFICIAL
+                                          ratified logo stays two-tone blue */
+  --logo-secondary: var(--wm-navy-deep);
+  --max-width: 1080px;         /* smooths the hero(1200)->content(900) jump */
+  --wm-header-h: 75px;         /* sticky site-header height; full-screen app frames
+                                  (e.g. the roll book) subtract this from 100dvh */
 }
 
 /* ---------- typography: serif for DISPLAY (headings), clean sans for BODY/UI ----------
