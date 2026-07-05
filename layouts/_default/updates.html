@@ -63,7 +63,7 @@
 						{{ $excerpt = replaceRE `\s+` " " $excerpt }}
 						{{ $excerpt = replaceRE `(?i)^.*?[A-Z][a-z]+ \d{1,2}(,? \d{4})? \d+ min read ?` "" $excerpt }}
 						{{ $excerpt = replaceRE `(?i)^updated: [A-Z][a-z]+ \d{1,2}(,? \d{4})? ?` "" $excerpt }}
-						{{ $excerpt = $excerpt | strings.TrimSpace | truncate 150 }}
+						{{ $excerpt = trim $excerpt " " | truncate 150 }}
 						{{ with $excerpt }}
 							<p class="p-summary post-card-excerpt">{{ . }}</p>
 						{{ end }}
