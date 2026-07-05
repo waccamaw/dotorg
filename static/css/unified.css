@@ -187,6 +187,96 @@ h1, h2, h3, h4, h5, .section-heading, .post-card h3, .hero-title {
 }
 .post-card-placeholder .placeholder-icon { display: none; }
 
+/* ---------- Updates index: a museum "collection" grid of post-cards ----------
+   The template emits the .post-card contract above; these rules add only the
+   grid + card interior (chrome, imagery, title, date already inherit). */
+.updates-page .updates-header {
+  max-width: 46rem; margin: 0 auto 2.75rem; text-align: center;
+}
+.updates-page .updates-kicker {
+  display: inline-block; font-family: var(--wm-sans); text-transform: uppercase;
+  letter-spacing: .14em; font-size: .78rem; font-weight: 700;
+  color: var(--wm-ochre); margin-bottom: .6rem;
+}
+.updates-page .updates-header h1 {
+  font-family: var(--wm-serif); font-size: clamp(2.1rem, 5vw, 2.9rem);
+  line-height: 1.08; margin: 0 0 .75rem;
+}
+.updates-page .updates-lede {
+  font-size: 1.12rem; line-height: 1.6; color: var(--text-light); margin: 0;
+}
+
+/* category filter as warm pills */
+.updates-page .category-filter { margin: 0 auto 2.5rem; text-align: center; }
+.updates-page .category-links {
+  display: inline-flex; flex-wrap: wrap; justify-content: center; gap: .5rem;
+}
+.updates-page .category-link {
+  font-family: var(--wm-sans); font-size: .82rem; font-weight: 600;
+  color: var(--text-light); text-decoration: none;
+  padding: .38rem .9rem; border-radius: 50px;
+  background: var(--bg-white); border: 1px solid var(--border-color);
+  transition: color .15s, border-color .15s, background .15s;
+}
+.updates-page .category-link:hover,
+.updates-page .category-link.is-active {
+  color: #fff; background: var(--primary-color); border-color: var(--primary-color);
+}
+
+/* the collection grid */
+.updates-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem; margin: 0 0 3rem;
+}
+.updates-grid .post-card { display: flex; }
+.post-card-link {
+  display: flex; flex-direction: column; height: 100%;
+  text-decoration: none; color: inherit;
+}
+.post-card-body {
+  display: flex; flex-direction: column; gap: .55rem; flex: 1;
+  padding: 1.15rem 1.3rem 1.35rem;
+}
+.post-card-body .post-card-date { order: -1; }
+.post-card-body .post-card-title { font-size: 1.22rem; margin: 0; }
+.post-card-excerpt {
+  color: var(--text-light); font-size: .94rem; line-height: 1.55; margin: 0;
+}
+.post-card-cats { margin-top: auto; padding-top: .35rem; display: flex; flex-wrap: wrap; gap: .4rem; }
+.post-card-cats .category-badge {
+  font-family: var(--wm-sans); font-size: .68rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em;
+  color: var(--wm-clay); background: var(--bg-secondary);
+  border: 1px solid var(--border-color); border-radius: 50px;
+  padding: .15rem .6rem; text-decoration: none;
+}
+.post-card-cats .category-badge:hover { background: var(--wm-clay); color: #fff; border-color: var(--wm-clay); }
+.post-card-photocount {
+  position: absolute; right: .6rem; bottom: .6rem; z-index: 2;
+  font-family: var(--wm-sans); font-size: .7rem; font-weight: 700; color: #fff;
+  background: rgba(22,40,58,.72); border-radius: 50px; padding: .2rem .6rem;
+  backdrop-filter: blur(2px);
+}
+
+/* pagination footer */
+.updates-page .pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+  border-top: 1px solid var(--border-color); padding-top: 1.5rem;
+}
+.updates-page .pagination-info {
+  font-family: var(--wm-sans); font-size: .82rem; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--text-light); font-weight: 600;
+}
+.updates-page .pagination-next {
+  font-family: var(--wm-sans); font-weight: 700; color: var(--link-color);
+  text-decoration: none;
+}
+.updates-page .pagination-next:hover { color: var(--primary-color); }
+@media (max-width: 560px) {
+  .updates-page .pagination { justify-content: center; text-align: center; }
+}
+
 /* ---------- Homepage: Pauwau promo + "Welcome Chief Cheryl" duo ---------- */
 .welcome-duo, .welcome-solo { max-width: 1200px; margin: 0 auto 2.5rem; }
 .welcome-duo {
