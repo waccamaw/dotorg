@@ -659,8 +659,23 @@ h1, h2, h3, h4, h5, .section-heading, .post-card h3, .hero-title {
 .essay-source, .back-to-learn { text-align: center; margin-top: 2rem; }
 .essay-source a, .back-to-learn a { font-weight: 700; }
 
-/* ================= 404 — Page Not Found (museum design language) ================= */
-.nf-page { max-width: 46rem; margin: 0 auto; padding: 1rem 0 1.5rem; }
+/* ================= 404 — Page Not Found (museum design language) =================
+   Micro.blog serves the 404 with its <head> stripped (quirks mode) + its own title
+   text prepended, which mangles the normal site header/footer — so the 404 renders
+   standalone (baseof drops the chrome) with this self-contained brand + content. */
+.nf-page { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.25rem 3rem; }
+.nf-brand {
+  display: inline-flex; align-items: center; gap: .6rem; text-decoration: none;
+  margin: 0 0 2.5rem;
+}
+.nf-brand-mark {
+  width: 34px; height: 34px; flex: 0 0 auto;
+  background: url('/logos/doug-2025/logo-flat.svg') center/contain no-repeat;
+}
+.nf-brand-word {
+  font-family: var(--wm-sans); font-weight: 700; letter-spacing: -0.3px;
+  font-size: 1.15rem; color: var(--primary-color);
+}
 .nf-head { text-align: center; margin-bottom: 2.25rem; }
 .nf-kicker {
   display: inline-block; font-family: var(--wm-sans); text-transform: uppercase;

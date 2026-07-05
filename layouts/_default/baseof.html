@@ -2,16 +2,21 @@
 <html lang="en">
     {{ partial "head.html" . }}
     <body>
-        {{/* Suppress the big donation appeal on the 404 route — it's an error
-             page, not a landing page (keeps "Page Not Found" at the top). */}}
+        {{/* The 404 route is served by Micro.blog with its entire <head> stripped
+             (quirks mode) and its own title text prepended — which mangles the
+             header/nav/donate chrome. So on the 404 we render ONLY the self-styled
+             .nf- content (its CSS lives in unified.css, which survives). Everything
+             else on the site is unchanged. */}}
         {{ $is404 := or (eq .Kind "404") (in .RelPermalink "404") }}
-        {{ if and (not .Params.hide_donate) (not $is404) }}{{ partial "donation-banner.html" . }}{{ end }}
-        {{ partial "header.html" . }}
+        {{ if not $is404 }}
+            {{ if not .Params.hide_donate }}{{ partial "donation-banner.html" . }}{{ end }}
+            {{ partial "header.html" . }}
+        {{ end }}
         <main>
             {{ block "main" . }}{{ end }}
         </main>
-        {{ if not .Params.hide_donate }}{{ partial "donate.html" . }}{{ end }}
-        {{ if not .Params.hide_footer }}{{ partial "footer.html" . }}{{ end }}
-		{{ if not .Params.hide_footer }}{{ partial "custom_footer.html" . }}{{ end }}
+        {{ if and (not $is404) (not .Params.hide_donate) }}{{ partial "donate.html" . }}{{ end }}
+        {{ if and (not $is404) (not .Params.hide_footer) }}{{ partial "footer.html" . }}{{ end }}
+		{{ if and (not $is404) (not .Params.hide_footer) }}{{ partial "custom_footer.html" . }}{{ end }}
     </body>
 </html>
