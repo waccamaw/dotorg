@@ -1,13 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
     {{ partial "head.html" . }}
-    <body>
-        {{/* The 404 route is served by Micro.blog with its entire <head> stripped
-             (quirks mode) and its own title text prepended — which mangles the
-             header/nav/donate chrome. So on the 404 we render ONLY the self-styled
-             .nf- content (its CSS lives in unified.css, which survives). Everything
-             else on the site is unchanged. */}}
-        {{ $is404 := or (eq .Kind "404") (in .RelPermalink "404") }}
+    {{/* The 404 route is served by Micro.blog with its entire <head> stripped
+         (quirks mode) and its own "404 Page not found" title prepended as a bare
+         text node — which mangles the header/donate chrome AND leaks that text at
+         the top. So on the 404 we (a) render ONLY the self-styled .nf- content
+         (its CSS is in unified.css, which survives the strip), and (b) tag the
+         body so unified.css can collapse that leaked text (body.nf-body font-size:0,
+         reset on .nf-page). Body attributes survive; only the <head> is stripped. */}}
+    {{ $is404 := or (eq .Kind "404") (in .RelPermalink "404") }}
+    <body{{ if $is404 }} class="nf-body"{{ end }}>
         {{ if not $is404 }}
             {{ if not .Params.hide_donate }}{{ partial "donation-banner.html" . }}{{ end }}
             {{ partial "header.html" . }}

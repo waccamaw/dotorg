@@ -663,7 +663,11 @@ h1, h2, h3, h4, h5, .section-heading, .post-card h3, .hero-title {
    Micro.blog serves the 404 with its <head> stripped (quirks mode) + its own title
    text prepended, which mangles the normal site header/footer — so the 404 renders
    standalone (baseof drops the chrome) with this self-contained brand + content. */
-.nf-page { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.25rem 3rem; }
+/* Collapse Micro.blog's leaked "404 Page not found" bare text node (a direct
+   child of <body>, before our content). It inherits body font-size, so zeroing
+   it on the 404 body hides it; .nf-page resets a real size for our content. */
+body.nf-body { font-size: 0; }
+.nf-page { max-width: 46rem; margin: 0 auto; padding: 2.5rem 1.25rem 3rem; font-size: 1.04rem; }
 .nf-brand {
   display: inline-flex; align-items: center; gap: .6rem; text-decoration: none;
   margin: 0 0 2.5rem;
