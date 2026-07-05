@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="noindex">
+	<title>Page Not Found — Waccamaw.org</title>
+	<!--
+	  Cloudflare Custom Errors asset for waccamaw.org (served for origin 404s
+	  across the whole domain). Self-contained on purpose (inline CSS, own
+	  <!DOCTYPE>) so it renders in standards mode no matter how it's served —
+	  Micro.blog's own /404.html is served WITHOUT a doctype (quirks mode).
+
+	  This IS the tracked 404 file: edit it, deploy the theme, then run
+	  `just deploy-cf-404` (scripts/deploy-cloudflare-404.sh) to re-fetch the
+	  asset into Cloudflare and (re)apply the custom-error rule.
+	-->
+	<style>
+		:root {
+			--navy:#1f3a52; --clay:#9c4a2f; --ochre:#c8963e; --ink:#2b2118;
+			--ink-muted:#5f5040; --paper:#f7f2e7; --paper-shade:#efe6d2;
+			--card:#fffdf8; --border:#ddd0b6;
+			--serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+			--sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+		}
+		* { box-sizing:border-box; }
+		body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans); font-size:1.04rem; line-height:1.6; }
+		.nf-header { background:var(--paper-shade); border-bottom:3px double var(--border); }
+		.nf-header-inner { max-width:1080px; margin:0 auto; padding:1rem 1.5rem; display:flex; align-items:center; gap:.6rem; }
+		.nf-logo { width:34px; height:34px; flex:0 0 auto; background:url('https://waccamaw.org/logos/doug-2025/logo-flat.svg') center/contain no-repeat; }
+		.nf-wordmark { font-weight:700; letter-spacing:-.3px; color:var(--navy); text-decoration:none; font-size:1.15rem; }
+		.nf-main { max-width:46rem; margin:0 auto; padding:3.5rem 1.5rem 4rem; }
+		.nf-kicker { display:inline-block; font-family:var(--sans); text-transform:uppercase; letter-spacing:.16em; font-size:.78rem; font-weight:700; color:var(--ochre); margin-bottom:.6rem; }
+		h1 { font-family:var(--serif); color:var(--navy); font-size:clamp(2.1rem,5vw,2.9rem); line-height:1.08; margin:0 0 .75rem; letter-spacing:-.01em; }
+		.nf-lede { font-size:1.12rem; color:var(--ink-muted); margin:0 0 2.25rem; }
+		.nf-notice { background:var(--paper-shade); border:1px solid var(--border); border-left:4px solid var(--clay); border-radius:12px; padding:1.15rem 1.4rem; margin:0 0 2.25rem; }
+		.nf-notice p { margin:0; font-size:.98rem; } .nf-notice strong { color:var(--navy); }
+		.nf-links { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:.9rem; margin:0 0 2.5rem; }
+		.nf-link { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1.05rem 1.3rem; text-decoration:none; background:var(--card); border:1px solid var(--border); border-radius:12px; box-shadow:0 1px 4px rgba(43,33,24,.06); transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease; }
+		.nf-link:hover { transform:translateY(-2px); border-color:var(--ochre); box-shadow:0 12px 26px -18px rgba(122,69,19,.5); }
+		.nf-link span:first-child { font-weight:700; color:var(--navy); }
+		.nf-link .arw { color:var(--ochre); font-weight:700; opacity:.45; transform:translateX(-4px); transition:opacity .16s ease,transform .16s ease; }
+		.nf-link:hover .arw { opacity:1; transform:translateX(0); }
+		.nf-link:hover span:first-child { color:var(--clay); }
+		form.nf-search { background:var(--paper-shade); border:1px solid var(--border); border-radius:14px; padding:1.5rem 1.6rem; margin:0 0 2rem; }
+		.nf-search label { display:block; font-family:var(--serif); color:var(--navy); font-size:1.2rem; margin-bottom:.85rem; }
+		.nf-search-row { display:flex; gap:.6rem; }
+		.nf-search input[type=text] { flex:1; padding:.8rem 1.1rem; font:inherit; background:var(--card); border:1px solid var(--border); border-radius:10px; }
+		.nf-search input[type=text]:focus { outline:none; border-color:var(--ochre); }
+		.nf-search button { padding:.8rem 1.4rem; font:inherit; font-weight:700; color:#fff; background:var(--navy); border:none; border-radius:10px; cursor:pointer; }
+		.nf-search button:hover { background:var(--clay); }
+		.nf-help { text-align:center; padding-top:1.75rem; margin:0; border-top:1px solid var(--border); color:var(--ink-muted); }
+		.nf-help a { color:var(--clay); font-weight:700; text-decoration:none; }
+		@media (max-width:560px){ .nf-links{grid-template-columns:1fr} .nf-search-row{flex-direction:column} }
+	</style>
+</head>
+<body>
+	<header class="nf-header">
+		<div class="nf-header-inner">
+			<span class="nf-logo" aria-hidden="true"></span>
+			<a class="nf-wordmark" href="https://waccamaw.org/">Waccamaw.org</a>
+		</div>
+	</header>
+	<main class="nf-main">
+		<span class="nf-kicker">Error 404</span>
+		<h1>Page Not Found</h1>
+		<p class="nf-lede">The page you're looking for may have moved — but our content is still here. Try one of the links below, or search the site.</p>
+
+		<div class="nf-notice">
+			<p><strong>We recently updated our website.</strong> Some older bookmarked links may have changed. Everything is still here — use the links below to find it.</p>
+		</div>
+
+		<nav class="nf-links" aria-label="Helpful links">
+			<a class="nf-link" href="/"><span>Home</span><span class="arw" aria-hidden="true">&rarr;</span></a>
+			<a class="nf-link" href="/updates/"><span>News &amp; Updates</span><span class="arw" aria-hidden="true">&rarr;</span></a>
+			<a class="nf-link" href="/learn/"><span>Learn Our Story</span><span class="arw" aria-hidden="true">&rarr;</span></a>
+			<a class="nf-link" href="/meetings/"><span>Tribal Meetings</span><span class="arw" aria-hidden="true">&rarr;</span></a>
+			<a class="nf-link" href="/members/"><span>Member Portal</span><span class="arw" aria-hidden="true">&rarr;</span></a>
+			<a class="nf-link" href="/pauwau/"><span>Pauwau</span><span class="arw" aria-hidden="true">&rarr;</span></a>
+		</nav>
+
+		<form class="nf-search" action="https://www.google.com/search" method="get" target="_blank" rel="noopener">
+			<input type="hidden" name="as_sitesearch" value="waccamaw.org">
+			<label for="nf-q">Search the site</label>
+			<div class="nf-search-row">
+				<input type="text" id="nf-q" name="q" placeholder="Search for tribal news, events, meetings&hellip;">
+				<button type="submit">Search</button>
+			</div>
+		</form>
+
+		<p class="nf-help">Still can't find what you need? <a href="mailto:WaccamawChief@gmail.com">Let us know</a> and we'll help you find it.</p>
+	</main>
+</body>
+</html>

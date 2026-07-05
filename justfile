@@ -142,6 +142,11 @@ auth:
 deploy:
     python3 .github/deploy/microblog_deploy.py --all
 
+# Deploy the site-wide styled 404 to Cloudflare Custom Errors (static/error-404.html).
+# Run after the theme deploy so the asset URL is live for Cloudflare to fetch.
+deploy-cf-404:
+    bash scripts/deploy-cloudflare-404.sh
+
 # Backup content from Micro.blog
 backup:
     python3 .github/deploy/microblog_backup.py --all
