@@ -206,6 +206,45 @@ h1, h2, h3, h4, h5, .section-heading, .post-card h3, .hero-title {
   font-size: 1.12rem; line-height: 1.6; color: var(--text-light); margin: 0;
 }
 
+/* featured post — learn-hero-style editorial lead (dynamic background image) */
+.updates-page .featured-hero {
+  position: relative; display: block; overflow: hidden; text-decoration: none;
+  border-radius: 16px; margin: 0 0 2.75rem; color: #fff; min-height: 42vh;
+  background: var(--wm-navy-deep);            /* fallback when a featured post has no image */
+  background-size: cover; background-position: center 35%;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.updates-page .featured-hero:hover {
+  transform: translateY(-3px); box-shadow: 0 18px 40px -20px rgba(0,0,0,.6);
+}
+.featured-hero-inner {
+  position: relative; min-height: 42vh; max-width: 46rem; margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 3.5rem 1.75rem;
+}
+.featured-hero-label {
+  display: inline-block; font-family: var(--wm-sans); text-transform: uppercase;
+  letter-spacing: .16em; font-size: .78rem; font-weight: 700; color: #e8c98a; margin-bottom: .8rem;
+}
+.featured-hero-title {
+  font-family: var(--wm-serif); color: #fff; letter-spacing: -0.01em;
+  font-size: clamp(1.9rem, 4vw, 2.9rem); line-height: 1.1; margin: 0 0 .85rem;
+}
+.featured-hero-lede {
+  font-size: 1.14rem; line-height: 1.55; color: rgba(255,255,255,.92);
+  max-width: 40rem; margin: 0 0 1.3rem;
+}
+.featured-hero-cta {
+  font-family: var(--wm-sans); font-weight: 700; color: #e8c98a; font-size: .98rem;
+  transition: color .15s;
+}
+.updates-page .featured-hero:hover .featured-hero-cta { color: #fff; }
+@media (max-width: 640px) {
+  .updates-page .featured-hero { min-height: 62vw; }
+  .featured-hero-inner { min-height: 62vw; padding: 2.25rem 1.4rem; }
+  .featured-hero-title { font-size: 1.7rem; }
+}
+
 /* category filter as warm pills */
 .updates-page .category-filter { margin: 0 auto 2.5rem; text-align: center; }
 .updates-page .category-links {

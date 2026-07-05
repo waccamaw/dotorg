@@ -1,0 +1,13 @@
+{{- /* Returns the best lead image URL for a post, or "" if none.
+       1) the photo-picker `photos` frontmatter (proper Micro.blog post photos)
+       2) fallback: the first image embedded inline in the post body — Micro.blog
+          does NOT populate `photos` for images pasted into the body, so those
+          posts would otherwise fall back to the logo placeholder.
+       Kept on Hugo 0.91.2-safe funcs (findRE/index/return). */ -}}
+{{- $img := "" -}}
+{{- with .Params.photos -}}{{- $img = index . 0 -}}{{- end -}}
+{{- if not $img -}}
+  {{- $urls := findRE `(?i)https?://[^\s"'<>)]+\.(?:png|jpe?g|gif|webp)` .Content 1 -}}
+  {{- with $urls -}}{{- $img = index . 0 -}}{{- end -}}
+{{- end -}}
+{{- return $img -}}

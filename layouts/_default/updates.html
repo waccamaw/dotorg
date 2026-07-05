@@ -10,6 +10,26 @@
 		<p class="updates-lede">{{ .Content | plainify | htmlUnescape | default "Latest news, announcements, and updates from the Waccamaw Indian People." }}</p>
 	</header>
 
+	{{/* Featured post — the editorial lead. Revives the old homepage "featured"
+	     flag (posts in the `featured` category) as a learn-hero-style banner. */}}
+	{{ $featured := where $allPosts "Params.categories" "intersect" (slice "featured") }}
+	{{ range first 1 $featured }}
+		{{ $heroImg := partial "post-image.html" . }}
+		<a class="featured-hero{{ if $heroImg }} has-image{{ end }}" href="{{ .Permalink }}"
+			{{ with $heroImg }}style="background-image: linear-gradient(180deg, rgba(20,30,45,.30) 0%, rgba(20,30,45,.86) 100%), url('{{ . }}');"{{ end }}>
+			<div class="featured-hero-inner">
+				<span class="featured-hero-label">Featured</span>
+				<h2 class="featured-hero-title">{{ .Title }}</h2>
+				{{ $ex := .Content | plainify | htmlUnescape }}
+				{{ $ex = replaceRE `\s+` " " $ex }}
+				{{ $ex = replaceRE `(?i)^.*?[A-Z][a-z]+ \d{1,2}(,? \d{4})? \d+ min read ?` "" $ex }}
+				{{ $ex = trim $ex " " | truncate 180 }}
+				{{ with $ex }}<p class="featured-hero-lede">{{ . }}</p>{{ end }}
+				<span class="featured-hero-cta">Read the full story →</span>
+			</div>
+		</a>
+	{{ end }}
+
 	<!-- Category filter (warm pills) -->
 	{{ $categories := slice }}
 	{{ range $allPosts }}
@@ -35,14 +55,16 @@
 
 	<div class="updates-grid">
 		{{ range $displayPosts }}
+			{{ $post := . }}
+			{{ $cardImg := partial "post-image.html" . }}
 			<article class="h-entry post-card">
 				<a href="{{ .Permalink }}" class="post-card-link u-url">
-					{{ with .Params.photos }}
+					{{ if $cardImg }}
 						<div class="post-card-image">
-							<img src="{{ index . 0 }}" alt="" loading="lazy">
-							{{ if gt (len .) 1 }}
+							<img src="{{ $cardImg }}" alt="" loading="lazy">
+							{{ with $post.Params.photos }}{{ if gt (len .) 1 }}
 								<span class="post-card-photocount">{{ len . }} photos</span>
-							{{ end }}
+							{{ end }}{{ end }}
 						</div>
 					{{ else }}
 						<div class="post-card-placeholder"><span class="placeholder-icon">📄</span></div>
