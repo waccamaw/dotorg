@@ -2,7 +2,10 @@
 <html lang="en">
     {{ partial "head.html" . }}
     <body>
-        {{ if not .Params.hide_donate }}{{ partial "donation-banner.html" . }}{{ end }}
+        {{/* Suppress the big donation appeal on the 404 route — it's an error
+             page, not a landing page (keeps "Page Not Found" at the top). */}}
+        {{ $is404 := or (eq .Kind "404") (in .RelPermalink "404") }}
+        {{ if and (not .Params.hide_donate) (not $is404) }}{{ partial "donation-banner.html" . }}{{ end }}
         {{ partial "header.html" . }}
         <main>
             {{ block "main" . }}{{ end }}
