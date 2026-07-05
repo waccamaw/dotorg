@@ -1,16 +1,16 @@
 {{ define "main" }}
 
-<div class="updates-feed">
-	<h1 onclick="toggleCategoryFilter()" style="cursor: pointer;">
-		{{ .Title }}
-		<svg class="filter-icon" id="filterIcon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-			<polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-		</svg>
-	</h1>
-	
+<div class="updates-page">
+
 	{{ $allPosts := where .Site.RegularPages "Type" "post" }}
-	
-	<!-- Category Filter -->
+
+	<header class="updates-header">
+		<span class="updates-kicker">News &amp; Announcements</span>
+		<h1>{{ .Title }}</h1>
+		<p class="updates-lede">{{ .Content | plainify | htmlUnescape | default "Latest news, announcements, and updates from the Waccamaw Indian People." }}</p>
+	</header>
+
+	<!-- Category filter (warm pills) -->
 	{{ $categories := slice }}
 	{{ range $allPosts }}
 		{{ range .Params.categories }}
@@ -18,105 +18,76 @@
 		{{ end }}
 	{{ end }}
 	{{ $categories = $categories | uniq }}
-	
+
 	{{ if $categories }}
-	<div class="category-filter" id="categoryFilter" style="display: none;">
+	<nav class="category-filter" aria-label="Filter updates by category">
 		<div class="category-links">
-			<a href="/updates/" class="category-link">All</a>
+			<a href="/updates/" class="category-link is-active">All</a>
 			{{ range sort $categories }}
 				<a href="/categories/{{ . | urlize }}/" class="category-link">{{ . }}</a>
 			{{ end }}
 		</div>
-	</div>
+	</nav>
 	{{ end }}
 
-	<script>
-	function toggleCategoryFilter() {
-		const filter = document.getElementById('categoryFilter');
-		const icon = document.getElementById('filterIcon');
-		
-		if (filter.style.display === 'none') {
-			filter.style.display = 'block';
-			setTimeout(() => {
-				filter.classList.add('show');
-			}, 10);
-			icon.style.transform = 'rotate(180deg)';
-		} else {
-			filter.classList.remove('show');
-			setTimeout(() => {
-				filter.style.display = 'none';
-			}, 300);
-			icon.style.transform = 'rotate(0deg)';
-		}
-	}
-	</script>
-	
-	<!-- Show first 10 posts -->
+	<!-- First 10 posts as a museum-style collection grid -->
 	{{ $displayPosts := first 10 $allPosts }}
-	
-	{{ range $displayPosts }}
-		<article class="h-entry post-preview">
-			<header class="post-header">
-				{{ if .Title }}
-					<h3 class="p-name post-title">
-						<a href="{{ .Permalink }}">{{ .Title }}</a>
-					</h3>
-				{{ end }}
-				
-				<div class="post-meta">
-					<time class="dt-published" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
-						{{ .Date.Format "January 2, 2006" }}
-					</time>
-					{{ with .Params.author }}
-						{{ if reflect.IsMap . }}
-							by <span class="p-author h-card">
-								{{ with .avatar }}<img src="{{ . }}" alt="{{ $.Params.author.full_name }}" class="author-avatar"> {{ end }}
-								{{ .full_name | default .name }}
-							</span>
-						{{ else }}
-							by <span class="p-author h-card">{{ . }}</span>
-						{{ end }}
-					{{ end }}
-					{{ if .Params.categories }}
-						<span class="post-categories">
-							{{ range .Params.categories }}
-								<a href="/categories/{{ . | urlize }}/" class="category-badge">{{ . }}</a>
+
+	<div class="updates-grid">
+		{{ range $displayPosts }}
+			<article class="h-entry post-card">
+				<a href="{{ .Permalink }}" class="post-card-link u-url">
+					{{ with .Params.photos }}
+						<div class="post-card-image">
+							<img src="{{ index . 0 }}" alt="" loading="lazy">
+							{{ if gt (len .) 1 }}
+								<span class="post-card-photocount">{{ len . }} photos</span>
 							{{ end }}
-						</span>
+						</div>
+					{{ else }}
+						<div class="post-card-placeholder"><span class="placeholder-icon">📄</span></div>
 					{{ end }}
-				</div>
-			</header>
 
-			<div class="p-summary post-summary">
-				{{ if .Content }}
-					<p>{{ .Content | plainify | htmlUnescape | truncate 300 }}</p>
-				{{ end }}
-			</div>
+					<div class="post-card-body">
+						{{ if .Title }}
+							<h3 class="p-name post-card-title">{{ .Title }}</h3>
+						{{ end }}
+						<time class="dt-published post-card-date" datetime="{{ .Date.Format "2006-01-02T15:04:05-0700" }}">
+							{{ .Date.Format "January 2, 2006" }}
+						</time>
+						{{/* Build a clean excerpt: collapse whitespace, then strip the Wix-import
+						     boilerplate header ("<Title> <Author> Mon DD[, YYYY] N min read"
+						     + optional "Updated: …") that got baked into imported post bodies.
+						     Native micro.blog posts have no "min read", so they pass through. */}}
+						{{ $excerpt := .Content | plainify | htmlUnescape }}
+						{{ $excerpt = replaceRE `\s+` " " $excerpt }}
+						{{ $excerpt = replaceRE `(?i)^.*?[A-Z][a-z]+ \d{1,2}(,? \d{4})? \d+ min read ?` "" $excerpt }}
+						{{ $excerpt = replaceRE `(?i)^updated: [A-Z][a-z]+ \d{1,2}(,? \d{4})? ?` "" $excerpt }}
+						{{ $excerpt = $excerpt | strings.TrimSpace | truncate 150 }}
+						{{ with $excerpt }}
+							<p class="p-summary post-card-excerpt">{{ . }}</p>
+						{{ end }}
+						{{ if .Params.categories }}
+							<div class="post-card-cats">
+								{{ range first 4 .Params.categories }}
+									<span class="category-badge">{{ . }}</span>
+								{{ end }}
+							</div>
+						{{ end }}
+					</div>
+				</a>
+			</article>
+		{{ end }}
+	</div>
 
-			{{ if .Params.photos }}
-				<div class="post-photos-preview">
-					{{ range first 3 .Params.photos }}
-						<img src="{{ . }}" alt="" loading="lazy">
-					{{ end }}
-					{{ if gt (len .Params.photos) 3 }}
-						<span class="more-photos">+{{ sub (len .Params.photos) 3 }} more</span>
-					{{ end }}
-				</div>
-			{{ end }}
-
-			<div class="post-footer">
-				<a href="{{ .Permalink }}" class="u-url read-more">Read more →</a>
-			</div>
-		</article>
-	{{ end }}
-	
 	<!-- Pagination -->
-	<nav class="pagination">
+	<nav class="pagination" aria-label="Updates pagination">
 		<span class="pagination-info">
-			Showing {{ len $displayPosts }} of {{ len $allPosts }} total posts
+			Showing {{ len $displayPosts }} of {{ len $allPosts }} posts
 		</span>
 		<a href="/page/2/" class="pagination-next">Older posts →</a>
 	</nav>
+
 </div>
 
 {{ end }}
