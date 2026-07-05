@@ -4,12 +4,6 @@
 
 	{{ $allPosts := where .Site.RegularPages "Type" "post" }}
 
-	<header class="updates-header">
-		<span class="updates-kicker">News &amp; Announcements</span>
-		<h1>{{ .Title }}</h1>
-		<p class="updates-lede">{{ .Content | plainify | htmlUnescape | default "Latest news, announcements, and updates from the Waccamaw Indian People." }}</p>
-	</header>
-
 	{{/* Featured post — the editorial lead. Revives the old homepage "featured"
 	     flag (posts in the `featured` category) as a learn-hero-style banner. */}}
 	{{ $featured := where $allPosts "Params.categories" "intersect" (slice "featured") }}
@@ -30,7 +24,7 @@
 		</a>
 	{{ end }}
 
-	<!-- Category filter (warm pills) -->
+	<!-- Section head: title + category filter (warm pills) -->
 	{{ $categories := slice }}
 	{{ range $allPosts }}
 		{{ range .Params.categories }}
@@ -39,16 +33,19 @@
 	{{ end }}
 	{{ $categories = $categories | uniq }}
 
-	{{ if $categories }}
-	<nav class="category-filter" aria-label="Filter updates by category">
-		<div class="category-links">
-			<a href="/updates/" class="category-link is-active">All</a>
-			{{ range sort $categories }}
-				<a href="/categories/{{ . | urlize }}/" class="category-link">{{ . }}</a>
-			{{ end }}
-		</div>
-	</nav>
-	{{ end }}
+	<div class="updates-listing-head">
+		<h1 class="updates-listing-title">Latest Updates</h1>
+		{{ if $categories }}
+		<nav class="category-filter" aria-label="Filter updates by category">
+			<div class="category-links">
+				<a href="/updates/" class="category-link is-active">All</a>
+				{{ range sort $categories }}
+					<a href="/categories/{{ . | urlize }}/" class="category-link">{{ . }}</a>
+				{{ end }}
+			</div>
+		</nav>
+		{{ end }}
+	</div>
 
 	<!-- First 10 posts as a museum-style collection grid -->
 	{{ $displayPosts := first 10 $allPosts }}
