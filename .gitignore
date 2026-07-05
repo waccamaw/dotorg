@@ -38,3 +38,6 @@ node_modules/
 
 # Backups
 backups/.claude/worktrees/
+
+# Claude Code agent worktrees (transient; registered under .claude/worktrees/)
+.claude/worktrees/
