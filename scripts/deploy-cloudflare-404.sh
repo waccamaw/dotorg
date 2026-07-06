@@ -12,16 +12,15 @@
 #   bash scripts/deploy-cloudflare-404.sh
 #   just deploy-cf-404
 #
-# Requires a Cloudflare API token with these ZONE permissions on waccamaw.org:
-#   - Custom Pages : Edit   (upload/refresh the error asset)
-#   - Config Rules : Edit   (apply the http_custom_errors rule)
-# The script probes both up front and tells you exactly which is missing.
+# The 404 body is embedded INLINE in the custom-error rule (this account allows
+# 0 stored custom-error assets), so the only token permission required is:
+#   - Zone > Custom Error Rules : Edit
+# Source of truth for the body is the tracked file static/error-404.html.
 
 set -euo pipefail
 
 ZONE="feb3534399611b07b6b38d704a668140"          # waccamaw.org
-ASSET_NAME="waccamaw-404"
-ASSET_URL="https://waccamaw.org/error-404.html"
+ASSET_FILE="static/error-404.html"               # tracked source of the 404 body
 API="https://api.cloudflare.com/client/v4"
 
 # --- token: prefer env, else read the members-service dev var --------------
@@ -43,41 +42,32 @@ cf() { # cf METHOD PATH [JSON] -> body on stdout
 }
 ok() { python3 -c "import json,sys;print('1' if json.load(sys.stdin).get('success') else '0')"; }
 
-echo "▶ Probing token scope on waccamaw.org…"
-cp_ok=$(cf GET "/zones/$ZONE/custom_pages" | ok)
-rs_ok=$(cf GET "/zones/$ZONE/rulesets/phases/http_custom_errors/entrypoint" | ok)
-if [ "$cp_ok" != "1" ] || [ "$rs_ok" != "1" ]; then
-	echo "❌ Token is missing required scope:"
-	[ "$cp_ok" = "1" ] || echo "   - Custom Pages : Edit   (needed to upload the error asset)"
-	[ "$rs_ok" = "1" ] || echo "   - Config Rules : Edit   (needed to apply the http_custom_errors rule)"
-	echo "   Add these to the token at https://dash.cloudflare.com/profile/api-tokens, then re-run."
-	exit 2
-fi
-echo "  ✓ scope OK"
+# This account allows 0 stored custom-error assets, so serve the 404 body INLINE
+# in the rule instead (serve_error supports inline `content`). Source of truth is
+# still the tracked file static/error-404.html — we read it and embed it.
+echo "▶ Building custom error rule from $ASSET_FILE (inline content)…"
+payload=$(python3 - "$here/$ASSET_FILE" <<'PY'
+import json, sys
+html = open(sys.argv[1], encoding="utf-8").read()
+print(json.dumps({"rules": [{
+    "action": "serve_error",
+    "action_parameters": {"content": html, "content_type": "text/html", "status_code": 404},
+    "expression": "(http.response.code eq 404)",
+    "description": "Serve the styled 404 for origin 404s across waccamaw.org",
+    "enabled": True,
+}]}))
+PY
+)
 
-echo "▶ Refreshing custom error asset '$ASSET_NAME' from $ASSET_URL…"
-# delete-if-exists so the asset is re-fetched fresh, then create
-cf DELETE "/zones/$ZONE/custom_pages/assets/$ASSET_NAME" >/dev/null 2>&1 || true
-create=$(cf POST "/zones/$ZONE/custom_pages/assets" \
-	"{\"name\":\"$ASSET_NAME\",\"description\":\"Waccamaw.org styled 404\",\"url\":\"$ASSET_URL\"}")
-if [ "$(printf '%s' "$create" | ok)" != "1" ]; then
-	echo "❌ Asset upload failed:"; printf '%s\n' "$create" | python3 -m json.tool; exit 1
-fi
-echo "  ✓ asset stored"
-
-echo "▶ Applying custom error rule (serve $ASSET_NAME on any origin 404)…"
-rule=$(cf PUT "/zones/$ZONE/rulesets/phases/http_custom_errors/entrypoint" '{
-  "rules": [
-    {
-      "action": "serve_error",
-      "action_parameters": { "asset_name": "'"$ASSET_NAME"'", "content_type": "text/html", "status_code": 404 },
-      "expression": "(http.response.code eq 404)",
-      "description": "Serve the styled 404 for origin 404s across waccamaw.org",
-      "enabled": true
-    }
-  ]
-}')
+echo "▶ Applying custom error rule (serve styled 404 on any origin 404)…"
+rule=$(cf PUT "/zones/$ZONE/rulesets/phases/http_custom_errors/entrypoint" "$payload")
 if [ "$(printf '%s' "$rule" | ok)" != "1" ]; then
+	if printf '%s' "$rule" | grep -q '"code": *10000'; then
+		echo "❌ Rule apply denied — token is missing 'Custom Error Rules : Edit'."
+		echo "   Add it to the token at https://dash.cloudflare.com/profile/api-tokens, then re-run."
+		echo "   (The asset uploaded fine; re-running is safe/idempotent.)"
+		exit 2
+	fi
 	echo "❌ Rule apply failed:"; printf '%s\n' "$rule" | python3 -m json.tool; exit 1
 fi
 echo "  ✓ rule applied"
