@@ -9,6 +9,14 @@
 			</a>
 		</div>
 
+		<!-- CSS-only mobile menu toggle (no JS). Checkbox controls .header-right
+		     via the ~ sibling selector; the label is the hamburger, shown only on
+		     mobile. -->
+		<input type="checkbox" id="nav-toggle" class="nav-toggle-checkbox" aria-hidden="true">
+		<label for="nav-toggle" class="nav-toggle-label" aria-label="Open menu">
+			<span class="nav-toggle-bars"></span>
+		</label>
+
 		<div class="header-right">
 			<!-- Primary nav: teaching / tourist-facing content -->
 			<nav class="site-nav" aria-label="Main navigation">
