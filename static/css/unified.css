@@ -855,7 +855,10 @@ body.nf-body { font-size: 0; }
 .press-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 1.25rem; }
 .press-photo { margin: 0; background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(43,33,24,.07); }
 .press-photo a { display: block; }
-.press-photo img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+.press-photo img { width: 100%; aspect-ratio: 4/3; object-fit: cover; object-position: center 30%; display: block; }
+/* Chief Cheryl's face sits high in her portrait — pull the crop up so the
+   thumbnail shows her face rather than the middle of the frame. */
+.press-photo img[src*="chief-cheryl-cail"] { object-position: center 14%; }
 .press-photo figcaption { padding: .7rem .85rem .8rem; font-size: .85rem; line-height: 1.45; color: var(--text-color); }
 .press-dl { display: inline-block; margin-top: .35rem; font-family: var(--wm-sans); font-weight: 700; font-size: .8rem; color: var(--link-color); text-decoration: none; }
 .press-dl:hover { color: var(--primary-color); }
