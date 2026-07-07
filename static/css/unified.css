@@ -812,3 +812,56 @@ body.nf-body { font-size: 0; }
   .nf-search-row { flex-direction: column; }
   .nf-search-btn { justify-content: center; }
 }
+
+/* ================= Press Kit (/press/) — museum design language ================= */
+.press-page { max-width: 46rem; margin: 0 auto; padding: 1rem 0 2rem; }
+.press-hero { text-align: center; margin-bottom: 2.75rem; }
+.press-kicker {
+  display: inline-block; font-family: var(--wm-sans); text-transform: uppercase;
+  letter-spacing: .14em; font-size: .78rem; font-weight: 700; color: var(--wm-ochre); margin-bottom: .6rem;
+}
+.press-hero h1 { font-family: var(--wm-serif); color: var(--primary-color); font-size: clamp(2.2rem,5vw,3rem); line-height: 1.08; margin: 0 0 .85rem; letter-spacing: -0.01em; }
+.press-lede { font-size: 1.14rem; line-height: 1.6; color: var(--text-light); margin: 0 auto; max-width: 40rem; }
+
+.press-section { margin: 0 0 2.75rem; }
+.press-section > h2 {
+  font-family: var(--wm-serif); color: var(--primary-color); font-size: 1.5rem;
+  letter-spacing: -0.01em; margin: 0 0 1rem; padding-bottom: .5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.press-section p { line-height: 1.7; margin: 0 0 1rem; }
+
+.press-facts { list-style: none; margin: 0; padding: 0; }
+.press-facts li { padding: .55rem 0; border-bottom: 1px solid var(--border-color); line-height: 1.6; }
+.press-facts li:last-child { border-bottom: 0; }
+.press-facts strong { color: var(--primary-color); }
+
+.press-timeline { list-style: none; margin: 0; padding: 0; }
+.press-timeline li { display: grid; grid-template-columns: 4.5rem 1fr; gap: 1.1rem; align-items: baseline; padding: .7rem 0; border-top: 1px solid var(--border-color); line-height: 1.6; }
+.press-timeline li:first-child { border-top: 0; }
+.press-timeline .py { font-family: var(--wm-serif); font-weight: 700; color: var(--wm-ochre); font-size: 1.05rem; }
+
+.press-quote {
+  font-family: var(--wm-serif); font-style: italic; font-size: 1.5rem; line-height: 1.4;
+  color: var(--primary-color); margin: 0; padding: 0 0 0 1.4rem; border-left: 4px solid var(--wm-ochre);
+}
+.press-quote cite { display: block; margin-top: .8rem; font-family: var(--wm-sans); font-style: normal; font-size: .92rem; color: var(--text-light); }
+
+.press-sidebar { background: var(--bg-secondary); border: 1px solid var(--border-color); border-left: 4px solid var(--wm-clay); border-radius: 12px; padding: 1.5rem 1.75rem; }
+.press-sidebar > h2 { border-bottom: 0; padding-bottom: 0; margin-bottom: .6rem; font-size: 1.3rem; }
+.press-sidebar p { margin: 0; }
+
+.press-photo-note { font-size: .95rem; color: var(--text-light); }
+.press-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; margin-top: 1.25rem; }
+.press-photo { margin: 0; background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(43,33,24,.07); }
+.press-photo a { display: block; }
+.press-photo img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+.press-photo figcaption { padding: .7rem .85rem .8rem; font-size: .85rem; line-height: 1.45; color: var(--text-color); }
+.press-dl { display: inline-block; margin-top: .35rem; font-family: var(--wm-sans); font-weight: 700; font-size: .8rem; color: var(--link-color); text-decoration: none; }
+.press-dl:hover { color: var(--primary-color); }
+
+.press-contact { background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.5rem 1.75rem; }
+.press-contact > h2 { border-bottom: 0; padding-bottom: 0; }
+.press-contact-line { font-size: 1.05rem; line-height: 1.7; }
+.press-contact-line strong { color: var(--primary-color); }
+@media (max-width: 560px) { .press-timeline li { grid-template-columns: 1fr; gap: .2rem; } }

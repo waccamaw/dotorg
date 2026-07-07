@@ -1,0 +1,90 @@
+{{ define "main" }}
+<div class="press-page">
+
+	<header class="press-hero">
+		<span class="press-kicker">For the Press &middot; Waccamaw Indian People</span>
+		<h1>Press Kit</h1>
+		<p class="press-lede">A founding chief's retirement, and a museum built by his people. Everything a newsroom needs is on this page — the story, the facts, quotes, photos to download, and how to reach us for interviews.</p>
+	</header>
+
+	<section class="press-section">
+		<h2>The story</h2>
+		<p>For 34 years, Chief Harold &ldquo;Buster&rdquo; Hatcher led the Waccamaw Indian People &mdash; the tribe he founded in 1992 and the first state-recognized tribe in South Carolina. On June 29, 2026, he retired. His people answered his farewell by building him a museum: his story, more than three decades of photographs, the origins of the tribe in the Dimery Settlement, five generations of family history, and his own voice on tape. It is online now at <a href="https://museum.waccamaw.org">museum.waccamaw.org</a>.</p>
+		<p>A Vietnam combat veteran and Chief Warrant Officer, Hatcher spent his life asserting and defending Native identity in South Carolina. He won a landmark 1988 lawsuit affirming that identity, led the tribe to state recognition in 2005, and helped change state law so Native chiefs could perform legal marriages. In 2022 the tribe filed a petition for federal recognition, which remains pending. Leadership now passes to Chief Cheryl Cail.</p>
+	</section>
+
+	<section class="press-section">
+		<h2>At a glance</h2>
+		<ul class="press-facts">
+			<li><strong>Who:</strong> The Waccamaw Indian People &mdash; South Carolina's first state-recognized tribe (Feb. 17, 2005).</li>
+			<li><strong>Where:</strong> The Dog Bluff community near Aynor, Horry County, S.C. &mdash; 300+ years of continuous presence.</li>
+			<li><strong>The news:</strong> Founding Chief Harold &ldquo;Buster&rdquo; Hatcher retired June 29, 2026, after 34 years; a digital museum launched in his honor.</li>
+			<li><strong>Succession:</strong> Chief Cheryl Cail now leads the tribe.</li>
+			<li><strong>Recognition:</strong> State-recognized since 2005; federal recognition petition filed 2022, pending.</li>
+			<li><strong>Annual event:</strong> The Waccamaw Pauwau &amp; Cultural Arts Festival, held each fall on the tribal grounds.</li>
+			<li><strong>Online:</strong> Museum at <a href="https://museum.waccamaw.org">museum.waccamaw.org</a> &middot; tribe at <a href="/">waccamaw.org</a>.</li>
+		</ul>
+	</section>
+
+	<section class="press-section">
+		<h2>Timeline</h2>
+		<ul class="press-timeline">
+			<li><span class="py">1988</span><span>Hatcher wins a landmark lawsuit affirming Native American identity in South Carolina.</span></li>
+			<li><span class="py">1992</span><span>Hatcher charters the modern Waccamaw Indian People and is named chief.</span></li>
+			<li><span class="py">2005</span><span>The Waccamaw become South Carolina's first state-recognized tribe.</span></li>
+			<li><span class="py">2022</span><span>The tribe files a petition for federal recognition (pending).</span></li>
+			<li><span class="py">2026</span><span>Chief Hatcher retires after 34 years; the tribe launches its digital museum and Chief Cheryl Cail takes leadership.</span></li>
+		</ul>
+	</section>
+
+	<section class="press-section">
+		<h2>In their words</h2>
+		<blockquote class="press-quote">
+			&ldquo;Thank you for allowing me to serve. I did my best for you.&rdquo;
+			<cite>&mdash; Chief Harold &ldquo;Buster&rdquo; Hatcher, in his farewell letter to the tribe</cite>
+		</blockquote>
+	</section>
+
+	<section class="press-section press-sidebar">
+		<h2>How this museum was built</h2>
+		<p>The Waccamaw Indian People have kept records, photographs, and recordings for decades &mdash; scattered across boxes, drives, and memory. To bring them together, the tribe used new AI tools to help sort and connect that corpus: surfacing documents, matching photographs to events, and organizing oral histories that might otherwise have stayed buried. Every entry was reviewed and confirmed by tribal members. The tools did the sifting; the People did the telling &mdash; a kind of digital preservation usually reserved for large institutions, here done by a small tribe, for its own history, and given freely to the public.</p>
+	</section>
+
+	<section class="press-section">
+		<h2>Photos</h2>
+		<p class="press-photo-note">High-resolution images free for editorial use with credit <em>&ldquo;Courtesy of the Waccamaw Indian People.&rdquo;</em> Click any photo to open full size, or use the download link.</p>
+		{{ $photos := slice
+			(dict "src" "/governing-body/chief-hatcher-portrait.jpg" "cap" "Chief Harold “Buster” Hatcher, founding chief (1992–2026)")
+			(dict "src" "/images/museum/smiling.jpg" "cap" "Chief Harold “Buster” Hatcher")
+			(dict "src" "/governing-body/chief-cheryl-cail.jpg" "cap" "Chief Cheryl Cail, incoming chief")
+			(dict "src" "/images/museum/hero.jpg" "cap" "From the Waccamaw digital museum")
+			(dict "src" "/images/pauwau/fancy-dancer.jpg" "cap" "A dancer at the annual Waccamaw Pauwau")
+			(dict "src" "/images/pauwau/grounds-aerial.jpg" "cap" "The Waccamaw tribal grounds near Aynor (aerial)")
+			(dict "src" "/images/pauwau/grounds-exhibits.png" "cap" "Cultural exhibits on the tribal grounds")
+			(dict "src" "/images/pauwau/grounds-marker-sign.jpg" "cap" "Waccamaw tribal grounds marker")
+			(dict "src" "/images/pauwau/tribal-office-entrance.jpg" "cap" "The Waccamaw tribal office")
+			(dict "src" "/governing-body/chief-of-council-chris-hatcher.jpg" "cap" "Chris Hatcher, Chief of Council")
+			(dict "src" "/governing-body/2nd-chief-external-alan-faver.png" "cap" "Alan Faver, Second Chief (External)")
+		}}
+		<div class="press-gallery">
+			{{ range $photos }}
+				<figure class="press-photo">
+					<a href="{{ .src }}" target="_blank" rel="noopener"><img src="{{ .src }}" alt="{{ .cap }}" loading="lazy"></a>
+					<figcaption>{{ .cap }} <a class="press-dl" href="{{ .src }}" download>Download</a></figcaption>
+				</figure>
+			{{ end }}
+		</div>
+	</section>
+
+	<section class="press-section press-contact">
+		<h2>Interviews &amp; media contact</h2>
+		<p>Chief Harold &ldquo;Buster&rdquo; Hatcher and incoming Chief Cheryl Cail are both available for interviews &mdash; the looking-back and the looking-forward.</p>
+		<p class="press-contact-line">
+			<strong>Doug Hatcher</strong><br>
+			Son of Chief Harold &ldquo;Buster&rdquo; Hatcher &middot; Waccamaw Indian People<br>
+			<a href="tel:+18432248834">843-224-8834</a> &middot; <a href="mailto:doug@hatcher.ltd">doug@hatcher.ltd</a>
+		</p>
+	</section>
+
+</div>
+{{ end }}
