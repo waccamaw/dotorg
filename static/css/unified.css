@@ -863,6 +863,14 @@ body.nf-body { font-size: 0; }
 .press-dl { display: inline-block; margin-top: .35rem; font-family: var(--wm-sans); font-weight: 700; font-size: .8rem; color: var(--link-color); text-decoration: none; }
 .press-dl:hover { color: var(--primary-color); }
 
+.press-logo-block { display: flex; flex-wrap: wrap; align-items: center; gap: 1.75rem; margin-top: 1.25rem; padding: 1.5rem 1.75rem; background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 14px; }
+.press-logo-block img { width: 150px; height: auto; flex: 0 0 auto; }
+.press-logo-info { flex: 1 1 240px; }
+.press-logo-info p { margin: 0 0 .75rem; }
+.press-logo-links { display: flex; flex-wrap: wrap; gap: .6rem; }
+.press-logo-btn { display: inline-block; font-family: var(--wm-sans); font-weight: 700; font-size: .85rem; padding: .5rem .95rem; border-radius: 8px; background: var(--wm-navy); color: #fff; text-decoration: none; }
+.press-logo-btn:hover { background: var(--wm-navy-deep); color: #fff; }
+
 .press-contact { background: var(--bg-white); border: 1px solid var(--border-color); border-radius: 14px; padding: 1.5rem 1.75rem; }
 .press-contact > h2 { border-bottom: 0; padding-bottom: 0; }
 .press-contact-line { font-size: 1.05rem; line-height: 1.7; }
