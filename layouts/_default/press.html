@@ -47,30 +47,28 @@
 
 	<section class="press-section press-sidebar">
 		<h2>How this museum was built</h2>
-		<p>The Waccamaw Indian People have kept records, photographs, and recordings for decades &mdash; scattered across boxes, drives, and memory. To bring them together, the tribe used new AI tools to help sort and connect that corpus: surfacing documents, matching photographs to events, and organizing oral histories that might otherwise have stayed buried. Every entry was reviewed and confirmed by tribal members. The tools did the sifting; the People did the telling &mdash; a kind of digital preservation usually reserved for large institutions, here done by a small tribe, for its own history, and given freely to the public.</p>
+		<p>The Waccamaw Indian People have kept records, photographs, and recordings for decades &mdash; scattered across boxes, drives, and memory. To bring them together, the tribe used new AI tools to help sort and connect that corpus: surfacing documents, matching photographs to events, and organizing oral histories that might otherwise have stayed buried. Every entry was reviewed and confirmed by tribal members &mdash; the tools did the sifting, the People did the telling.</p>
+		<p>It is also an act of sovereignty. Rather than hand its history to an outside institution, the tribe keeps and stewards its own record &mdash; its own data, on its own platform, under its own control. The museum and the systems behind it run on <strong>orgware</strong>, a member platform built by a tribal member for tribes and nonprofits. More on how it works at <a href="https://orgware.hatcher.ltd">orgware.hatcher.ltd</a>.</p>
 	</section>
 
 	<section class="press-section">
 		<h2>Photos</h2>
-		<p class="press-photo-note">High-resolution images free for editorial use with credit <em>&ldquo;Courtesy of the Waccamaw Indian People.&rdquo;</em> Click any photo to open full size, or use the download link.</p>
+		<p class="press-photo-note">These photos are from the tribe's own collection, shown here as a preview. <strong>Before publishing any image, please reach out</strong> so we can confirm the credit and clear its use.</p>
 		{{ $photos := slice
 			(dict "src" "/governing-body/chief-hatcher-portrait.jpg" "cap" "Chief Harold “Buster” Hatcher, founding chief (1992–2026)")
 			(dict "src" "/images/museum/smiling.jpg" "cap" "Chief Harold “Buster” Hatcher")
 			(dict "src" "/governing-body/chief-cheryl-cail.jpg" "cap" "Chief Cheryl Cail, incoming chief")
-			(dict "src" "/images/museum/hero.jpg" "cap" "From the Waccamaw digital museum")
 			(dict "src" "/images/pauwau/fancy-dancer.jpg" "cap" "A dancer at the annual Waccamaw Pauwau")
 			(dict "src" "/images/pauwau/grounds-aerial.jpg" "cap" "The Waccamaw tribal grounds near Aynor (aerial)")
 			(dict "src" "/images/pauwau/grounds-exhibits.png" "cap" "Cultural exhibits on the tribal grounds")
 			(dict "src" "/images/pauwau/grounds-marker-sign.jpg" "cap" "Waccamaw tribal grounds marker")
 			(dict "src" "/images/pauwau/tribal-office-entrance.jpg" "cap" "The Waccamaw tribal office")
-			(dict "src" "/governing-body/chief-of-council-chris-hatcher.jpg" "cap" "Chris Hatcher, Chief of Council")
-			(dict "src" "/governing-body/2nd-chief-external-alan-faver.png" "cap" "Alan Faver, Second Chief (External)")
 		}}
 		<div class="press-gallery">
 			{{ range $photos }}
 				<figure class="press-photo">
 					<a href="{{ .src }}" target="_blank" rel="noopener"><img src="{{ .src }}" alt="{{ .cap }}" loading="lazy"></a>
-					<figcaption>{{ .cap }} <a class="press-dl" href="{{ .src }}" download>Download</a></figcaption>
+					<figcaption>{{ .cap }}</figcaption>
 				</figure>
 			{{ end }}
 		</div>
