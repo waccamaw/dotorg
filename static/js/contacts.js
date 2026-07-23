@@ -192,13 +192,16 @@
     document.documentElement.style.setProperty('--bar-h', h + 'px');
   }
   // ---------- role-based UI ----------
+  // canWrite = admin OR editor: create/edit contacts, lists, and list membership.
+  // Access management (dir-access-btn) stays admin-only.
   function applyRole() {
     const admin = myRole === 'admin';
-    const canSeePeople = admin || myRole === 'viewer';
-    ['dir-new', 'dir-new-list'].forEach(id => { const el = $(id); if (el) el.style.display = admin ? '' : 'none'; });
+    const canWrite = admin || myRole === 'editor';
+    const canSeePeople = canWrite || myRole === 'viewer';
+    ['dir-new', 'dir-new-list'].forEach(id => { const el = $(id); if (el) el.style.display = canWrite ? '' : 'none'; });
     const ab = $('dir-access-btn'); if (ab) ab.style.display = admin ? '' : 'none';
     const rb = $('dir-role-badge');
-    if (rb) rb.textContent = admin ? '' : (myRole === 'viewer' ? 'Read-only access' : 'Counts-only access');
+    if (rb) rb.textContent = canWrite ? '' : (myRole === 'viewer' ? 'Read-only access' : 'Counts-only access');
     $('dir-search').style.display = canSeePeople ? '' : 'none';
     if (!canSeePeople) {
       if (table) { table.destroy(); table = null; }
@@ -206,11 +209,11 @@
     }
   }
   function applyModalRole() {
-    const admin = myRole === 'admin';
-    ['f-first', 'f-last', 'f-org', 'f-title', 'f-email', 'f-phone', 'f-city', 'f-state', 'f-dnc'].forEach(id => { const el = $(id); if (el) el.disabled = !admin; });
-    $('f-save').style.display = admin ? '' : 'none';
-    const addRow = $('f-addlist').parentElement; if (addRow) addRow.style.display = admin ? '' : 'none';
-    if (!admin) $('f-lists').querySelectorAll('.dir-chip-x').forEach(x => x.style.display = 'none');
+    const canWrite = myRole === 'admin' || myRole === 'editor';
+    ['f-first', 'f-last', 'f-org', 'f-title', 'f-email', 'f-phone', 'f-city', 'f-state', 'f-dnc'].forEach(id => { const el = $(id); if (el) el.disabled = !canWrite; });
+    $('f-save').style.display = canWrite ? '' : 'none';
+    const addRow = $('f-addlist').parentElement; if (addRow) addRow.style.display = canWrite ? '' : 'none';
+    if (!canWrite) $('f-lists').querySelectorAll('.dir-chip-x').forEach(x => x.style.display = 'none');
   }
 
   // ---------- access management (admin) ----------
