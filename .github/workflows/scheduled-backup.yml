@@ -15,8 +15,8 @@ jobs:
   backup:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-    
+      contents: read
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -97,53 +97,43 @@ jobs:
             exit 1
           fi
       
-      - name: Create release with backup
+      - name: Commit extracted export to waccamaw/backups
+        # Backups live as git commits in the private waccamaw/backups repo (extracted
+        # plaintext tree → real git deltas), keeping this public repo's Releases
+        # code-only and free of backup archives.
         env:
-          GH_TOKEN: ${{ github.token }}
+          DEPLOY_KEY: ${{ secrets.BACKUPS_DEPLOY_KEY }}
         run: |
-          # Create release notes
-          cat << EOF > release-notes.md
-          # Automated Micro.blog Backup
-          
-          **Backup Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
-          **Git Commit:** ${{ github.sha }}
-          **Repository State:** ${{ github.ref_name }} branch
-          
-          ## Contents
-          
-          This release contains a complete theme export from Micro.blog, including:
-          - Content files (blog posts, pages)
-          - Data files (blogrolls, bookshelves, etc.)
-          - Theme layouts and templates
-          - Static assets
-          
-          ## Restoration
-          
-          To restore this backup locally:
-          
-          \`\`\`bash
-          # Download the backup ZIP from this release
-          # Extract to your local repository
-          just backup-extract ${{ steps.backup-metadata.outputs.zip_name }}
-          \`\`\`
-          
-          ## Backup Archive
-          
-          - **File:** ${{ steps.backup-metadata.outputs.zip_name }}
-          - **Size:** $(du -h "${{ steps.backup-metadata.outputs.zip_file }}" | cut -f1)
-          
-          ---
-          
-          This backup was created automatically by the scheduled-backup workflow.
-          EOF
-          
-          # Create release
-          gh release create "${{ steps.backup-metadata.outputs.tag }}" \
-            --title "Backup ${{ steps.backup-metadata.outputs.timestamp }}" \
-            --notes-file release-notes.md \
-            "${{ steps.backup-metadata.outputs.zip_file }}"
-          
-          echo "✅ Release created: ${{ steps.backup-metadata.outputs.tag }}"
+          set -e
+          rm -rf /tmp/export-tree && mkdir -p /tmp/export-tree
+          unzip -qo "${{ steps.backup-metadata.outputs.zip_file }}" -d /tmp/export-tree
+          find /tmp/export-tree -name '__MACOSX' -type d -prune -exec rm -rf {} + 2>/dev/null || true
+          find /tmp/export-tree -name '._*' -delete 2>/dev/null || true
+
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/backups_key
+          chmod 600 ~/.ssh/backups_key
+          export GIT_SSH_COMMAND="ssh -i ~/.ssh/backups_key -o StrictHostKeyChecking=accept-new"
+          git clone --depth 1 git@github.com:waccamaw/backups.git /tmp/backups-repo
+          git -C /tmp/backups-repo config user.name "waccamaw-backup-bot"
+          git -C /tmp/backups-repo config user.email "actions@waccamaw.org"
+
+          mkdir -p /tmp/backups-repo/dotorg/site
+          rsync -a --delete /tmp/export-tree/ /tmp/backups-repo/dotorg/site/
+
+          cd /tmp/backups-repo
+          git add -A
+          if git diff --cached --quiet; then
+            echo "site export unchanged — no commit"
+            exit 0
+          fi
+          git commit -m "dotorg: weekly site export ${{ steps.backup-metadata.outputs.timestamp }}"
+          for i in 1 2 3; do
+            git push && exit 0
+            git fetch origin main && git rebase origin/main
+          done
+          echo "::error::push to waccamaw/backups failed after retries"
+          exit 1
       
       - name: Create workflow summary
         if: always()
@@ -162,7 +152,7 @@ jobs:
           
           if [ "${{ job.status }}" = "success" ]; then
             echo "- ✅ **Backup Status:** Successful" >> $GITHUB_STEP_SUMMARY
-            echo "- 📦 **Release:** ${{ steps.backup-metadata.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+            echo "- 📦 **Destination:** waccamaw/backups \`dotorg/site/\` (git commit)" >> $GITHUB_STEP_SUMMARY
             echo "- 📁 **Archive:** ${{ steps.backup-metadata.outputs.zip_name }}" >> $GITHUB_STEP_SUMMARY
           else
             echo "- ❌ **Backup Status:** Failed" >> $GITHUB_STEP_SUMMARY
