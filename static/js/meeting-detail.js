@@ -416,6 +416,9 @@ class MeetingDetailApp {
         
         console.log('[renderMarkdown] After comment removal (first 500 chars):', html.substring(0, 500));
         
+        // Convert &nbsp; entities to real non-breaking spaces before HTML escaping;
+        // escapeHtml() turns & → &amp;, which would make &nbsp; display as literal text.
+        html = html.replace(/&nbsp;/g, ' ');
         // NOW escape HTML to prevent XSS
         html = this.escapeHtml(html);
         
