@@ -130,7 +130,9 @@ class MeetingsAPIClient {
      * @returns {Promise<Object>} Response with meeting details
      */
     async getMeetingById(id) {
-        const endpoint = `/api/meetings/${id}`;
+        // encodeURIComponent handles UUIDs that contain '/' (common in base64),
+        // which would otherwise be misinterpreted as URL path separators by Hono.
+        const endpoint = `/api/meetings/${encodeURIComponent(id)}`;
         return this.request(endpoint, { method: 'GET' });
     }
 
