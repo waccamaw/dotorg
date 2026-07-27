@@ -319,11 +319,31 @@
     
     // Category change handler
     categorySelect.addEventListener('change', handleCategoryChange);
-    
+
+    // Pre-select a category from the URL (?category=... or #anchor), e.g. /contact/#peoples_alliance
+    preselectCategoryFromURL();
+
     // Render Turnstile widget
     renderTurnstile();
   }
-  
+
+  // Pre-select the category dropdown from a URL hash or ?category= query param.
+  // Accepts dashes or underscores (peoples-alliance == peoples_alliance).
+  function preselectCategoryFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    let requested = params.get('category') || window.location.hash.replace(/^#/, '');
+    if (!requested) return;
+    const norm = s => s.toLowerCase().replace(/-/g, '_');
+    requested = norm(decodeURIComponent(requested));
+    const match = Array.from(categorySelect.options).find(o => o.value && norm(o.value) === requested);
+    if (!match) return;
+    categorySelect.value = match.value;
+    categorySelect.dispatchEvent(new Event('change'));
+    // Bring the form into view so the pre-filled category is visible
+    const anchor = document.getElementById('contact-form');
+    if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   // Render Cloudflare Turnstile widget
   function renderTurnstile() {
     // Check if site key is available
