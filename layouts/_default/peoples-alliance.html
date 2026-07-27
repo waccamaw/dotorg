@@ -1,0 +1,232 @@
+{{ define "main" }}
+{{ $founder := .Params.founder }}
+<div class="pa-page">
+
+  <!-- Hero -->
+  <header class="pa-hero">
+    <div class="pa-hero-inner">
+      <span class="pa-eyebrow">An independent watchdog of the Waccamaw Indian People &middot; Est. 1992</span>
+      <h1>The Waccamaw People&rsquo;s Alliance</h1>
+      <p class="pa-hero-lede">A member-founded body dedicated to keeping the tribe&rsquo;s record honest, its history preserved, and its people informed.</p>
+    </div>
+  </header>
+
+  <div class="pa-body">
+
+    <!-- Mission lead -->
+    <section class="pa-lead">
+      <p>The People&rsquo;s Alliance answers to the membership first. It is a body <em>of</em> the people and <em>for</em> the people &mdash; and it holds that duty independent of whoever sits in tribal office at any given time.</p>
+    </section>
+
+    <!-- Founder spotlight: Iris -->
+    <section class="pa-founder">
+      <div class="pa-founder-portrait">
+        {{ with $founder.photo }}
+          <img src="{{ . }}" alt="Iris Hatcher Ewing, founder of the Waccamaw People's Alliance">
+        {{ else }}
+          <div class="pa-monogram" aria-hidden="true"><span>IE</span></div>
+        {{ end }}
+        <p class="pa-founder-cap">Iris Hatcher Ewing</p>
+        <p class="pa-founder-role">Founder &middot; Tribal Member #003<br>Second Chief, Internal (ret.)</p>
+        {{ with $founder.photo_credit }}<p class="pa-founder-credit">Photo: {{ . }}</p>{{ end }}
+      </div>
+      <div class="pa-founder-body">
+        <span class="pa-section-label">Our founder</span>
+        <h2>Founded by Iris Hatcher Ewing</h2>
+        <p>Iris founded the People&rsquo;s Alliance in the early 1990s as a promise to the membership: that someone would keep an honest accounting of the tribe&rsquo;s affairs and answer to the people first. She built the tribe&rsquo;s earliest membership records and reported back to members after every meeting. That work of stewardship and transparency is the Alliance&rsquo;s founding purpose &mdash; and it continues today.</p>
+        <blockquote class="pa-quote">To keep the tribe honest, its history preserved, and its people informed &mdash; answerable to the members first.</blockquote>
+      </div>
+    </section>
+
+    <!-- What we do -->
+    <section class="pa-mission">
+      <span class="pa-section-label pa-section-label--center">What we do</span>
+      <div class="pa-cards">
+        <div class="pa-card">
+          <div class="pa-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          </div>
+          <h3>Preserve the record</h3>
+          <p>We maintain the tribe&rsquo;s digital archive and the <a href="https://museum.waccamaw.org">Waccamaw Museum</a>, keeping its history, governance, and milestones safe and sourced.</p>
+        </div>
+        <div class="pa-card">
+          <div class="pa-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-5v12L3 14v-3z"></path><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"></path></svg>
+          </div>
+          <h3>Keep the people informed</h3>
+          <p>We carry the tribe&rsquo;s public record, calendar, and communications to the membership through waccamaw.org.</p>
+        </div>
+        <div class="pa-card">
+          <div class="pa-card-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+          </div>
+          <h3>Guard integrity</h3>
+          <p>We hold the tribe&rsquo;s public information to a standard of honesty and accuracy, in service of the members it belongs to.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Stewardship -->
+    <section class="pa-stewardship">
+      <span class="pa-section-label pa-section-label--center">Stewardship today</span>
+      <p>The People&rsquo;s Alliance is carried forward today by <strong>Doug Hatcher</strong> and <strong>Jennifer &ldquo;Chell&rdquo; Hatcher</strong>, continuing the work Iris Ewing began.</p>
+    </section>
+
+    <!-- Contact CTA -->
+    <section class="pa-cta">
+      <h2>Have something we should look into?</h2>
+      <p>Reach the People&rsquo;s Alliance directly &mdash; questions, records, or a concern about how the tribe&rsquo;s public information is kept.</p>
+      <a class="pa-cta-btn" href="/contact/">Contact the People&rsquo;s Alliance &rarr;</a>
+    </section>
+
+  </div>
+</div>
+
+<style>
+  .pa-page {
+    --pa-navy: var(--wm-navy, #0033cc);
+    --pa-navy-deep: var(--wm-navy-deep, #0a1f3c);
+    --pa-clay: var(--clay, #9c4a2f);
+    --pa-paper: var(--wm-paper, #faf8f3);
+    --pa-card: var(--wm-card, #ffffff);
+    --pa-ink: var(--wm-ink, #2a2a2a);
+    --pa-muted: var(--wm-ink-muted, #6b6b6b);
+    --pa-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    background: var(--pa-paper);
+  }
+
+  /* Hero */
+  .pa-hero {
+    background: linear-gradient(160deg, #0a1f3c 0%, #14294a 55%, #1c3358 100%);
+    color: #fff;
+    padding: 4.5rem 1.5rem 4rem;
+    text-align: center;
+    border-bottom: 4px solid var(--pa-clay);
+  }
+  .pa-hero-inner { max-width: 760px; margin: 0 auto; }
+  .pa-eyebrow {
+    display: inline-block; font-size: 0.72rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: rgba(255,255,255,0.72);
+    border: 1px solid rgba(255,255,255,0.28); border-radius: 999px;
+    padding: 0.4rem 1rem; margin-bottom: 1.5rem;
+  }
+  .pa-hero h1 {
+    font-family: var(--pa-serif); font-weight: 700; color: #fff;
+    font-size: clamp(2.2rem, 5vw, 3.4rem); line-height: 1.1; margin: 0 0 1.1rem;
+  }
+  .pa-hero-lede {
+    font-size: clamp(1.05rem, 2.2vw, 1.3rem); line-height: 1.6;
+    color: rgba(255,255,255,0.9); margin: 0 auto; max-width: 620px;
+  }
+
+  .pa-body { max-width: 920px; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+  .pa-section-label {
+    display: inline-block; font-size: 0.72rem; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--pa-clay); font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  .pa-section-label--center { display: block; text-align: center; }
+
+  /* Lead */
+  .pa-lead { padding: 3rem 0 1rem; text-align: center; }
+  .pa-lead p {
+    font-family: var(--pa-serif); font-size: clamp(1.25rem, 2.6vw, 1.6rem);
+    line-height: 1.5; color: var(--pa-ink); max-width: 720px; margin: 0 auto;
+  }
+  .pa-lead em { font-style: italic; color: var(--pa-navy); }
+
+  /* Founder */
+  .pa-founder {
+    display: grid; grid-template-columns: 260px 1fr; gap: 2.5rem;
+    align-items: center; margin: 3rem 0;
+    background: var(--pa-card); border-radius: 16px; padding: 2.5rem;
+    box-shadow: 0 4px 24px rgba(10,31,60,0.08); border: 1px solid rgba(10,31,60,0.06);
+  }
+  .pa-founder-portrait { text-align: center; }
+  .pa-founder-portrait img,
+  .pa-monogram {
+    width: 100%; max-width: 230px; aspect-ratio: 341 / 500; margin: 0 auto;
+    object-fit: cover; object-position: 50% 30%; border-radius: 14px;
+    border: 5px solid var(--pa-card);
+    box-shadow: 0 6px 22px rgba(10,31,60,0.2);
+  }
+  .pa-monogram {
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(160deg, #14294a, #1c3358);
+  }
+  .pa-monogram span {
+    font-family: var(--pa-serif); font-size: 4rem; color: #fff;
+    letter-spacing: 0.05em; opacity: 0.92;
+  }
+  .pa-founder-cap {
+    font-family: var(--pa-serif); font-size: 1.25rem; font-weight: 700;
+    color: var(--pa-ink); margin: 1rem 0 0.25rem;
+  }
+  .pa-founder-role { font-size: 0.85rem; color: var(--pa-muted); line-height: 1.5; margin: 0; }
+  .pa-founder-credit { font-size: 0.7rem; color: var(--pa-muted); opacity: 0.7; margin: 0.5rem 0 0; font-style: italic; }
+  .pa-founder-body h2 {
+    font-family: var(--pa-serif); font-size: clamp(1.5rem, 3vw, 2rem);
+    color: var(--pa-navy); margin: 0 0 1rem; line-height: 1.2;
+  }
+  .pa-founder-body p { color: var(--pa-ink); line-height: 1.7; margin: 0 0 1.25rem; }
+  .pa-quote {
+    font-family: var(--pa-serif); font-style: italic; font-size: 1.15rem;
+    line-height: 1.5; color: var(--pa-navy); margin: 0;
+    padding-left: 1.25rem; border-left: 3px solid var(--pa-clay);
+  }
+
+  /* Mission cards */
+  .pa-mission { margin: 4rem 0 2rem; text-align: center; }
+  .pa-cards {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+    margin-top: 1.5rem; text-align: left;
+  }
+  .pa-card {
+    background: var(--pa-card); border-radius: 14px; padding: 2rem 1.75rem;
+    border: 1px solid rgba(10,31,60,0.07); box-shadow: 0 2px 14px rgba(10,31,60,0.05);
+  }
+  .pa-card-icon {
+    width: 48px; height: 48px; border-radius: 12px; margin-bottom: 1.1rem;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(156,74,47,0.1); color: var(--pa-clay);
+  }
+  .pa-card-icon svg { width: 24px; height: 24px; }
+  .pa-card h3 {
+    font-family: var(--pa-serif); font-size: 1.25rem; color: var(--pa-ink);
+    margin: 0 0 0.6rem;
+  }
+  .pa-card p { color: var(--pa-muted); line-height: 1.65; margin: 0; font-size: 0.97rem; }
+  .pa-card a { color: var(--pa-navy); font-weight: 600; text-decoration: none; }
+  .pa-card a:hover { text-decoration: underline; }
+
+  /* Stewardship */
+  .pa-stewardship { text-align: center; margin: 3.5rem auto; max-width: 640px; }
+  .pa-stewardship p {
+    font-size: 1.15rem; line-height: 1.7; color: var(--pa-ink);
+  }
+
+  /* CTA */
+  .pa-cta {
+    text-align: center; background: var(--pa-navy-deep, #0a1f3c);
+    color: #fff; border-radius: 16px; padding: 3rem 2rem; margin-top: 3rem;
+  }
+  .pa-cta h2 {
+    font-family: var(--pa-serif); color: #fff; font-size: clamp(1.5rem, 3vw, 2rem);
+    margin: 0 0 0.75rem;
+  }
+  .pa-cta p { color: rgba(255,255,255,0.85); line-height: 1.6; max-width: 520px; margin: 0 auto 1.75rem; }
+  .pa-cta-btn {
+    display: inline-block; background: var(--pa-clay); color: #fff;
+    font-weight: 600; text-decoration: none; padding: 0.9rem 2rem;
+    border-radius: 10px; transition: transform 0.15s, background 0.15s;
+  }
+  .pa-cta-btn:hover { background: #b3542f; transform: translateY(-1px); }
+
+  @media (max-width: 720px) {
+    .pa-founder { grid-template-columns: 1fr; gap: 1.5rem; padding: 1.75rem; text-align: center; }
+    .pa-quote { text-align: left; }
+    .pa-cards { grid-template-columns: 1fr; }
+  }
+</style>
+{{ end }}
