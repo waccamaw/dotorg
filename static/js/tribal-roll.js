@@ -16,7 +16,7 @@
   let EDIT_ID = null;
   let table = null;
   let mode = "roster"; // "roster" | "query"
-  let quickFilter = null; // null(total) | "active" | "voting" | "review"
+  let quickFilter = null; // null(total) | "active" | "voting" | "review" | "turning18" | "recent18"
   let facets = []; // {field,type,label,op,opLabel,value,valueLabel}
   let SUMMARY = null;
 
@@ -44,6 +44,9 @@
     { k: "at_risk", l: "At risk", t: "bool" },
     { k: "needs_status_review", l: "Needs review", t: "bool" },
     { k: "voting_eligible", l: "Voting eligible", t: "bool" },
+    { k: "turning_18_soon", l: "Turning 18 (90 days)", t: "bool" },
+    { k: "recently_18", l: "Turned 18 (past year)", t: "bool" },
+    { k: "turns_18_on", l: "18th birthday", t: "date" },
   ];
   const FACET_OPS = {
     text: [["contains", "contains"], ["is", "is"], ["is_not", "is not"], ["empty", "is empty"], ["not_empty", "is not empty"]],
@@ -117,6 +120,10 @@
       card("total", "Total", s.total) +
       card("active", "Active", active) +
       card("voting", "Voting eligible", s.voting_eligible) +
+      // Aging-into-adulthood cohorts (issue #34) — Chell pulls these to mail
+      // letters, so they sit next to the counts she already works from.
+      card("turning18", "Turning 18 (90d)", s.turning_18_soon || 0) +
+      card("recent18", "Turned 18 (1yr)", s.recently_18 || 0) +
       card("review", "Needs review", s.needs_review, "warn");
   }
 
@@ -148,11 +155,15 @@
       { title: "Phone", field: "phone", width: 125 },
       { title: "Expires", field: "expiration_date", width: 115, cssClass: IS_RK ? "rk-editable" : "",
         editor: IS_RK ? "input" : false, formatter: (cell) => esc(cell.getValue() || "") },
-      { title: "Flags", field: "needs_status_review", headerSort: false, width: 205,
+      { title: "Flags", field: "needs_status_review", headerSort: false, width: 275,
         formatter: (cell) => {
           const d = cell.getRow().getData();
           return (d.core_member ? '<span class="rp rp-c">core</span>' : "") +
                  (d.voting_eligible ? '<span class="rp rp-v">vote</span>' : "") +
+                 // turns_18_on is only sent for rows already in a window, so
+                 // the tooltip never reveals a DOB the row didn't already imply.
+                 (d.turning_18_soon ? `<span class="rp rp-b" title="Turns 18 on ${esc(d.turns_18_on || "")}">turns 18</span>` : "") +
+                 (d.recently_18 ? `<span class="rp rp-b" title="Turned 18 on ${esc(d.turns_18_on || "")}">turned 18</span>` : "") +
                  (d.fee_exempt ? '<span class="rp rp-e">exempt</span>' : "") +
                  (d.second_chance_used ? '<span class="rp rp-2">2nd chance</span>' : "") +
                  (d.needs_status_review ? '<span class="rp rp-w">review</span>' : "");
@@ -222,6 +233,8 @@
       if (quickFilter === "active" && data.status !== "active") return false;
       if (quickFilter === "voting" && !data.voting_eligible) return false;
       if (quickFilter === "review" && !data.needs_status_review) return false;
+      if (quickFilter === "turning18" && !data.turning_18_soon) return false;
+      if (quickFilter === "recent18" && !data.recently_18) return false;
       if (q) {
         const hay = `${data.first_name || ""} ${data.last_name || ""} ${data.email || ""} ${data.trb_id || ""} ${data.city || ""} ${data.state || ""} ${data.position || ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
@@ -690,6 +703,8 @@
   //   ?status=inactive          -> lapsed members
   //   ?email=empty              -> members with no email on file
   //   ?expiring=90              -> active members expiring within N days (at-risk)
+  //   ?age=turning-18           -> minors whose 18th birthday is within 90 days
+  //   ?age=recently-18          -> members who turned 18 in the past year
   function applyUrlFilters() {
     let params;
     try { params = new URLSearchParams(window.location.search); } catch (e) { return; }
@@ -712,6 +727,12 @@
       push("expiration_date", "Expiration", "after", "after", iso(today), "today");
       push("expiration_date", "Expiration", "before", "before", iso(end), iso(end));
     }
+    // Age milestones map onto the summary tiles rather than a chip, so the tile
+    // lights up and the count on it matches what the grid is showing.
+    const age = params.get("age");
+    if (age === "turning-18") quickFilter = "turning18";
+    else if (age === "recently-18") quickFilter = "recent18";
+
     if (added) renderChips();
   }
 
