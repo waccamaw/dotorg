@@ -58,6 +58,7 @@
 
   const MEMBER_TYPES = ["regular", "honorary", "spousal", "associate", "minor", "hunka"];
   const STATUSES = ["active", "inactive", "resigned", "retired", "deceased", "revoked", "void", "unknown"];
+  const AGE_MILESTONE_STATUSES = new Set(["active", "inactive"]);
   const TIERS = ["tribal_member", "executive_leadership", "public"];
   const EXEMPTION_TYPES = ["", "Governing body", "Active committee", "Volunteer (8+ hrs/yr)", "Lifetime membership", "Hardship"];
   const FIELDS = [
@@ -113,6 +114,13 @@
     if (!s) return;
     SUMMARY = s;
     const active = (s.by_status.find((x) => x.status === "active") || {}).n || 0;
+    const ageCohortRows = ALL.filter(inAgeMilestoneStatus);
+    const turning18 = ALL.length
+      ? ageCohortRows.filter((x) => x.turning_18_soon).length
+      : s.turning_18_soon || 0;
+    const recent18 = ALL.length
+      ? ageCohortRows.filter((x) => x.recently_18).length
+      : s.recently_18 || 0;
     const cur = quickFilter || "total";
     const card = (key, label, val, cls) =>
       `<div class="roll-stat ${cls || ""} ${cur === key ? "sel" : ""}" data-quick="${key}"><div class="roll-stat-n">${val}</div><div class="roll-stat-l">${label}</div></div>`;
@@ -122,8 +130,8 @@
       card("voting", "Voting eligible", s.voting_eligible) +
       // Aging-into-adulthood cohorts (issue #34) — Chell pulls these to mail
       // letters, so they sit next to the counts she already works from.
-      card("turning18", "Turning 18 (90d)", s.turning_18_soon || 0) +
-      card("recent18", "Turned 18 (1yr)", s.recently_18 || 0) +
+      card("turning18", "Turning 18 (90d)", turning18) +
+      card("recent18", "Turned 18 (1yr)", recent18) +
       card("review", "Needs review", s.needs_review, "warn");
   }
 
@@ -210,6 +218,9 @@
 
   function matchFacet(row, f) {
     const raw = row[f.field];
+    if ((f.field === "turning_18_soon" || f.field === "recently_18") && !inAgeMilestoneStatus(row)) {
+      return false;
+    }
     const sv = (raw == null ? "" : String(raw)).toLowerCase();
     const val = (f.value == null ? "" : String(f.value)).toLowerCase();
     switch (f.op) {
@@ -226,6 +237,10 @@
     }
   }
 
+  function inAgeMilestoneStatus(row) {
+    return AGE_MILESTONE_STATUSES.has(String(row.status || "").toLowerCase());
+  }
+
   function applyFilters() {
     if (!table || mode !== "roster") return;
     const q = $("roll-search").value.trim().toLowerCase();
@@ -233,8 +248,8 @@
       if (quickFilter === "active" && data.status !== "active") return false;
       if (quickFilter === "voting" && !data.voting_eligible) return false;
       if (quickFilter === "review" && !data.needs_status_review) return false;
-      if (quickFilter === "turning18" && !data.turning_18_soon) return false;
-      if (quickFilter === "recent18" && !data.recently_18) return false;
+      if (quickFilter === "turning18" && (!data.turning_18_soon || !inAgeMilestoneStatus(data))) return false;
+      if (quickFilter === "recent18" && (!data.recently_18 || !inAgeMilestoneStatus(data))) return false;
       if (q) {
         const hay = `${data.first_name || ""} ${data.last_name || ""} ${data.email || ""} ${data.trb_id || ""} ${data.city || ""} ${data.state || ""} ${data.position || ""}`.toLowerCase();
         if (!hay.includes(q)) return false;
