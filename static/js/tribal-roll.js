@@ -324,6 +324,7 @@
     if (!res.ok || !data.success) { $("roll-error-msg").textContent = data.error || "Failed to load the roll."; show("roll-error"); return; }
     ALL = data.members || [];
     IS_RK = !!data.isRecordkeeper;
+    if (IS_RK) $("roll-mailing").style.display = "";
     renderSummary(data.summary);
     show("roll-content");
     // Counts-only access (tribal leadership): summary numbers, no roster.
@@ -399,6 +400,51 @@
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
+  }
+
+  // Recordkeeper-only mailing-list export: name + full postal address for
+  // members with a street address on file (active/inactive). Separate from the
+  // grid CSV, which intentionally omits address for privacy.
+  async function downloadMailingList() {
+    const btn = $("roll-mailing");
+    btn.disabled = true;
+    btn.textContent = "Fetching…";
+    try {
+      const { res, data } = await api("/api/admin/mailing-list");
+      if (!res.ok || !data.success) throw new Error(data.error || "Failed");
+      const rows = data.members;
+      if (!rows.length) { alert("No members with addresses on file."); return; }
+      const COLS = [
+        { k: "first_name", l: "First Name" },
+        { k: "last_name",  l: "Last Name" },
+        { k: "address",    l: "Address" },
+        { k: "address2",   l: "Address 2" },
+        { k: "city",       l: "City" },
+        { k: "state",      l: "State" },
+        { k: "zipcode",    l: "Zip" },
+      ];
+      const cell = (v) => {
+        v = v == null ? "" : String(v);
+        return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+      };
+      const csv = [COLS.map((c) => c.l).join(",")]
+        .concat(rows.map((r) => COLS.map((c) => cell(r[c.k])).join(",")))
+        .join("\n");
+      const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `mailing-list-${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      alert("Mailing list download failed: " + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "✉ Mailing list";
+    }
   }
 
   // ---- Recordkeeper edit modal + history ------------------------------------
@@ -786,6 +832,7 @@
 
     // top actions
     $("roll-download").addEventListener("click", downloadCsv);
+    $("roll-mailing").addEventListener("click", downloadMailingList);
     $("roll-sql-toggle").addEventListener("click", () => $("roll-drawer").classList.toggle("open"));
     $("roll-drawer-close").addEventListener("click", () => $("roll-drawer").classList.remove("open"));
 
