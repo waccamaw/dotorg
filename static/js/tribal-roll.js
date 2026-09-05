@@ -415,6 +415,7 @@
       const rows = data.members;
       if (!rows.length) { alert("No members with addresses on file."); return; }
       const COLS = [
+        { k: "trb_id",     l: "TRB ID" },
         { k: "first_name", l: "First Name" },
         { k: "last_name",  l: "Last Name" },
         { k: "address",    l: "Address" },
