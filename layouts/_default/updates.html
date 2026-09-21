@@ -3,10 +3,15 @@
 <div class="updates-page">
 
 	{{ $allPosts := where .Site.RegularPages "Type" "post" }}
+	{{ $paginator := .Paginate $allPosts 10 }}
 
 	{{/* Featured post — the editorial lead. Revives the old homepage "featured"
-	     flag (posts in the `featured` category) as a learn-hero-style banner. */}}
-	{{ $featured := where $allPosts "Params.categories" "intersect" (slice "featured") }}
+	     flag (posts in the `featured` category) as a learn-hero-style banner.
+	     Page 1 only; on later pages the grid is the whole story. */}}
+	{{ $featured := slice }}
+	{{ if eq $paginator.PageNumber 1 }}
+		{{ $featured = where $allPosts "Params.categories" "intersect" (slice "featured") }}
+	{{ end }}
 	{{ range first 1 $featured }}
 		{{ $heroImg := partial "post-image.html" . }}
 		<a class="featured-hero{{ if $heroImg }} has-image{{ end }}" href="{{ .Permalink }}"
@@ -34,7 +39,9 @@
 	{{ $categories = $categories | uniq }}
 
 	<div class="updates-listing-head">
-		<h1 class="updates-listing-title">Latest Updates</h1>
+		<h1 class="updates-listing-title">
+			Latest Updates{{ if gt $paginator.PageNumber 1 }} <span class="updates-listing-page">Page {{ $paginator.PageNumber }}</span>{{ end }}
+		</h1>
 		{{ if $categories }}
 		<nav class="category-filter" aria-label="Filter updates by category">
 			<div class="category-links">
@@ -47,8 +54,8 @@
 		{{ end }}
 	</div>
 
-	<!-- First 10 posts as a museum-style collection grid -->
-	{{ $displayPosts := first 10 $allPosts }}
+	<!-- This page's posts as a museum-style collection grid -->
+	{{ $displayPosts := $paginator.Pages }}
 
 	<div class="updates-grid">
 		{{ range $displayPosts }}
@@ -100,12 +107,22 @@
 	</div>
 
 	<!-- Pagination -->
-	<nav class="pagination" aria-label="Updates pagination">
-		<span class="pagination-info">
-			Showing {{ len $displayPosts }} of {{ len $allPosts }} posts
-		</span>
-		<a href="/page/2/" class="pagination-next">Older posts →</a>
-	</nav>
+	{{ if $displayPosts }}
+		{{ $first := add (mul (sub $paginator.PageNumber 1) $paginator.PagerSize) 1 }}
+		{{ $last := add $first (sub (len $displayPosts) 1) }}
+		<nav class="pagination" aria-label="Updates pagination">
+			{{ with $paginator.Prev }}
+				<a href="{{ .URL }}" class="pagination-prev" rel="prev">← Newer posts</a>
+			{{ end }}
+			<span class="pagination-info">
+				Showing {{ $first }}–{{ $last }} of {{ $paginator.TotalNumberOfElements }} posts
+				{{ if gt $paginator.TotalPages 1 }}(page {{ $paginator.PageNumber }} of {{ $paginator.TotalPages }}){{ end }}
+			</span>
+			{{ with $paginator.Next }}
+				<a href="{{ .URL }}" class="pagination-next" rel="next">Older posts →</a>
+			{{ end }}
+		</nav>
+	{{ end }}
 
 </div>
 
