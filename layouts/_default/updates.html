@@ -3,7 +3,11 @@
 <div class="updates-page">
 
 	{{ $allPosts := where .Site.RegularPages "Type" "post" }}
-	{{ $paginator := .Paginate $allPosts 10 }}
+	{{/* Page size lives in a variable rather than being read back off the pager:
+	     Micro.blog builds with Hugo 0.117, which has no Pager.PagerSize (added in
+	     0.128), and a failed render there leaves the stale /updates/ page live. */}}
+	{{ $pageSize := 10 }}
+	{{ $paginator := .Paginate $allPosts $pageSize }}
 
 	{{/* Featured post — the editorial lead. Revives the old homepage "featured"
 	     flag (posts in the `featured` category) as a learn-hero-style banner.
@@ -108,7 +112,7 @@
 
 	<!-- Pagination -->
 	{{ if $displayPosts }}
-		{{ $first := add (mul (sub $paginator.PageNumber 1) $paginator.PagerSize) 1 }}
+		{{ $first := add (mul (sub $paginator.PageNumber 1) $pageSize) 1 }}
 		{{ $last := add $first (sub (len $displayPosts) 1) }}
 		<nav class="pagination" aria-label="Updates pagination">
 			{{ with $paginator.Prev }}
