@@ -346,11 +346,19 @@ h1, h2, h3, h4, h5, .section-heading, .post-card h3, .hero-title {
   font-family: var(--wm-sans); font-size: .82rem; text-transform: uppercase;
   letter-spacing: .06em; color: var(--text-light); font-weight: 600;
 }
-.updates-page .pagination-next {
+.updates-page .pagination-next,
+.updates-page .pagination-prev {
   font-family: var(--wm-sans); font-weight: 700; color: var(--link-color);
   text-decoration: none;
 }
-.updates-page .pagination-next:hover { color: var(--primary-color); }
+.updates-page .pagination-next:hover,
+.updates-page .pagination-prev:hover { color: var(--primary-color); }
+/* keep the info block centered when only one of prev/next is present */
+.updates-page .pagination-info { margin-inline: auto; }
+.updates-page .updates-listing-page {
+  font-family: var(--wm-sans); font-size: .5em; text-transform: uppercase;
+  letter-spacing: .06em; color: var(--text-light); vertical-align: middle;
+}
 @media (max-width: 560px) {
   .updates-page .pagination { justify-content: center; text-align: center; }
 }
