@@ -336,31 +336,37 @@ h1, h2, h3, h4, h5, .section-heading, .post-card h3, .hero-title {
   backdrop-filter: blur(2px);
 }
 
-/* pagination footer */
+/* pagination footer — prev | info | next on a 3-column grid, so both links
+   fit on one row and the info stays centered when only one link exists */
 .updates-page .pagination {
-  display: flex; align-items: center; justify-content: space-between;
-  flex-wrap: wrap; gap: 1rem;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem;
   border-top: 1px solid var(--border-color); padding-top: 1.5rem;
 }
 .updates-page .pagination-info {
+  grid-column: 2; text-align: center;
   font-family: var(--wm-sans); font-size: .82rem; text-transform: uppercase;
   letter-spacing: .06em; color: var(--text-light); font-weight: 600;
 }
+.updates-page .pagination-prev { grid-column: 1; justify-self: start; }
+.updates-page .pagination-next { grid-column: 3; justify-self: end; }
+/* theme.css gives these a navy button background — keep the text white on it */
 .updates-page .pagination-next,
-.updates-page .pagination-prev {
-  font-family: var(--wm-sans); font-weight: 700; color: var(--link-color);
-  text-decoration: none;
-}
+.updates-page .pagination-prev,
 .updates-page .pagination-next:hover,
-.updates-page .pagination-prev:hover { color: var(--primary-color); }
-/* keep the info block centered when only one of prev/next is present */
-.updates-page .pagination-info { margin-inline: auto; }
+.updates-page .pagination-prev:hover {
+  font-family: var(--wm-sans); font-weight: 700; color: #fff;
+  text-decoration: none; white-space: nowrap;
+}
 .updates-page .updates-listing-page {
   font-family: var(--wm-sans); font-size: .5em; text-transform: uppercase;
   letter-spacing: .06em; color: var(--text-light); vertical-align: middle;
 }
 @media (max-width: 560px) {
-  .updates-page .pagination { justify-content: center; text-align: center; }
+  .updates-page .pagination { grid-template-columns: 1fr; justify-items: center; }
+  .updates-page .pagination-info,
+  .updates-page .pagination-prev,
+  .updates-page .pagination-next { grid-column: 1; justify-self: stretch; text-align: center; }
+  .updates-page .pagination-info { order: -1; }
 }
 
 /* ---------- Homepage: Pauwau promo + "Welcome Chief Cheryl" duo ---------- */
