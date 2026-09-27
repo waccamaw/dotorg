@@ -209,17 +209,79 @@
 			>
 			<button type="submit">Subscribe</button>
 		</form>
+		<!-- Cloudflare Turnstile (invisible; rendered lazily on first interaction) -->
+		<div id="newsletter-turnstile"></div>
 	</div>
 	<div id="newsletter-message" style="display: none; margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem; text-align: center;"></div>
 </div>
 
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
+const NEWSLETTER_API_BASE = 'https://contact.waccamaw.org';
+// Cloudflare's always-passes test key, for local Hugo dev over http://localhost
+const TURNSTILE_DUMMY_KEY = '1x00000000000000000000AA';
+
 const newsletterForm = document.getElementById('newsletterForm');
 const emailInput = document.getElementById('newsletter-email');
 const nameInput = document.getElementById('newsletter-name');
 
+let nlSiteKey = null;
+let nlSiteKeyPromise = null;
+let nlWidgetId = null;
+let nlToken = null;
+
+// The contact service owns the site key; /api/config hands it out.
+function loadNewsletterSiteKey() {
+	if (nlSiteKeyPromise) return nlSiteKeyPromise;
+	nlSiteKeyPromise = (async function () {
+		if (window.location.hostname === 'localhost') {
+			nlSiteKey = TURNSTILE_DUMMY_KEY;
+			return nlSiteKey;
+		}
+		try {
+			const res = await fetch(NEWSLETTER_API_BASE + '/api/config');
+			if (!res.ok) throw new Error('config ' + res.status);
+			const data = await res.json();
+			nlSiteKey = data.turnstileSiteKey || null;
+		} catch (err) {
+			console.error('[Newsletter/Turnstile] Could not load site key:', err);
+			nlSiteKey = null;
+		}
+		return nlSiteKey;
+	})();
+	return nlSiteKeyPromise;
+}
+
+// Render once, invisibly. 'interaction-only' keeps the homepage clean unless
+// Cloudflare actually decides a challenge is warranted.
+async function renderNewsletterTurnstile() {
+	if (nlWidgetId !== null) return;
+	const key = await loadNewsletterSiteKey();
+	if (!key) return;
+	if (typeof turnstile === 'undefined') {
+		setTimeout(renderNewsletterTurnstile, 500);
+		return;
+	}
+	const container = document.getElementById('newsletter-turnstile');
+	if (!container) return;
+	try {
+		nlWidgetId = turnstile.render(container, {
+			sitekey: String(key),
+			callback: function (token) { nlToken = token; },
+			'error-callback': function () { nlToken = null; },
+			'expired-callback': function () { nlToken = null; },
+			theme: 'light',
+			size: 'compact',
+			appearance: 'interaction-only'
+		});
+	} catch (err) {
+		console.error('[Newsletter/Turnstile] Render failed:', err);
+	}
+}
+
 // Show name field when email is focused
 emailInput.addEventListener('focus', function() {
+	renderNewsletterTurnstile();
 	if (nameInput.style.display === 'none') {
 		nameInput.style.display = 'block';
 		// Smooth scroll into view if needed
@@ -241,8 +303,22 @@ newsletterForm.addEventListener('submit', async function(e) {
 	submitButton.disabled = true;
 	submitButton.textContent = 'Subscribing...';
 	
+	// The contact service fails closed without a Turnstile token, so make sure
+	// the widget exists and has produced one before we post.
+	await renderNewsletterTurnstile();
+	if (!nlToken && typeof turnstile !== 'undefined' && nlWidgetId !== null) {
+		try {
+			turnstile.execute(nlWidgetId);
+			for (let i = 0; i < 20 && !nlToken; i++) {
+				await new Promise(function (r) { setTimeout(r, 250); });
+			}
+		} catch (err) {
+			console.error('[Newsletter/Turnstile] Execute failed:', err);
+		}
+	}
+	
 	try {
-		const response = await fetch('https://contact.waccamaw.org/api/contact', {
+		const response = await fetch(NEWSLETTER_API_BASE + '/api/contact', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -252,7 +328,8 @@ newsletterForm.addEventListener('submit', async function(e) {
 				email: email,
 				category: 'general',
 				message: 'Newsletter subscription request',
-				newsletter: true
+				newsletter: true,
+				turnstileToken: nlToken || null
 			})
 		});
 		
@@ -271,6 +348,12 @@ newsletterForm.addEventListener('submit', async function(e) {
 		messageDiv.style.backgroundColor = 'var(--error-bg, #f8d7da)';
 		messageDiv.style.color = 'var(--error-text, #721c24)';
 	} finally {
+		// Turnstile tokens are single-use; clear and reset so a second
+		// signup in the same page view can get a fresh one.
+		nlToken = null;
+		if (typeof turnstile !== 'undefined' && nlWidgetId !== null) {
+			try { turnstile.reset(nlWidgetId); } catch (err) { /* non-fatal */ }
+		}
 		submitButton.disabled = false;
 		submitButton.textContent = 'Subscribe';
 	}
@@ -1147,6 +1230,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   background:#9c4a2f !important; border:none !important;
 }
 .newsletter-form button:hover, #newsletterForm button:hover { background:#1f3a52 !important; }
+/* Turnstile container: take up no room until Cloudflare actually injects a
+   challenge, then centre it under the form. */
+#newsletter-turnstile:empty { display: none; }
+#newsletter-turnstile { display: flex; justify-content: center; margin-top: 0.75rem; }
 /* donate section — ONE paper panel (was double: section + banner both styled,
    the inner border was the nested banner edge inset from the section). */
 .donate-section { background:transparent !important; border:none !important; }
