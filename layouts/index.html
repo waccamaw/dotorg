@@ -333,7 +333,10 @@ newsletterForm.addEventListener('submit', async function(e) {
 	}
 	
 	try {
-		const response = await fetch(NEWSLETTER_API_BASE + '/api/contact', {
+		// Dedicated newsletter endpoint. This used to post to /api/contact with
+		// category: 'general', which does not exist in the service config, so the
+		// request 500'd after passing the bot check.
+		const response = await fetch(NEWSLETTER_API_BASE + '/api/newsletter', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -341,24 +344,29 @@ newsletterForm.addEventListener('submit', async function(e) {
 			body: JSON.stringify({
 				name: name,
 				email: email,
-				category: 'general',
-				message: 'Newsletter subscription request',
-				newsletter: true,
-				turnstileToken: nlToken || null
+				turnstileToken: nlToken
 			})
 		});
 		
-		if (response.ok) {
-			messageDiv.textContent = 'Thank you for subscribing! Please check your email to confirm your subscription.';
+		const data = await response.json().catch(function () { return null; });
+		
+		if (response.ok && data && data.success) {
+			messageDiv.textContent = data.message
+				|| 'Thank you for subscribing! Please check your email to confirm your subscription.';
 			messageDiv.style.display = 'block';
 			messageDiv.style.backgroundColor = 'var(--success-bg, #d4edda)';
 			messageDiv.style.color = 'var(--success-text, #155724)';
 			this.reset();
+			nameInput.style.display = 'none';
 		} else {
-			throw new Error('Subscription failed');
+			// Show what the service actually said, so a future failure is
+			// diagnosable instead of a blanket "try again".
+			throw new Error((data && data.error) || ('Subscription failed (' + response.status + ')'));
 		}
 	} catch (error) {
-		messageDiv.textContent = 'Sorry, there was an error. Please try again.';
+		messageDiv.textContent = error && error.message
+			? error.message
+			: 'Sorry, there was an error. Please try again.';
 		messageDiv.style.display = 'block';
 		messageDiv.style.backgroundColor = 'var(--error-bg, #f8d7da)';
 		messageDiv.style.color = 'var(--error-text, #721c24)';
