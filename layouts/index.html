@@ -1230,6 +1230,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   background:#9c4a2f !important; border:none !important;
 }
 .newsletter-form button:hover, #newsletterForm button:hover { background:#1f3a52 !important; }
+/* Turnstile container: take up no room until Cloudflare actually injects a
+   challenge, then centre it under the form. */
+#newsletter-turnstile:empty { display: none; }
+#newsletter-turnstile { display: flex; justify-content: center; margin-top: 0.75rem; }
 /* donate section — ONE paper panel (was double: section + banner both styled,
    the inner border was the nested banner edge inset from the section). */
 .donate-section { background:transparent !important; border:none !important; }
