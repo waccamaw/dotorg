@@ -317,6 +317,21 @@ newsletterForm.addEventListener('submit', async function(e) {
 		}
 	}
 	
+	// Cloudflare sometimes decides a visitor needs to tick a box. Say so plainly
+	// instead of posting a tokenless request that the service will reject with a
+	// generic failure.
+	if (!nlToken) {
+		const pending = document.getElementById('newsletter-turnstile');
+		if (pending) pending.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+		messageDiv.textContent = 'Please complete the verification just below, then press Subscribe again.';
+		messageDiv.style.display = 'block';
+		messageDiv.style.backgroundColor = 'var(--warning-bg, #fff3cd)';
+		messageDiv.style.color = 'var(--warning-text, #664d03)';
+		submitButton.disabled = false;
+		submitButton.textContent = 'Subscribe';
+		return;
+	}
+	
 	try {
 		const response = await fetch(NEWSLETTER_API_BASE + '/api/contact', {
 			method: 'POST',
