@@ -9,6 +9,11 @@ on:
       - 'static/**'
       - 'config.json'
       - 'data/**'
+      # content/** drives real pages: content/subscribe.md is what serves
+      # https://waccamaw.org/subscribe/. Without it here, editing any static page
+      # never triggered a deploy and the change sat unpublished until some other
+      # path happened to change.
+      - 'content/**'
   workflow_dispatch:
     inputs:
       theme_id:
