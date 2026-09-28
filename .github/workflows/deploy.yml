@@ -39,7 +39,10 @@ jobs:
       
       - name: Checkout repository
         uses: actions/checkout@v5
-      
+        with:
+          # HEAD~1 must resolve for the "Changed Files" summary step below.
+          fetch-depth: 2
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -131,7 +134,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Changed Files" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          git diff --name-only HEAD~1 HEAD | grep -E '(layouts/|static/|config\.json)' || echo "No template files changed"
+          git diff --name-only HEAD~1 HEAD | grep -E '(layouts/|static/|content/|data/|config\.json)' >> $GITHUB_STEP_SUMMARY || echo "No deploy-relevant files changed" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
       
       - name: Update deployment status
