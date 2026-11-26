@@ -1,7 +1,40 @@
 {{ define "main" }}
 
+<!-- Temporary Coastal Giving Tuesday campaign -->
+<section class="giving-hero" id="giving-campaign" aria-labelledby="giving-title" hidden>
+  <div class="giving-hero-inner">
+    <p class="giving-kicker">Coastal Giving Tuesday &middot; Begins December 1</p>
+    <h1 id="giving-title">Support the Waccamaw Indian People</h1>
+    <p>Join us for our first Coastal Giving Tuesday campaign and help support our community.</p>
+    <div class="giving-actions">
+      <button class="givegab-button" data-campaign-id="267663" data-host="https://www.givegab.com" data-org-id="530231" data-preview="">Donate Now</button>
+      <a class="giving-button" href="https://www.coastalgivingtuesday.org/organizations/waccamaw-indian-people">Visit our campaign page &rarr;</a>
+    </div>
+    <script src="https://givegab.s3.amazonaws.com/donation-widget/givegab-button.js"></script>
+  </div>
+</section>
+<style>
+.giving-hero{max-width:1200px;margin:1.25rem auto 2rem;border-radius:16px;overflow:hidden;background:linear-gradient(90deg,rgba(18,34,40,.94),rgba(26,48,46,.78) 48%,rgba(26,48,46,.25)),url('/images/pauwau/grounds-aerial.jpg') center/cover no-repeat;color:#fff}
+.giving-hero-inner{padding:clamp(2.5rem,7vw,5rem) clamp(1.5rem,5vw,3.5rem);max-width:42rem}
+.giving-kicker{font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#f1c978;margin:0 0 1rem}
+.giving-hero h1{font-family:Georgia,serif;font-size:clamp(2.25rem,5vw,3.8rem);line-height:1.05;color:#fff;margin:0 0 1rem}
+.giving-hero-inner > p:not(.giving-kicker){font-size:1.1rem;line-height:1.6;color:#fff;max-width:32rem;margin:0 0 1.5rem}
+.giving-actions{display:flex;flex-wrap:wrap;align-items:center;gap:.75rem}
+.giving-actions button.givegab-button{background:#a5462d;color:#fff;border:0;border-radius:8px;padding:.85rem 1.35rem;font-family:inherit;font-size:inherit;font-weight:700;line-height:inherit;text-shadow:none;cursor:pointer}
+.giving-actions button.givegab-button:hover{background:#81351f}
+.giving-button{display:inline-block;background:#a5462d;color:#fff!important;padding:.85rem 1.35rem;border-radius:8px;font-weight:700;text-decoration:none}
+.giving-button:hover{background:#81351f;color:#fff;text-decoration:none}
+.museum-feature-card{display:flex;flex-direction:column;justify-content:flex-end;min-height:280px;border-radius:12px;padding:2rem 2.25rem;color:#fff;text-decoration:none;background:linear-gradient(0deg,rgba(13,26,40,.96),rgba(13,26,40,.62) 60%,rgba(13,26,40,.25)),url('/images/museum/hero.jpg') center 22%/cover no-repeat;box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.museum-feature-card:hover{text-decoration:none;color:#fff}
+.museum-feature-card .museum-kicker{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#f1c978}
+.museum-feature-card h2{font-family:Georgia,serif;color:#fff;font-size:1.8rem;line-height:1.12;margin:.5rem 0}
+.museum-feature-card p{color:#f2ecdf;line-height:1.5;margin:0 0 .75rem}
+.museum-feature-card .museum-cta{color:#f1c978;font-weight:700}
+@media(max-width:640px){.giving-hero{border-radius:0;margin-top:0}}
+</style>
+
 <!-- Museum feature — "Thank you, Chief." (permanent featured exhibit) -->
-<section class="museum-hero">
+<section class="museum-hero" id="museum-default-hero">
 	<div class="museum-hero-inner">
 		<div class="museum-hero-text">
 			<span class="museum-hero-label">A new museum &middot; museum.waccamaw.org</span>
@@ -31,6 +64,14 @@
 .museum-btn.ghost:hover{background:rgba(242,236,223,.15);border-color:#fff}
 @media (max-width:640px){.museum-hero{border-radius:0;margin-top:0}}
 </style>
+
+<script>
+// The campaign is month-long. Restore the museum hero on January 1, Eastern time.
+if (Date.now() < Date.parse('2027-01-01T05:00:00Z')) {
+  document.getElementById('giving-campaign').hidden = false;
+  document.getElementById('museum-default-hero').hidden = true;
+}
+</script>
 
 <!-- Featured-post hero suppressed: the Museum feature above is the permanent hero.
      (Restore from git history if a rotating featured slot is wanted again.) -->
@@ -143,15 +184,26 @@
 {{/* Resolve the festival date from data/pauwau.toml; fall back if the
      data file's year doesn't match the current year (i.e. not yet updated). */}}
 {{- $when := printf "First full weekend of November %d" $year -}}
-{{- with .Site.Data.pauwau }}{{ if eq .year $year }}{{ $when = .dates }}{{ end }}{{ end -}}
-{{- if and (ge $month 3) (le $month 4) }}
+{{- $pauwauEnabled := false -}}
+{{- with .Site.Data.pauwau }}{{ if eq .year $year }}{{ $when = .dates }}{{ $pauwauEnabled = .enabled }}{{ end }}{{ end -}}
+{{/* Promo is only shown if enabled AND month is Mar–Nov */}}
+{{- $showPromo := and $pauwauEnabled (or (and (ge $month 3) (le $month 4)) (and (ge $month 5) (le $month 9)) (and (ge $month 10) (le $month 11))) -}}
+{{- if and (ge $month 3) (le $month 4) $showPromo }}
 	<!-- OPEN: subtle strip (full width), Chief welcome below -->
 	<a href="/pauwau/applications/" class="pauwau-strip">
 		<span>🪶 <strong>Registration is open</strong> for the {{ $anniv }}{{ $ord }} Annual Waccamaw Pauwau — {{ $when }}.</span>
 		<span class="pauwau-strip-cta">Register →</span>
 	</a>
-	<div class="welcome-solo">{{ partial "home/chief-welcome.html" . }}</div>
-{{- else if and (ge $month 5) (le $month 9) }}
+	<div class="welcome-duo">
+        {{ partial "home/chief-welcome.html" . }}
+        <a class="museum-feature-card" href="https://museum.waccamaw.org">
+            <span class="museum-kicker">The Waccamaw Museum</span>
+            <h2>Thank you, Chief.</h2>
+            <p>Explore Chief Harold &ldquo;Buster&rdquo; Hatcher&rsquo;s story and the history of the Waccamaw Indian People.</p>
+            <span class="museum-cta">Visit the Museum &rarr;</span>
+        </a>
+    </div>
+{{- else if and (ge $month 5) (le $month 9) $showPromo }}
 	<!-- REGISTER: promo banner + Chief welcome, side by side -->
 	<div class="welcome-duo">
 		<a href="/pauwau/" class="pauwau-promo">
@@ -164,7 +216,7 @@
 		</a>
 		{{ partial "home/chief-welcome.html" . }}
 	</div>
-{{- else if and (ge $month 10) (le $month 11) }}
+{{- else if and (ge $month 10) (le $month 11) $showPromo }}
 	<!-- STAY: attend banner + Chief welcome, side by side -->
 	<div class="welcome-duo">
 		<a href="/pauwau/" class="pauwau-promo">
@@ -179,7 +231,15 @@
 	</div>
 {{- else }}
 	<!-- Off-season (Dec–Feb): Chief welcome alone -->
-	<div class="welcome-solo">{{ partial "home/chief-welcome.html" . }}</div>
+	<div class="welcome-duo">
+        {{ partial "home/chief-welcome.html" . }}
+        <a class="museum-feature-card" href="https://museum.waccamaw.org">
+            <span class="museum-kicker">The Waccamaw Museum</span>
+            <h2>Thank you, Chief.</h2>
+            <p>Explore Chief Harold &ldquo;Buster&rdquo; Hatcher&rsquo;s story and the history of the Waccamaw Indian People.</p>
+            <span class="museum-cta">Visit the Museum &rarr;</span>
+        </a>
+    </div>
 {{- end }}
 
 <!-- Newsletter Signup -->
